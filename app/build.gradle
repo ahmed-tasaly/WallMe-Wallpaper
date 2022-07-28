@@ -46,8 +46,9 @@ android {
 }
 
 dependencies {
-    implementation("io.coil-kt:coil-compose:2.1.0")
-    implementation "io.coil-kt:coil:1.1.1"
+//    implementation("io.coil-kt:coil-compose:2.1.0")
+//    implementation "io.coil-kt:coil:1.1.1"
+    implementation 'com.squareup.picasso:picasso:2.8'
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'com.google.android.material:material:1.6.1'
