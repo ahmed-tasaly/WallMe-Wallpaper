@@ -1,8 +1,6 @@
 package com.wallme.wallpaper
 
-import android.app.WallpaperManager
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,9 +10,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.drawToBitmap
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.MemoryPolicy
 import com.squareup.picasso.Picasso
+
+
 
 
 class Image_Activity(): AppCompatActivity(){
@@ -45,10 +45,8 @@ class Image_Activity(): AppCompatActivity(){
     }
 
     private fun setWallpaper(){
-        val wall = WallpaperManager.getInstance(baseContext);
-        val myBitMap: Bitmap;
-        //Picasso.get().load(myData.Image_url).into(myBitMap).;
-        //wall.setBitmap(myBitMap);
+        val intent = Intent(Intent.ACTION_SET_WALLPAPER);
+        startActivity(Intent.createChooser(intent, "Select Wallpaper"));
     }
 
 
@@ -69,10 +67,10 @@ class MyAdab(list_ : Array<List_image>,onimageclick : MyAdab.OnImageClick): Recy
     override fun onBindViewHolder(mytypes: myviewholder, position: Int) {
         Picasso.get().load(list[position].Image_url).into(
             mytypes.image_main);
-
-        mytypes.text_auther.setText("yeet");
-        mytypes.text_name.setText(position.toString());
-        mytypes.text_url.setText("meet");
+        //Picasso.get().load(list[position].Image_url).save
+//        mytypes.text_auther.setText("yeet");
+//        mytypes.text_name.setText(position.toString());
+//        mytypes.text_url.setText("meet");
         mytypes.root_view.setOnClickListener {
             onimgclick.onImageClick(position);
         }
@@ -85,9 +83,9 @@ class MyAdab(list_ : Array<List_image>,onimageclick : MyAdab.OnImageClick): Recy
         //define xml types here ;)
         var root_view = itemView.findViewById<ConstraintLayout>(R.id.root_imageView);
         var image_main = itemView.findViewById<ImageView>(R.id.image_main);
-        var text_name = itemView.findViewById<TextView>(R.id.text_name);
-        var text_auther = itemView.findViewById<TextView>(R.id.auther_name);
-        var text_url = itemView.findViewById<TextView>(R.id.text_url);
+//        var text_name = itemView.findViewById<TextView>(R.id.text_name);
+//        var text_auther = itemView.findViewById<TextView>(R.id.auther_name);
+//        var text_url = itemView.findViewById<TextView>(R.id.text_url);
     }
 
     interface OnImageClick{
