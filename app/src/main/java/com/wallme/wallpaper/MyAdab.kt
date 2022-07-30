@@ -7,9 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.MemoryPolicy
 import com.squareup.picasso.Picasso
@@ -26,8 +27,6 @@ class Image_Activity(): AppCompatActivity(){
     companion object{
         lateinit var myData : List_image;
     }
-
-
 
     override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle);
@@ -48,7 +47,6 @@ class Image_Activity(): AppCompatActivity(){
         val intent = Intent(Intent.ACTION_SET_WALLPAPER);
         startActivity(Intent.createChooser(intent, "Select Wallpaper"));
     }
-
 
 }
 
@@ -81,7 +79,7 @@ class MyAdab(list_ : Array<List_image>,onimageclick : MyAdab.OnImageClick): Recy
     }
     class myviewholder(myview: View) : RecyclerView.ViewHolder(myview){
         //define xml types here ;)
-        var root_view = itemView.findViewById<ConstraintLayout>(R.id.root_imageView);
+        var root_view = itemView.findViewById<CardView>(R.id.root_imageView);
         var image_main = itemView.findViewById<ImageView>(R.id.image_main);
 //        var text_name = itemView.findViewById<TextView>(R.id.text_name);
 //        var text_auther = itemView.findViewById<TextView>(R.id.auther_name);
