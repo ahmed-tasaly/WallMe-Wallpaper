@@ -1,28 +1,54 @@
 package com.wallme.wallpaper
 
+import android.app.WallpaperManager
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.set
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.MemoryPolicy
 import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
+import java.lang.Exception
 
 
+class get_bitmap: Target{
+    lateinit var mybitmap : Bitmap;
+    override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+        if(bitmap != null){
+            mybitmap = bitmap;
+        }
+    }
 
+    override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
+        mybitmap.set(100,200,Color.WHITE);
+    }
+
+    override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+        if(placeHolderDrawable != null){
+            mybitmap = placeHolderDrawable.toBitmap()
+        }
+    }
+
+}
 
 class Image_Activity(): AppCompatActivity(){
     //private lateinit var pageInfo: List_image;
     private lateinit var Image_name_text: TextView;
     private lateinit var Auther_text: TextView;
     private lateinit var Full_image: ImageView;
+    private lateinit var Loadimage : get_bitmap;
 
     companion object{
         lateinit var myData : List_image;
@@ -39,16 +65,25 @@ class Image_Activity(): AppCompatActivity(){
         Picasso.get().load(myData.Image_url).into(
             Full_image);
 
+        Loadimage = get_bitmap();
+        Picasso.get().load(myData.Image_url).into(Loadimage);
+
         findViewById<ImageButton>(R.id.set_imageButton).setOnClickListener { setWallpaper(); };
 
     }
 
     private fun setWallpaper(){
-        val intent = Intent(Intent.ACTION_SET_WALLPAPER);
-        startActivity(Intent.createChooser(intent, "Select Wallpaper"));
+
+        var wall: WallpaperManager = WallpaperManager.getInstance(this);
+        wall.setBitmap(Loadimage.mybitmap);
+        //val intent = Intent(Intent.ACTION_SET_WALLPAPER);
+        //startActivity(Intent.createChooser(intent, "Select Wallpaper"));
     }
 
 }
+
+
+
 
 
 
