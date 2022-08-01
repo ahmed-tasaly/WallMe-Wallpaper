@@ -74,10 +74,12 @@ class Image_Activity(): AppCompatActivity(){
 
     private fun setWallpaper(){
 
-        var wall: WallpaperManager = WallpaperManager.getInstance(this);
-        wall.setBitmap(Loadimage.mybitmap);
-        //val intent = Intent(Intent.ACTION_SET_WALLPAPER);
-        //startActivity(Intent.createChooser(intent, "Select Wallpaper"));
+//        var wall: WallpaperManager = WallpaperManager.getInstance(this);
+//        wall.setBitmap(Loadimage.mybitmap);
+
+        var redditApp = Reddit_Api();
+        redditApp.call_api();
+
     }
 
 }
