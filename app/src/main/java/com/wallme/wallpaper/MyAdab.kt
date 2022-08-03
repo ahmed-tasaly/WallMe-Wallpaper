@@ -77,8 +77,7 @@ class Image_Activity(): AppCompatActivity(){
 //        var wall: WallpaperManager = WallpaperManager.getInstance(this);
 //        wall.setBitmap(Loadimage.mybitmap);
 
-        var redditApp = Reddit_Api(applicationContext);
-        redditApp.call_api();
+        Reddit_Api.Update_Api_key();
 
     }
 
