@@ -15,6 +15,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.set
 import androidx.recyclerview.widget.RecyclerView
@@ -62,8 +63,7 @@ class Image_Activity(): AppCompatActivity(){
         Full_image = findViewById<ImageView>(R.id.full_image);
         Image_name_text.setText(myData.Image_name);
         Auther_text.setText(myData.Image_auther);
-        Picasso.get().load(myData.Image_url).into(
-            Full_image);
+        Picasso.get().load(myData.Image_url).into(Full_image);
 
         Loadimage = get_bitmap();
         Picasso.get().load(myData.Image_url).into(Loadimage);
@@ -74,10 +74,8 @@ class Image_Activity(): AppCompatActivity(){
 
     private fun setWallpaper(){
 
-//        var wall: WallpaperManager = WallpaperManager.getInstance(this);
-//        wall.setBitmap(Loadimage.mybitmap);
-
-        Reddit_Api.Update_Api_key();
+        var wall: WallpaperManager = WallpaperManager.getInstance(this);
+        wall.setBitmap(Loadimage.mybitmap);
 
     }
 
@@ -92,19 +90,13 @@ class MyAdab(list_ : Array<List_image>,onimageclick : MyAdab.OnImageClick): Recy
     private var list: Array<List_image> = list_;
     private var onimgclick = onimageclick;
 
-    private lateinit var myIntent: Intent;
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): myviewholder {
         val item_view = LayoutInflater.from(parent.context).inflate(R.layout.image_scrolable,parent,false);
         return myviewholder(item_view);
     }
 
     override fun onBindViewHolder(mytypes: myviewholder, position: Int) {
-        Picasso.get().load(list[position].Image_url).into(
-            mytypes.image_main);
-        //Picasso.get().load(list[position].Image_url).save
-//        mytypes.text_auther.setText("yeet");
-//        mytypes.text_name.setText(position.toString());
-//        mytypes.text_url.setText("meet");
+        Picasso.get().load(list[position].Image_thumbnail).into(mytypes.image_main);
         mytypes.root_view.setOnClickListener {
             onimgclick.onImageClick(position);
         }
@@ -113,13 +105,11 @@ class MyAdab(list_ : Array<List_image>,onimageclick : MyAdab.OnImageClick): Recy
     override fun getItemCount(): Int {
         return list.size;
     }
+
     class myviewholder(myview: View) : RecyclerView.ViewHolder(myview){
         //define xml types here ;)
-        var root_view = itemView.findViewById<CardView>(R.id.root_imageView);
+        var root_view = itemView.findViewById<ConstraintLayout>(R.id.root_imageView);
         var image_main = itemView.findViewById<ImageView>(R.id.image_main);
-//        var text_name = itemView.findViewById<TextView>(R.id.text_name);
-//        var text_auther = itemView.findViewById<TextView>(R.id.auther_name);
-//        var text_url = itemView.findViewById<TextView>(R.id.text_url);
     }
 
     interface OnImageClick{
