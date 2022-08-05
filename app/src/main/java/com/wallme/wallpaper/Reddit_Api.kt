@@ -18,9 +18,10 @@ class Reddit_Api(subreddit: String) {
         var api_key = "NOKEY";
         var time_left = 0;
         var reddit = OkHttpClient();
-        var callback_getjson : Array<Reddit_Api> = emptyArray();
+        var reddit_global_posts : Array<List_image> = emptyArray();
 
-        fun Update_Api_key() {
+
+        fun Update_Api_key(callback_update: () -> Unit = {}) {
             Log.i("Reddit_Api", "Function called");
             var Myrequest = Request.Builder()
                 .url("https://www.reddit.com/api/v1/access_token?grant_type=https%3A%2F%2Foauth.reddit.com%2Fgrants%2Finstalled_client&device_id=DO_NOT_TRACK_THIS_DEVICE")
@@ -38,9 +39,7 @@ class Reddit_Api(subreddit: String) {
                     api_key = respond_json.getString("access_token");
                     time_left = respond_json.getInt("expires_in");
                     Log.i("Reddit_Api","you got ${api_key} with time $time_left");
-                    for(i in callback_getjson){
-                        i.get_subreddit_posts();
-                    }
+                    callback_update();
                 }
             });
         }
@@ -50,13 +49,13 @@ class Reddit_Api(subreddit: String) {
 
 
 
-    fun get_subreddit_posts(){
+    fun get_subreddit_posts(callback_update: () -> Unit= {}){
         if(api_key != "NOKEY"){
             Log.i("Reddit_Api", api_key)
             var url: String;
 
             if(subreddit_posts_list.isNotEmpty())
-                url = "https://oauth.reddit.com/r/$subreddit/top?count=10&after=${last_before_id}";
+                url = "https://oauth.reddit.com/r/$subreddit/top?count=10&after=${last_before_id}&t=year";
             else
                 url = "https://oauth.reddit.com/r/$subreddit/top";
 
@@ -79,16 +78,26 @@ class Reddit_Api(subreddit: String) {
                 override fun onResponse(call: Call, response: Response) {
                     val res = response.body!!.string();
                     Log.i("Reddit_Api", " I got $res");
+                    reddit_global_posts = emptyArray();
                     try {
                         respond_json = JSONObject(res);
                         var size = respond_json.getJSONObject("data").getInt("dist");
                         last_before_id = respond_json.getJSONObject("data").getString("before");
                         var children_json = respond_json.getJSONObject("data").getJSONArray("children");
+                        var temp_list: Array<List_image> = emptyArray();
 
                         for (i in 0 until children_json.length()) {
-                            if (children_json.getJSONObject(i).getJSONObject("data").getBoolean("over_18")) {
+                            if (children_json.getJSONObject(i).getJSONObject("data").getBoolean("over_18"))
                                 continue;
+
+
+                            var found : Boolean = false;
+                            for (j in 0 until subreddit_posts_list.size){
+                                if(children_json.getJSONObject(i).getJSONObject("data").getString("name") == subreddit_posts_list.get(j).Image_name)
+                                    found = true;
                             }
+                            if(found)
+                                continue;
 
                             var one_post: List_image = List_image(
                                 children_json.getJSONObject(i).getJSONObject("data").getString("url"),
@@ -97,7 +106,12 @@ class Reddit_Api(subreddit: String) {
                                 children_json.getJSONObject(i).getJSONObject("data").getString("author"),
                                 children_json.getJSONObject(i).getJSONObject("data").getString("title")
                             )
-                            subreddit_posts_list += one_post;
+                            temp_list += one_post;
+                        }
+                        if(temp_list.isNotEmpty()){
+                            reddit_global_posts += temp_list;
+                            subreddit_posts_list += temp_list;
+                            callback_update();
                         }
                     }
                     catch (e : JSONException){
@@ -110,10 +124,6 @@ class Reddit_Api(subreddit: String) {
 
     }
 
-
-    init {
-        callback_getjson += this;
-    }
 
 
 

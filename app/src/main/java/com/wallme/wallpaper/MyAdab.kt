@@ -14,7 +14,6 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.set
@@ -25,7 +24,7 @@ import java.lang.Exception
 
 
 class get_bitmap: Target{
-    lateinit var mybitmap : Bitmap;
+    var mybitmap : Bitmap = Bitmap.createBitmap(1000,1000,Bitmap.Config.RGB_565);
     override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
         if(bitmap != null){
             mybitmap = bitmap;
@@ -37,9 +36,8 @@ class get_bitmap: Target{
     }
 
     override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
-        if(placeHolderDrawable != null){
-            mybitmap = placeHolderDrawable.toBitmap()
-        }
+        mybitmap = placeHolderDrawable!!.toBitmap()
+
     }
 
 }
@@ -65,8 +63,9 @@ class Image_Activity(): AppCompatActivity(){
         Auther_text.setText(myData.Image_auther);
         Picasso.get().load(myData.Image_url).into(Full_image);
 
+
         Loadimage = get_bitmap();
-        Picasso.get().load(myData.Image_url).into(Loadimage);
+        Picasso.get().load(myData.Image_url).placeholder(com.google.android.material.R.drawable.ic_m3_chip_checked_circle).into(Loadimage);
 
         findViewById<ImageButton>(R.id.set_imageButton).setOnClickListener { setWallpaper(); };
 
@@ -86,8 +85,10 @@ class Image_Activity(): AppCompatActivity(){
 
 
 
+
+
 class MyAdab(list_ : Array<List_image>,onimageclick : MyAdab.OnImageClick): RecyclerView.Adapter<MyAdab.myviewholder>() {
-    private var list: Array<List_image> = list_;
+    var ItemsList: Array<List_image> = list_;
     private var onimgclick = onimageclick;
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): myviewholder {
@@ -96,14 +97,23 @@ class MyAdab(list_ : Array<List_image>,onimageclick : MyAdab.OnImageClick): Recy
     }
 
     override fun onBindViewHolder(mytypes: myviewholder, position: Int) {
-        Picasso.get().load(list[position].Image_thumbnail).into(mytypes.image_main);
+        Picasso.get().load(ItemsList[position].Image_thumbnail).placeholder(com.google.android.material.R.drawable.ic_m3_chip_checked_circle).into(mytypes.image_main);
         mytypes.root_view.setOnClickListener {
             onimgclick.onImageClick(position);
         }
     }
 
     override fun getItemCount(): Int {
-        return list.size;
+        return ItemsList.size;
+    }
+
+    fun refresh_itemList(Updated_list : Array<List_image>){
+        var lastIndex = itemCount;
+        if(Updated_list.isNotEmpty()){
+            ItemsList += Updated_list;
+            notifyItemInserted(lastIndex);
+        }
+
     }
 
     class myviewholder(myview: View) : RecyclerView.ViewHolder(myview){

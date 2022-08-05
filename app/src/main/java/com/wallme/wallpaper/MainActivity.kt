@@ -18,14 +18,13 @@ class MainActivity : AppCompatActivity(),MyAdab.OnImageClick {
 
     private lateinit var binding: ActivityMainBinding;
     private lateinit var myrec: RecyclerView;
-    private lateinit var mylist: Array<List_image>;
+    private lateinit var myadab: MyAdab;
+
 
     var reddit_api : Reddit_Api = Reddit_Api("wallpaper");
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
-
-        reddit_api.get_subreddit_posts();
 
         binding = ActivityMainBinding.inflate(layoutInflater);
         setContentView(binding.root);
@@ -33,29 +32,60 @@ class MainActivity : AppCompatActivity(),MyAdab.OnImageClick {
 
 
 
-        mylist = reddit_api.subreddit_posts_list;
 
 
         myrec = findViewById(R.id.Mainrec);
         myrec.layoutManager = GridLayoutManager(this,2,GridLayoutManager.VERTICAL,false);
         myrec.setHasFixedSize(false);
-        myrec.adapter = MyAdab(reddit_api.subreddit_posts_list,this);
+        myadab = MyAdab(Reddit_Api.reddit_global_posts,this);
+        myrec.adapter = myadab;
+
+        reddit_api.get_subreddit_posts {
+            Log.i("MainRecyclerView", "CallBack called");
+            runOnUiThread { myadab.refresh_itemList(Reddit_Api.reddit_global_posts); }
+        }
+
+
+        myrec.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(!myrec.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE){
+                    Log.i("MainRecyclerView", "User hit bottom");
+                    update_adabter();
+                }
+
+            }
+        })
+
+
+
 
         findViewById<Button>(R.id.refresh).setOnClickListener{
             Log.i("Reddit_Api","Refresh button pressed")
-            reddit_api.get_subreddit_posts();
-            myrec.adapter = MyAdab(reddit_api.subreddit_posts_list,this);
+            reddit_api.get_subreddit_posts{
+                update_adabter();
+            };
 
         }
 
+
+        Reddit_Api.Update_Api_key{
+            update_adabter();
+        }//init reddit api to get the key
     }
 
     external fun stringFromJNI(): String
 
+    fun update_adabter(){
+        reddit_api.get_subreddit_posts {
+            Log.i("MainRecyclerView", "CallBack called");
+            runOnUiThread { myadab.refresh_itemList(Reddit_Api.reddit_global_posts); }
+        }
+    }
+
 
     companion object {
         init {
-            Reddit_Api.Update_Api_key();//init reddit api to get the key
             System.loadLibrary("wallpaper");
         }
     }
