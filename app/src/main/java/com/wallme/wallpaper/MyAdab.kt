@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -67,8 +68,10 @@ class Image_Activity(): AppCompatActivity(){
         Loadimage = get_bitmap();
         Picasso.get().load(myData.Image_url).placeholder(com.google.android.material.R.drawable.ic_m3_chip_checked_circle).into(Loadimage);
 
+
         findViewById<ImageButton>(R.id.set_imageButton).setOnClickListener { setWallpaper(); };
 
+        Log.i("Image_Activity","Info url ${myData.Image_url} name ${myData.Image_name} thumbnail ${myData.Image_thumbnail}")
     }
 
     private fun setWallpaper(){
@@ -88,8 +91,15 @@ class Image_Activity(): AppCompatActivity(){
 
 
 class MyAdab(list_ : Array<List_image>,onimageclick : MyAdab.OnImageClick): RecyclerView.Adapter<MyAdab.myviewholder>() {
-    var ItemsList: Array<List_image> = list_;
+    //var ItemsList: Array<List_image> = list_;
     private var onimgclick = onimageclick;
+
+    companion object{
+        enum class Image_Mode {
+            Reddit
+        }
+        var Current_mode: Image_Mode = Image_Mode.Reddit;
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): myviewholder {
         val item_view = LayoutInflater.from(parent.context).inflate(R.layout.image_scrolable,parent,false);
@@ -97,23 +107,25 @@ class MyAdab(list_ : Array<List_image>,onimageclick : MyAdab.OnImageClick): Recy
     }
 
     override fun onBindViewHolder(mytypes: myviewholder, position: Int) {
-        Picasso.get().load(ItemsList[position].Image_thumbnail).placeholder(com.google.android.material.R.drawable.ic_m3_chip_checked_circle).into(mytypes.image_main);
+        if(Current_mode == Image_Mode.Reddit){
+            Picasso.get().load(Reddit_Api.reddit_global_posts[position].Image_thumbnail).placeholder(com.google.android.material.R.drawable.ic_m3_chip_checked_circle).into(mytypes.image_main);
+        }
+
         mytypes.root_view.setOnClickListener {
             onimgclick.onImageClick(position);
         }
     }
 
     override fun getItemCount(): Int {
-        return ItemsList.size;
+        if(Current_mode == Image_Mode.Reddit){
+            return Reddit_Api.reddit_global_posts.size;
+        }
+        return  0;
     }
 
-    fun refresh_itemList(Updated_list : Array<List_image>){
-        var lastIndex = itemCount;
-        if(Updated_list.isNotEmpty()){
-            ItemsList += Updated_list;
-            notifyItemInserted(lastIndex);
-        }
-
+    fun refresh_itemList(){
+        if(Current_mode == Image_Mode.Reddit)
+            notifyItemInserted(Reddit_Api.last_index);
     }
 
     class myviewholder(myview: View) : RecyclerView.ViewHolder(myview){

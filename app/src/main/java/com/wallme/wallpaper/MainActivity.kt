@@ -18,10 +18,12 @@ class MainActivity : AppCompatActivity(),MyAdab.OnImageClick {
 
     private lateinit var binding: ActivityMainBinding;
     private lateinit var myrec: RecyclerView;
-    private lateinit var myadab: MyAdab;
+    private lateinit var myadabter: MyAdab;
 
 
-    var reddit_api : Reddit_Api = Reddit_Api("wallpaper");
+
+    var reddit_api : Array<Reddit_Api> = arrayOf(Reddit_Api("wallpaper"),Reddit_Api("animewallpaper"));
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -31,19 +33,18 @@ class MainActivity : AppCompatActivity(),MyAdab.OnImageClick {
         Picasso.get().setIndicatorsEnabled(true);
 
 
+        Reddit_Api.Update_Api_key{
+            update_adabter();
+        }//init reddit api to get the key and set data to array
 
 
 
         myrec = findViewById(R.id.Mainrec);
         myrec.layoutManager = GridLayoutManager(this,2,GridLayoutManager.VERTICAL,false);
         myrec.setHasFixedSize(false);
-        myadab = MyAdab(Reddit_Api.reddit_global_posts,this);
-        myrec.adapter = myadab;
+        myadabter = MyAdab(emptyArray(),this);
+        myrec.adapter = myadabter;
 
-        reddit_api.get_subreddit_posts {
-            Log.i("MainRecyclerView", "CallBack called");
-            runOnUiThread { myadab.refresh_itemList(Reddit_Api.reddit_global_posts); }
-        }
 
 
         myrec.addOnScrollListener(object : RecyclerView.OnScrollListener(){
@@ -61,25 +62,22 @@ class MainActivity : AppCompatActivity(),MyAdab.OnImageClick {
 
 
         findViewById<Button>(R.id.refresh).setOnClickListener{
-            Log.i("Reddit_Api","Refresh button pressed")
-            reddit_api.get_subreddit_posts{
-                update_adabter();
-            };
+            Log.i("Reddit_Api","Refresh button pressed");
+            update_adabter();
 
         }
 
 
-        Reddit_Api.Update_Api_key{
-            update_adabter();
-        }//init reddit api to get the key
+
     }
 
     external fun stringFromJNI(): String
 
     fun update_adabter(){
-        reddit_api.get_subreddit_posts {
-            Log.i("MainRecyclerView", "CallBack called");
-            runOnUiThread { myadab.refresh_itemList(Reddit_Api.reddit_global_posts); }
+        Reddit_Api.get_shuffle_andGive {
+         runOnUiThread{
+             myadabter.refresh_itemList();
+            }
         }
     }
 
@@ -92,7 +90,7 @@ class MainActivity : AppCompatActivity(),MyAdab.OnImageClick {
 
     override fun onImageClick(Pos: Int) {
         val intent = Intent(this,Image_Activity::class.java);
-        Image_Activity.myData = reddit_api.subreddit_posts_list.get(Pos);
+        Image_Activity.myData = Reddit_Api.reddit_global_posts.get(Pos);
         startActivity(intent);
     }
 }

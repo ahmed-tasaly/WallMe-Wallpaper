@@ -15,10 +15,18 @@ class Reddit_Api(subreddit: String) {
 
 
     companion object{
+        //reddit rquest token
         var api_key = "NOKEY";
+        //token time left
         var time_left = 0;
+        //okhttp client
         var reddit = OkHttpClient();
+        //list of all subreddits posts
         var reddit_global_posts : Array<List_image> = emptyArray();
+        //list of subreddits that have been made
+        var Subreddits : Array<Reddit_Api> = emptyArray();
+        //global post last index list
+        var last_index : Int = 0;
 
 
         fun Update_Api_key(callback_update: () -> Unit = {}) {
@@ -43,21 +51,42 @@ class Reddit_Api(subreddit: String) {
                 }
             });
         }
+
+
+        fun get_shuffle_andGive(callback_update: () -> Unit = {}){
+            var temp_array_of_posts: Array<List_image> = emptyArray();
+
+            for (subreddit in 0 until Subreddits.size){
+                Subreddits.get(subreddit).get_subreddit_posts{ posts ->
+
+                    temp_array_of_posts += posts;
+
+                    if(subreddit == Subreddits.lastIndex){
+                        Log.i("Reddit_Api","temp_array_of_posts size is ${temp_array_of_posts.size}")
+                        temp_array_of_posts.shuffle();
+                        last_index = reddit_global_posts.size
+                        reddit_global_posts += temp_array_of_posts;
+                        callback_update();
+                    }
+                }
+            }
+        }
+
     }
 
 
 
 
 
-    fun get_subreddit_posts(callback_update: () -> Unit= {}){
+    fun get_subreddit_posts(callback_update: (list_data : Array<List_image>) -> Unit= {}){
         if(api_key != "NOKEY"){
             Log.i("Reddit_Api", api_key)
             var url: String;
 
             if(subreddit_posts_list.isNotEmpty())
-                url = "https://oauth.reddit.com/r/$subreddit/top?count=10&after=${last_before_id}&t=year";
+                url = "https://oauth.reddit.com/r/$subreddit/top?count=25&after=${last_before_id}&t=year";
             else
-                url = "https://oauth.reddit.com/r/$subreddit/top";
+                url = "https://oauth.reddit.com/r/$subreddit/top?limit=25&t=year";
 
 
             var json_req = Request.Builder()
@@ -78,40 +107,90 @@ class Reddit_Api(subreddit: String) {
                 override fun onResponse(call: Call, response: Response) {
                     val res = response.body!!.string();
                     Log.i("Reddit_Api", " I got $res");
-                    reddit_global_posts = emptyArray();
                     try {
+                        //parse json
                         respond_json = JSONObject(res);
+
                         var size = respond_json.getJSONObject("data").getInt("dist");
-                        last_before_id = respond_json.getJSONObject("data").getString("before");
+
                         var children_json = respond_json.getJSONObject("data").getJSONArray("children");
+                        //----------------------
+                        // temp array to add data to
                         var temp_list: Array<List_image> = emptyArray();
 
                         for (i in 0 until children_json.length()) {
-                            if (children_json.getJSONObject(i).getJSONObject("data").getBoolean("over_18"))
-                                continue;
 
+                            var dataJson = children_json.getJSONObject(i).getJSONObject("data") as JSONObject;
 
+                            // check if worth adding
                             var found : Boolean = false;
+
                             for (j in 0 until subreddit_posts_list.size){
-                                if(children_json.getJSONObject(i).getJSONObject("data").getString("name") == subreddit_posts_list.get(j).Image_name)
+                                if(dataJson.getString("name") == subreddit_posts_list.get(j).Image_name)
                                     found = true;
                             }
-                            if(found)
+
+                            if (dataJson.getBoolean("over_18") || found)
+                                continue;
+                            //----------------------------------------------
+
+
+                            //add the image
+                            //get image name to skip it next time
+                            last_before_id = dataJson.getString("name");
+
+                            //check again if its an image
+                            if(dataJson.getString("thumbnail") == "self" || dataJson.getString("thumbnail") == "default")
                                 continue;
 
+
+                            //parse image gallery post
+                           if(dataJson.optBoolean("is_gallery",false)){
+                               var gallery_images_name = dataJson.getJSONObject("gallery_data").getJSONArray("items");
+
+                               for(i in 0 until gallery_images_name.length()){
+                                    var current_metadata = dataJson.getJSONObject("media_metadata").getJSONObject(gallery_images_name.getJSONObject(i).getString("media_id"));
+                                   Log.i("Reddit_Api","Gallery found")
+                                   var list_image_gallery: List_image = List_image(
+                                       current_metadata.getJSONObject("s").getString("u").replace("amp;",""),
+                                       current_metadata.getJSONArray("p").getJSONObject(5).getString("u").replace("amp;",""),
+                                       dataJson.getString("name"),
+                                       dataJson.getString("author"),
+                                       dataJson.getString("title")
+                                   );
+                                   temp_list += list_image_gallery;
+
+                               }
+                               continue;
+                           }
+
+
+
+
+                            var image_source_url = dataJson
+                                .getJSONObject("preview").getJSONArray("images").getJSONObject(0)
+                                .getJSONObject("source").getString("url").replace("amp;","");
+
+                            var image_preview_url = dataJson
+                                .getJSONObject("preview").getJSONArray("images").getJSONObject(0)
+                                .getJSONArray("resolutions").getJSONObject(5).getString("url").replace("amp;","");
+                            //parse json into data to use
                             var one_post: List_image = List_image(
-                                children_json.getJSONObject(i).getJSONObject("data").getString("url"),
-                                children_json.getJSONObject(i).getJSONObject("data").getString("thumbnail"),
-                                children_json.getJSONObject(i).getJSONObject("data").getString("name"),
-                                children_json.getJSONObject(i).getJSONObject("data").getString("author"),
-                                children_json.getJSONObject(i).getJSONObject("data").getString("title")
+                                image_source_url,
+                                image_preview_url,
+                                dataJson.getString("name"),
+                                dataJson.getString("author"),
+                                dataJson.getString("title")
                             )
+
                             temp_list += one_post;
+                            //----------------------------------
                         }
+
                         if(temp_list.isNotEmpty()){
-                            reddit_global_posts += temp_list;
                             subreddit_posts_list += temp_list;
-                            callback_update();
+
+                            callback_update(temp_list);
                         }
                     }
                     catch (e : JSONException){
@@ -124,7 +203,9 @@ class Reddit_Api(subreddit: String) {
 
     }
 
-
+    init {
+        Subreddits += this;
+    }
 
 
     var subreddit_posts_list : Array<List_image> = emptyArray();
