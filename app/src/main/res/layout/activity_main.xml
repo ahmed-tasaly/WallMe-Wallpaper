@@ -9,21 +9,13 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/Mainrec"
-        android:layout_width="409dp"
-        android:layout_height="729dp"
         android:layoutDirection="ltr"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/refresh"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/Mainrec"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="-146dp"
-        android:layout_marginEnd="160dp"
-        android:text="refrech" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/Background"
+        />
 
 </RelativeLayout>

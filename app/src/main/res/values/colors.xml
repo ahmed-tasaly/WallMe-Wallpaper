@@ -7,4 +7,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="sheetColor">#FF018786</color>
+
+
+    <color name="Buttons">#FFD369</color>
+    <color name="Background">#222831</color>
+    <color name="widget">#393E46</color>
+    <color name="loading">#EEEEEE</color>
 </resources>

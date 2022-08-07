@@ -3,7 +3,6 @@ package com.wallme.wallpaper
 import android.util.Log
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import org.json.JSONTokener
@@ -11,7 +10,7 @@ import java.io.IOException
 
 
 
-class Reddit_Api(subreddit: String) {
+class Reddit_Api(subredditname: String) {
 
 
     companion object{
@@ -28,10 +27,12 @@ class Reddit_Api(subreddit: String) {
         //global post last index list
         var last_index : Int = 0;
 
+        var previewQulaity: Int = 1 // from 0 to 5
+
 
         fun Update_Api_key(callback_update: () -> Unit = {}) {
             Log.i("Reddit_Api", "Function called");
-            var Myrequest = Request.Builder()
+            val Myrequest = Request.Builder()
                 .url("https://www.reddit.com/api/v1/access_token?grant_type=https%3A%2F%2Foauth.reddit.com%2Fgrants%2Finstalled_client&device_id=DO_NOT_TRACK_THIS_DEVICE")
                 .post(RequestBody.create("application/x-www-form-urlencoded".toMediaTypeOrNull(),"="))
                 .addHeader("Authorization", "Basic ${com.wallme.wallpaper.BuildConfig.API_KEY_Base}")
@@ -81,7 +82,7 @@ class Reddit_Api(subreddit: String) {
     fun get_subreddit_posts(callback_update: (list_data : Array<List_image>) -> Unit= {}){
         if(api_key != "NOKEY"){
             Log.i("Reddit_Api", api_key)
-            var url: String;
+            val url: String;
 
             if(subreddit_posts_list.isNotEmpty())
                 url = "https://oauth.reddit.com/r/$subreddit/top?count=25&after=${last_before_id}&t=year";
@@ -89,7 +90,7 @@ class Reddit_Api(subreddit: String) {
                 url = "https://oauth.reddit.com/r/$subreddit/top?limit=25&t=year";
 
 
-            var json_req = Request.Builder()
+            val json_req = Request.Builder()
                 .url(url)
                 .addHeader("Authorization" , "Bearer $api_key")
                 .addHeader("content-type", "application/x-www-form-urlencoded")
@@ -113,14 +114,14 @@ class Reddit_Api(subreddit: String) {
 
                         var size = respond_json.getJSONObject("data").getInt("dist");
 
-                        var children_json = respond_json.getJSONObject("data").getJSONArray("children");
+                        val children_json = respond_json.getJSONObject("data").getJSONArray("children");
                         //----------------------
                         // temp array to add data to
                         var temp_list: Array<List_image> = emptyArray();
 
                         for (i in 0 until children_json.length()) {
 
-                            var dataJson = children_json.getJSONObject(i).getJSONObject("data") as JSONObject;
+                            val dataJson = children_json.getJSONObject(i).getJSONObject("data") as JSONObject;
 
                             // check if worth adding
                             var found : Boolean = false;
@@ -146,17 +147,18 @@ class Reddit_Api(subreddit: String) {
 
                             //parse image gallery post
                            if(dataJson.optBoolean("is_gallery",false)){
-                               var gallery_images_name = dataJson.getJSONObject("gallery_data").getJSONArray("items");
+                               val gallery_images_name = dataJson.getJSONObject("gallery_data").getJSONArray("items");
 
                                for(i in 0 until gallery_images_name.length()){
-                                    var current_metadata = dataJson.getJSONObject("media_metadata").getJSONObject(gallery_images_name.getJSONObject(i).getString("media_id"));
+                                    val current_metadata = dataJson.getJSONObject("media_metadata").getJSONObject(gallery_images_name.getJSONObject(i).getString("media_id"));
                                    Log.i("Reddit_Api","Gallery found")
-                                   var list_image_gallery: List_image = List_image(
+                                   val list_image_gallery: List_image = List_image(
                                        current_metadata.getJSONObject("s").getString("u").replace("amp;",""),
-                                       current_metadata.getJSONArray("p").getJSONObject(5).getString("u").replace("amp;",""),
+                                       current_metadata.getJSONArray("p").getJSONObject(previewQulaity).getString("u").replace("amp;",""),
                                        dataJson.getString("name"),
                                        dataJson.getString("author"),
-                                       dataJson.getString("title")
+                                       dataJson.getString("title"),
+                                       "reddit.com${dataJson.getString("permalink")}"
                                    );
                                    temp_list += list_image_gallery;
 
@@ -165,22 +167,21 @@ class Reddit_Api(subreddit: String) {
                            }
 
 
-
-
-                            var image_source_url = dataJson
+                            val image_source_url = dataJson
                                 .getJSONObject("preview").getJSONArray("images").getJSONObject(0)
                                 .getJSONObject("source").getString("url").replace("amp;","");
 
-                            var image_preview_url = dataJson
+                            val image_preview_url = dataJson
                                 .getJSONObject("preview").getJSONArray("images").getJSONObject(0)
-                                .getJSONArray("resolutions").getJSONObject(5).getString("url").replace("amp;","");
+                                .getJSONArray("resolutions").getJSONObject(previewQulaity).getString("url").replace("amp;","");
                             //parse json into data to use
-                            var one_post: List_image = List_image(
+                            val one_post: List_image = List_image(
                                 image_source_url,
                                 image_preview_url,
                                 dataJson.getString("name"),
                                 dataJson.getString("author"),
-                                dataJson.getString("title")
+                                dataJson.getString("title"),
+                                "reddit.com${dataJson.getString("permalink")}"
                             )
 
                             temp_list += one_post;
@@ -210,5 +211,5 @@ class Reddit_Api(subreddit: String) {
 
     var subreddit_posts_list : Array<List_image> = emptyArray();
     var last_before_id = "";
-    var subreddit = subreddit;
+    var subreddit = subredditname;
 }

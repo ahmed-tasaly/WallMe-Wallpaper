@@ -1,17 +1,14 @@
 package com.wallme.wallpaper
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.AttributeSet
 import android.util.Log
-import android.util.Xml
 import android.widget.Button
-import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Picasso
 import com.wallme.wallpaper.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(),MyAdab.OnImageClick {
@@ -22,16 +19,15 @@ class MainActivity : AppCompatActivity(),MyAdab.OnImageClick {
 
 
 
-    var reddit_api : Array<Reddit_Api> = arrayOf(Reddit_Api("wallpaper"),Reddit_Api("animewallpaper"));
+    var reddit_api : Array<Reddit_Api> = arrayOf(Reddit_Api("wallpaper"));
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
+        this.supportActionBar!!.hide();
 
         binding = ActivityMainBinding.inflate(layoutInflater);
         setContentView(binding.root);
-        Picasso.get().setIndicatorsEnabled(true);
-
 
         Reddit_Api.Update_Api_key{
             update_adabter();
@@ -61,14 +57,6 @@ class MainActivity : AppCompatActivity(),MyAdab.OnImageClick {
 
 
 
-        findViewById<Button>(R.id.refresh).setOnClickListener{
-            Log.i("Reddit_Api","Refresh button pressed");
-            update_adabter();
-
-        }
-
-
-
     }
 
     external fun stringFromJNI(): String
@@ -88,9 +76,10 @@ class MainActivity : AppCompatActivity(),MyAdab.OnImageClick {
         }
     }
 
-    override fun onImageClick(Pos: Int) {
+    override fun onImageClick(Pos: Int,thumbnail : Drawable) {
         val intent = Intent(this,Image_Activity::class.java);
         Image_Activity.myData = Reddit_Api.reddit_global_posts.get(Pos);
+        Image_Activity.thumbnail = thumbnail;
         startActivity(intent);
     }
 }
