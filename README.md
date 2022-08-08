@@ -1,11 +1,11 @@
-<center> 
+<p align="center">
 
 # Wallme-Wallpaper
 
 
 <img src="./Images/Wallme_Wallpaper-Logo-Large.png" alt="drawing" width=200 style="border-radius:20%"/>
 
-</center>
+</p>
 
 </br></br>
 
