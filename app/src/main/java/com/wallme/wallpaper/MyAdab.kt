@@ -81,9 +81,9 @@ class MyAdab(list_ : Array<List_image>,onimageclick : MyAdab.OnImageClick): Recy
     //what does the view hold
     class myviewholder(myview: View) : RecyclerView.ViewHolder(myview){
         //define xml types here ;)
-        var root_view = itemView.findViewById<ConstraintLayout>(R.id.root_imageView);
-        var image_main = itemView.findViewById<ImageView>(R.id.image_main);
-        var cricle_prograssBar = itemView.findViewById<ProgressBar>(R.id.cricle_prograssBar);
+        var root_view = itemView.findViewById(R.id.root_imageView) as ConstraintLayout;
+        var image_main = itemView.findViewById(R.id.image_main) as ImageView;
+        var cricle_prograssBar = itemView.findViewById(R.id.cricle_prograssBar) as ProgressBar;
 
     }
 
