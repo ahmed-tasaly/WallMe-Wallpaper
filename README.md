@@ -3,8 +3,11 @@
 # Wallme-Wallpaper
 
 <a>
+<kdb>
 
-<img src="./Images/Wallme_Wallpaper-Logo-Large.png" alt="drawing" width=200 style="border-radius:20%"/>
+<img src="./Images/Wallme_Wallpaper-Logo-Large.png" width=200 style="border-radius:20%"/>
+
+</kdb>
 
 </a>
 
@@ -92,8 +95,12 @@ it needs a lot of work
 - [ ] add wallhaven support
 - [ ] more plans comming
 
+
+
 ### thanks to 
     - coil 
     - okhttp
 
   for the librays
+
+[<h3>Support me </h3>](https://www.patreon.com/Alaory)
