@@ -1,4 +1,4 @@
-<div style="background-color:#393E46"> 
+
 <div align="center">
 
 # Wallme-Wallpaper
@@ -36,7 +36,7 @@ wallme wallpaper is a wallpaper app aimed at simplicity and low peformance. it c
 
 
 </br>
-well i've used a lot of wallpaper apps only a few of them meet my requirements so i decided to make it to i content 
+well i've used a lot of wallpaper apps only a few of them meet my requirements. so i decided to make it to what i content 
 
 </br>
 </br>
@@ -47,7 +47,8 @@ well i've used a lot of wallpaper apps only a few of them meet my requirements s
 
 </span>
 </br>
-you don't need this app is aimed at people who realy want to feel comfortable with using their phones or the one who wants a new feel for their phone
+
+you don't need this app, it is aimed at people who realy want to feel comfortable with using their phones or the one who wants a new feel for their phone
 
 
 </br>
@@ -65,7 +66,9 @@ as now of development nothing much. however check the todo list to see the commi
 </br>
 <span style="color:#1be44a" > 
 
-### how does the app look like
+###  how does the app look like
+
+
 
 </span> 
 </br>
@@ -83,6 +86,7 @@ it needs a lot of work
 
 </br>
 </br>
+
 
 <span style="color:#50e41b" > 
 
@@ -105,4 +109,3 @@ it needs a lot of work
   for the librays
 
 [<h3>Support me </h3>](https://www.patreon.com/Alaory)
-</div>
