@@ -1,11 +1,11 @@
-<p align="center">
+<div align="center">
 
 # Wallme-Wallpaper
 
 
 <img src="./Images/Wallme_Wallpaper-Logo-Large.png" alt="drawing" width=200 style="border-radius:20%"/>
 
-</p>
+</div>
 
 </br></br>
 
@@ -26,6 +26,8 @@ wallme wallpaper is a wallpaper app aimed at simplicity and low peformance. it c
 ### why i am making it ?
 
 </span>
+
+
 </br>
 well i've used a lot of wallpaper apps only a few of them meet my requirements so i decided to make it to i content 
 
@@ -61,7 +63,12 @@ as now of development nothing much. however check the todo list to see the commi
 </span> 
 </br>
 </br>
+
+<div align=center>
+
 <img src="./Images/phone.jpeg" alt="drawing" width=200/>
+
+</div>
 
 </br>
 
