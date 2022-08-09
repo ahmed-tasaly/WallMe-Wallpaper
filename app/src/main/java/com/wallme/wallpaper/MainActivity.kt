@@ -20,10 +20,14 @@ class MainActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState);
         this.supportActionBar!!.hide();
 
+
         binding = ActivityMainBinding.inflate(layoutInflater);
         setContentView(binding.root);
-        change_fragment(redditPosts)
+        change_fragment(redditPosts);
 
+        Reddit_Api.Update_Api_key{
+            redditPosts.update_adabter();
+        }//init reddit api to get the key and set data to array
 
        findViewById<BottomNavigationView>(R.id.bottom_navigation).setOnItemSelectedListener {
            when (it.itemId){

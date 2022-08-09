@@ -17,7 +17,7 @@ import coil.ImageLoader
 
 
 
-class MyAdab(list_ : Array<List_image>,onimageclick : MyAdab.OnImageClick): RecyclerView.Adapter<MyAdab.myviewholder>() {
+class MyAdab(onimageclick : MyAdab.OnImageClick): RecyclerView.Adapter<MyAdab.myviewholder>() {
     private var onimgclick = onimageclick;
     lateinit var context: Context;
     companion object{

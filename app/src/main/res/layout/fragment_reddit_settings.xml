@@ -47,6 +47,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
+                        android:background="@drawable/textinput"
                         android:text="wallpaper"
                         android:hint="subreddits"
                         />
@@ -58,14 +59,16 @@
         </RelativeLayout>
 
     </ScrollView>
+
     <Button
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="120dp"
-        android:layout_marginRight="40dp"
-        android:text="Save"
-        android:backgroundTint="@color/Buttons"
+        android:id="@+id/save_button_reddit_settings"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="40dp"
+        android:layout_marginBottom="120dp"
+        android:backgroundTint="@color/Buttons"
+        android:text="Save" />
 
 </RelativeLayout>

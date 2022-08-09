@@ -150,17 +150,28 @@ class Reddit_Api(subredditname: String) {
                                val gallery_images_name = dataJson.getJSONObject("gallery_data").getJSONArray("items");
 
                                for(i in 0 until gallery_images_name.length()){
-                                    val current_metadata = dataJson.getJSONObject("media_metadata").getJSONObject(gallery_images_name.getJSONObject(i).getString("media_id"));
-                                   Log.i("Reddit_Api","Gallery found")
-                                   val list_image_gallery: List_image = List_image(
-                                       current_metadata.getJSONObject("s").getString("u").replace("amp;",""),
-                                       current_metadata.getJSONArray("p").getJSONObject(previewQulaity).getString("u").replace("amp;",""),
-                                       dataJson.getString("name"),
-                                       dataJson.getString("author"),
-                                       dataJson.getString("title"),
-                                       "reddit.com${dataJson.getString("permalink")}"
-                                   );
-                                   temp_list += list_image_gallery;
+                                   try {
+                                       val current_metadata =
+                                           dataJson.getJSONObject("media_metadata").getJSONObject(
+                                               gallery_images_name.getJSONObject(i)
+                                                   .getString("media_id")
+                                           );
+                                       Log.i("Reddit_Api", "Gallery found")
+                                       val list_image_gallery: List_image = List_image(
+                                           current_metadata.getJSONObject("s").getString("u")
+                                               .replace("amp;", ""),
+                                           current_metadata.getJSONArray("p")
+                                               .getJSONObject(previewQulaity).getString("u")
+                                               .replace("amp;", ""),
+                                           dataJson.getString("name"),
+                                           dataJson.getString("author"),
+                                           dataJson.getString("title"),
+                                           "reddit.com${dataJson.getString("permalink")}"
+                                       );
+                                       temp_list += list_image_gallery;
+                                   }catch (e: JSONException){
+                                       Log.e("Reddit_Api", e.toString())
+                                   }
 
                                }
                                continue;
@@ -195,7 +206,7 @@ class Reddit_Api(subredditname: String) {
                         }
                     }
                     catch (e : JSONException){
-                        Log.w("Reddit_Api",e);
+                        Log.e("Reddit_Api", e.toString());
                     }
 
                 }

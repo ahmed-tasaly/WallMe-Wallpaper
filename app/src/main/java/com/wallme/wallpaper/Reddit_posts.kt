@@ -15,16 +15,32 @@ class Reddit_posts : Fragment(),MyAdab.OnImageClick {
 
     private lateinit var myrec: RecyclerView;
     private lateinit var myadabter: MyAdab;
+
+    companion object{
+         var firsttime = true;
+         var userHitSave = false;
+    }
+
+
     var reddit_api : Array<Reddit_Api> = emptyArray();
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
-        reddit_api = emptyArray();
-        for (i in Reddit_settings.subreddits_list_names){
-            reddit_api += Reddit_Api(i);
+        if(firsttime || userHitSave){
+            reddit_api = emptyArray();
+            Reddit_Api.Subreddits = emptyArray();
+            Reddit_Api.reddit_global_posts = emptyArray();
+
+            for (i in Reddit_settings.subreddits_list_names){
+                reddit_api += Reddit_Api(i);
+            }
+            myadabter = MyAdab(this);
+            update_adabter();
+            firsttime = false;
+            userHitSave = false;
         }
-        myadabter = MyAdab(emptyArray(),this);
+
     }
 
 
@@ -49,9 +65,7 @@ class Reddit_posts : Fragment(),MyAdab.OnImageClick {
             }
         })
 
-        Reddit_Api.Update_Api_key{
-            update_adabter();
-        }//init reddit api to get the key and set data to array
+
     }
 
     override fun onCreateView(
@@ -65,7 +79,6 @@ class Reddit_posts : Fragment(),MyAdab.OnImageClick {
 
 
     fun update_adabter(){
-
             Reddit_Api.get_shuffle_andGive {
                 if(isAdded) {
                     requireActivity().runOnUiThread {

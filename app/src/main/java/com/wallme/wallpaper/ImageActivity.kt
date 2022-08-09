@@ -9,10 +9,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toBitmap
 import coil.ImageLoader
@@ -126,6 +123,8 @@ class Image_Activity(): AppCompatActivity(){
             intent.setDataAndType(Bitmap_toUri(applicationContext,mybitmap),"image/*");
             intent.putExtra("mimeType","image/*")
             this.startActivity(Intent.createChooser(intent,"Set as:"));
+        }else{
+            Toast.makeText(this,"Please wait for the image to load",2);
         }
 
 
