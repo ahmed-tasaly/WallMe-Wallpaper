@@ -1,3 +1,4 @@
+<div style="background-color:#393E46"> 
 <div align="center">
 
 # Wallme-Wallpaper
@@ -104,3 +105,4 @@ it needs a lot of work
   for the librays
 
 [<h3>Support me </h3>](https://www.patreon.com/Alaory)
+</div>
