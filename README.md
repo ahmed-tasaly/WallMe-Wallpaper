@@ -118,7 +118,7 @@ graph TD;
     Settings --> clear_cache
     WallHaven --> main_page --> users_posts --> Post
     main_page --> search_tags 
-    WallHaven --> wallhaven_settings --> subscription_page_users
+    WallHaven --> wallhaven_settings --> subscription_page_users --> users_posts
 ```
 
 
