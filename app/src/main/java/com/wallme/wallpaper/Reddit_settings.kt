@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
@@ -63,10 +64,19 @@ class Reddit_settings : Fragment() {
 
 
         var image_preview_quality = view.findViewById(R.id.image_quality_spinner) as Spinner;
-        var adabter_spinner: ArrayAdapter<CharSequence> = ArrayAdapter.createFromResource(requireContext(),R.array.preview_quality,android.R.layout.simple_spinner_item)
-        adabter_spinner.setDropDownViewResource(android.R.layout.simple_spinner_item);
-        image_preview_quality.adapter = adabter_spinner;
+        
+        image_preview_quality.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(adapterview : AdapterView<*>?, view : View?, pos : Int, selectedItem: Long) {
+                val tempvalue = adapterview!!.getItemAtPosition(pos) as Int?;
+                if(tempvalue != null)
+                    Reddit_Api.previewQulaity =  tempvalue -1;
+            }
 
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+
+            }
+
+        }
 
         val inputtext = view.findViewById(R.id.inputText) as TextInputEditText;
 

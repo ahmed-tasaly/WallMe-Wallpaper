@@ -102,6 +102,27 @@ it needs a lot of work
 
 
 
+### whats on my mind now for the app
+
+```mermaid
+graph TD;
+    MainActivity --> Reddit
+    MainActivity --> WallHaven
+    MainActivity --> Settings
+    MainActivity --> favorite_posts --> Post
+    Reddit --> show_subreddits_posts --> Post
+    Reddit --> reddit_settings --> Post_preview_quality
+    reddit_settings --> Subreddits_names
+    Settings --> where_ToSave_images_path
+    Settings --> auto_wallpaper_changer --> Time
+    Settings --> clear_cache
+    WallHaven --> main_page --> users_posts --> Post
+    main_page --> search_tags 
+    WallHaven --> wallhaven_settings --> subscription_page_users
+```
+
+
+
 ### thanks to 
     - coil 
     - okhttp
@@ -109,3 +130,5 @@ it needs a lot of work
   for the librays
 
 [<h3>Support me </h3>](https://www.patreon.com/Alaory)
+
+
