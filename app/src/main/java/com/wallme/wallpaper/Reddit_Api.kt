@@ -131,7 +131,7 @@ class Reddit_Api(subredditname: String) {
                                     found = true;
                             }
 
-                            if (dataJson.getBoolean("over_18") || found)
+                            if (dataJson.getBoolean("over_18") || found || dataJson.optBoolean("is_video",false))
                                 continue;
                             //----------------------------------------------
 
@@ -177,23 +177,38 @@ class Reddit_Api(subredditname: String) {
                                continue;
                            }
 
+                            val one_post: List_image;
+                            if(dataJson.optString("preview").isNullOrBlank()){
+                                one_post = List_image(
+                                    dataJson.getString("url"),
+                                    dataJson.getString("url"),
+                                    dataJson.getString("name"),
+                                    dataJson.getString("author"),
+                                    dataJson.getString("title"),
+                                    "reddit.com${dataJson.getString("permalink")}"
+                                )
 
-                            val image_source_url = dataJson
-                                .getJSONObject("preview").getJSONArray("images").getJSONObject(0)
-                                .getJSONObject("source").getString("url").replace("amp;","");
+                            }else{
+                                val image_source_url = dataJson
+                                    .getJSONObject("preview").getJSONArray("images").getJSONObject(0)
+                                    .getJSONObject("source").getString("url").replace("amp;","");
 
-                            val image_preview_url = dataJson
-                                .getJSONObject("preview").getJSONArray("images").getJSONObject(0)
-                                .getJSONArray("resolutions").getJSONObject(previewQulaity).getString("url").replace("amp;","");
-                            //parse json into data to use
-                            val one_post: List_image = List_image(
-                                image_source_url,
-                                image_preview_url,
-                                dataJson.getString("name"),
-                                dataJson.getString("author"),
-                                dataJson.getString("title"),
-                                "reddit.com${dataJson.getString("permalink")}"
-                            )
+                                val image_preview_url = dataJson
+                                    .getJSONObject("preview").getJSONArray("images").getJSONObject(0)
+                                    .getJSONArray("resolutions").getJSONObject(previewQulaity).getString("url").replace("amp;","");
+                                //parse json into data to use
+                                one_post = List_image(
+                                    image_source_url,
+                                    image_preview_url,
+                                    dataJson.getString("name"),
+                                    dataJson.getString("author"),
+                                    dataJson.getString("title"),
+                                    "reddit.com${dataJson.getString("permalink")}"
+                                )
+                            }
+
+
+
 
                             temp_list += one_post;
                             //----------------------------------

@@ -36,7 +36,7 @@ wallme wallpaper is a wallpaper app aimed at simplicity and low peformance. it c
 
 
 </br>
-well i've used a lot of wallpaper apps only a few of them meet my requirements. so i decided to make it to what i content 
+well i've used a lot of wallpaper apps only a few of them meet my requirements. so i decided to make one to what i content 
 
 </br>
 </br>

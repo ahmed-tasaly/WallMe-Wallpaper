@@ -16,6 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/subreddit_container"
                 android:layout_width="match_parent"
                 android:layout_margin="20dp"
                 android:background="@color/Background"
@@ -40,6 +41,7 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     android:paddingBottom="20dp"
+                    android:layout_marginBottom="40dp"
                     android:layout_height="wrap_content">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -54,7 +56,26 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
+
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <Spinner
+                android:id="@+id/image_quality_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/subreddit_container"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="30dp"
+                android:spinnerMode="dropdown" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Post Image qulaity"
+                android:layout_alignLeft="@+id/image_quality_spinner"
+                android:layout_alignTop="@+id/image_quality_spinner"
+                />
 
         </RelativeLayout>
 

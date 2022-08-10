@@ -91,10 +91,14 @@ class Reddit_posts : Fragment(),MyAdab.OnImageClick {
 
 
     override fun onImageClick(Pos: Int,thumbnail : Drawable) {
-        val intent = Intent(requireContext(),Image_Activity::class.java);
-        Image_Activity.myData = Reddit_Api.reddit_global_posts.get(Pos);
-        Image_Activity.thumbnail = thumbnail;
-        startActivity(intent);
+        try {
+            val intent = Intent(requireContext(), Image_Activity::class.java);
+            Image_Activity.myData = Reddit_Api.reddit_global_posts.get(Pos);
+            Image_Activity.thumbnail = thumbnail;
+            startActivity(intent);
+        }catch (e: Exception){
+            Log.e("Reddit_posts","error while trying to set image activity")
+        }
     }
 
 }
