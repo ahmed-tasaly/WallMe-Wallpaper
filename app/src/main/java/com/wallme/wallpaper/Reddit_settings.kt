@@ -39,7 +39,7 @@ class Reddit_settings : Fragment() {
 
         fun loadprefs(context: Context){
             val sharedprefs = PreferenceManager.getDefaultSharedPreferences(context);
-            val subtemp : String? = sharedprefs.getString("subreddits","wallpaper");
+            val subtemp : String? = sharedprefs.getString("subreddits","mobilewallpaper");
             val imagepreview = sharedprefs.getInt("image_preview",2);
 
 

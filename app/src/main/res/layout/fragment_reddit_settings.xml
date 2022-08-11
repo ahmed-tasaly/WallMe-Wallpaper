@@ -55,7 +55,7 @@
                         android:layout_margin="10dp"
                         android:background="@drawable/textinput"
                         android:hint="subreddits"
-                        android:text="wallpaper" />
+                        android:text="@string/defualt_subreddi" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
