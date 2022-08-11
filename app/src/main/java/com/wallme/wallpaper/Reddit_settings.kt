@@ -19,8 +19,8 @@ class Reddit_settings : Fragment() {
 
 
     companion object{
-        var subreddits_list_names : List<String> = listOf("wallpaper");
-        var subredditsNames = "wallpaper";
+        var subreddits_list_names : List<String> = listOf("mobilewallpaper");
+        var subredditsNames = "mobilewallpaper";
 
         fun parse_subreddits(SUBREDDITS : String){
             subredditsNames = SUBREDDITS;

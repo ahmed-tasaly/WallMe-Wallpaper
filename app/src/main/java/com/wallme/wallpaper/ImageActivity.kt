@@ -37,24 +37,6 @@ class Image_Activity(): AppCompatActivity(){
         lateinit var thumbnail: Drawable;
         //save bitmap to file and load it as a uri
 
-        fun File.delete(context: Context): Boolean {
-            var selectionArgs = arrayOf(this.absolutePath)
-            val contentResolver = context.getContentResolver()
-            var where: String? = null
-            var filesUri: Uri? = null
-            if (android.os.Build.VERSION.SDK_INT >= 29) {
-                filesUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                where = MediaStore.Images.Media._ID + "=?"
-                selectionArgs = arrayOf(this.name)
-            } else {
-                where = MediaStore.MediaColumns.DATA + "=?"
-                filesUri = MediaStore.Files.getContentUri("external")
-            }
-
-            val int = contentResolver.delete(filesUri!!, where, selectionArgs)
-
-            return !this.exists()
-        }
 
         fun saveImage(context: Context, image: Bitmap,Name : String): String {
             val imageByteStream = ByteArrayOutputStream();
@@ -65,7 +47,16 @@ class Image_Activity(): AppCompatActivity(){
         }
 
         fun Bitmap_toUri(context: Context, image: Bitmap): Uri? {
-            return Uri.parse(saveImage(context,image,"temp"));
+            var bytes = ByteArrayOutputStream();
+            image.compress(Bitmap.CompressFormat.PNG,100,bytes);
+            var imagepath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),"tempImage")
+            if (!imagepath.mkdirs()) {
+                Log.e("Image_Activity", "Directory not created")
+            }
+            var imagesaved = File(imagepath.absolutePath + "/temp.png");
+            imagesaved.writeBytes(bytes.toByteArray());
+
+            return Uri.parse(imagesaved.path);
         }
 
     }
