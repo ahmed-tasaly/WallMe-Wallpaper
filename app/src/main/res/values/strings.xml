@@ -1,14 +1,15 @@
 <resources>
     <string name="app_name">Wallme-Wallpaper</string>
     <string name="subreddits_input">Please input the subreddit name with \"+\" to separate them if you have more the one</string>
-    <string name="preview_quality" />
+    <string name="preview_quality"> preview image quality</string>
 
-    <integer-array name="preview_quality">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-    </integer-array>
+
+    <string-array name="preview_quality">
+        <item>very low</item>
+        <item>low</item>
+        <item>medium</item>
+        <item>high</item>
+        <item>very high</item>
+        <item>ultra</item>
+    </string-array>
 </resources>

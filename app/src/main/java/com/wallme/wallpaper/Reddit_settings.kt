@@ -2,6 +2,7 @@ package com.wallme.wallpaper
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
@@ -9,10 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.Spinner
+import android.widget.*
 import androidx.compose.ui.text.toLowerCase
 import com.google.android.material.textfield.TextInputEditText
 
@@ -36,14 +34,18 @@ class Reddit_settings : Fragment() {
             redditSettings.edit().putString("subreddits",subreddits).apply().apply {
                 Log.i("Reddit_settings","Settings have been saved with value $subreddits");
             };
+            redditSettings.edit().putInt("image_preview",Reddit_Api.previewQulaity).apply();
         }
+
         fun loadprefs(context: Context){
-            var sharedprefs = PreferenceManager.getDefaultSharedPreferences(context);
-            var subtemp : String? = sharedprefs.getString("subreddits","wallpaper");
-            if (subtemp != null){
-                subredditsNames = subtemp;
-                Log.i("Reddit_settings","value found $subredditsNames");
-            }
+            val sharedprefs = PreferenceManager.getDefaultSharedPreferences(context);
+            val subtemp : String? = sharedprefs.getString("subreddits","wallpaper");
+            val imagepreview = sharedprefs.getInt("image_preview",2);
+
+
+            subredditsNames = subtemp!!;
+            Reddit_Api.previewQulaity = imagepreview!!;
+
             parse_subreddits(subredditsNames);
         }
     }
@@ -64,17 +66,33 @@ class Reddit_settings : Fragment() {
 
 
         var image_preview_quality = view.findViewById(R.id.image_quality_spinner) as Spinner;
-        
+
+        ArrayAdapter.createFromResource(requireContext(),R.array.preview_quality,android.R.layout.simple_spinner_item).also { arrayAdapter ->
+            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            image_preview_quality.adapter = arrayAdapter;
+            image_preview_quality.setSelection(Reddit_Api.previewQulaity);
+            Log.i("Reddit_settings","Spinner adabter set")
+        }
+
         image_preview_quality.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-            override fun onItemSelected(adapterview : AdapterView<*>?, view : View?, pos : Int, selectedItem: Long) {
-                val tempvalue = adapterview!!.getItemAtPosition(pos) as Int?;
-                if(tempvalue != null)
-                    Reddit_Api.previewQulaity =  tempvalue -1;
+            override fun onItemSelected(parent : AdapterView<*>?, view : View?, pos : Int, selectedItem: Long) {
+
+                if(view != null){
+                    val current_view = view as TextView;
+                    current_view.setTextColor(Color.parseColor("#EEEEEE"))
+                }
+
+
+                Reddit_Api.previewQulaity =  selectedItem.toInt();
+                Log.i("Reddit_settings","user selected $selectedItem")
+
+
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
-
+                Log.i("Reddit_settings","spinner nothing selected")
             }
+
 
         }
 

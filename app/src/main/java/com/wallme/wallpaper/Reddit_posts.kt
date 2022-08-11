@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 class Reddit_posts : Fragment(),MyAdab.OnImageClick {
 
     private lateinit var myrec: RecyclerView;
-    private lateinit var myadabter: MyAdab;
+    private lateinit var PostsAdabter: MyAdab;
 
     companion object{
          var firsttime = true;
@@ -35,7 +35,7 @@ class Reddit_posts : Fragment(),MyAdab.OnImageClick {
             for (i in Reddit_settings.subreddits_list_names){
                 reddit_api += Reddit_Api(i);
             }
-            myadabter = MyAdab(this);
+            PostsAdabter = MyAdab(this);
             update_adabter();
             firsttime = false;
             userHitSave = false;
@@ -52,7 +52,7 @@ class Reddit_posts : Fragment(),MyAdab.OnImageClick {
         myrec = view.findViewById(R.id.fragmentrec) as RecyclerView;
         myrec.layoutManager = GridLayoutManager(requireContext(),2, GridLayoutManager.VERTICAL,false);
         myrec.setHasFixedSize(false);
-        myrec.adapter = myadabter;
+        myrec.adapter = PostsAdabter;
 
         myrec.addOnScrollListener(object : RecyclerView.OnScrollListener(){
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -82,7 +82,7 @@ class Reddit_posts : Fragment(),MyAdab.OnImageClick {
             Reddit_Api.get_shuffle_andGive {
                 if(isAdded) {
                     requireActivity().runOnUiThread {
-                        myadabter.refresh_itemList();
+                        PostsAdabter.refresh_itemList();
                     }
                 }
             }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+    android:layoutDirection="ltr"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -66,20 +67,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/subreddit_container"
-                android:layout_alignParentRight="true"
-                android:layout_marginLeft="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="30dp"
                 android:layout_marginTop="30dp"
+                android:layout_marginEnd="30dp"
+                android:background="@drawable/textinput"
                 android:entries="@array/preview_quality"
-                android:layout_marginRight="70dp"
-                android:background="@color/Buttons"
                 android:spinnerMode="dropdown" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Post Image qulaity"
-                android:layout_marginLeft="40dp"
-                android:layout_alignParentLeft="true"
+                android:text="@string/preview_quality"
+                android:layout_marginStart="40dp"
+                android:layout_alignParentStart="true"
                 android:layout_alignTop="@+id/image_quality_spinner"
                 />
 
@@ -91,9 +92,9 @@
         android:id="@+id/save_button_reddit_settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginRight="40dp"
+        android:layout_marginEnd="40dp"
         android:layout_marginBottom="120dp"
         android:backgroundTint="@color/Buttons"
         android:text="Save" />

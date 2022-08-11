@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
@@ -14,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toBitmap
 import coil.ImageLoader
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 
 
 class Image_Activity(): AppCompatActivity(){
@@ -33,9 +36,30 @@ class Image_Activity(): AppCompatActivity(){
         lateinit var myData : List_image;
         lateinit var thumbnail: Drawable;
         //save bitmap to file and load it as a uri
+
+        fun File.delete(context: Context): Boolean {
+            var selectionArgs = arrayOf(this.absolutePath)
+            val contentResolver = context.getContentResolver()
+            var where: String? = null
+            var filesUri: Uri? = null
+            if (android.os.Build.VERSION.SDK_INT >= 29) {
+                filesUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                where = MediaStore.Images.Media._ID + "=?"
+                selectionArgs = arrayOf(this.name)
+            } else {
+                where = MediaStore.MediaColumns.DATA + "=?"
+                filesUri = MediaStore.Files.getContentUri("external")
+            }
+
+            val int = contentResolver.delete(filesUri!!, where, selectionArgs)
+
+            return !this.exists()
+        }
+
         fun saveImage(context: Context, image: Bitmap,Name : String): String {
             val imageByteStream = ByteArrayOutputStream();
             image.compress(Bitmap.CompressFormat.PNG,100,imageByteStream);
+
             val path = MediaStore.Images.Media.insertImage(context.contentResolver,image,Name,null);
             return path;
         }
@@ -45,6 +69,11 @@ class Image_Activity(): AppCompatActivity(){
         }
 
     }
+
+
+
+
+
 
     override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle);
@@ -106,6 +135,7 @@ class Image_Activity(): AppCompatActivity(){
             .build()
         );
 
+
         //set the wallpaper set button
         findViewById<ImageButton>(R.id.set_imageButton).setOnClickListener { setWallpaper(); };
         findViewById<ImageButton>(R.id.save_imageButton).setOnClickListener { if(loaded) saveImage(applicationContext,mybitmap, myData.Image_name); };
@@ -116,18 +146,21 @@ class Image_Activity(): AppCompatActivity(){
 
 
     private fun setWallpaper(){
+        //set the wallpaper
         if(loaded){
-            //set the wallpaper
-            val intent = Intent(Intent.ACTION_ATTACH_DATA);
-            intent.addCategory((Intent.CATEGORY_DEFAULT));
-            intent.setDataAndType(Bitmap_toUri(applicationContext,mybitmap),"image/*");
-            intent.putExtra("mimeType","image/*")
-            this.startActivity(Intent.createChooser(intent,"Set as:"));
-        }else{
-            Toast.makeText(this,"Please wait for the image to load",2);
+            try {
+                var uri_image = Bitmap_toUri(applicationContext,mybitmap);
+                val intent = Intent(Intent.ACTION_ATTACH_DATA);
+                intent.addCategory((Intent.CATEGORY_DEFAULT));
+                intent.setDataAndType(uri_image,"image/*");
+                intent.putExtra("mimeType","image/*")
+                this.startActivity(Intent.createChooser(intent,"Set as:"));
+            }catch (e:Exception){
+                Log.e("Image_Activity",e.toString())
+            }
+
+
         }
-
-
     }
 
 }

@@ -120,98 +120,116 @@ class Reddit_Api(subredditname: String) {
                         var temp_list: Array<List_image> = emptyArray();
 
                         for (i in 0 until children_json.length()) {
+                            try {
+                                val dataJson = children_json.getJSONObject(i)
+                                    .getJSONObject("data") as JSONObject;
 
-                            val dataJson = children_json.getJSONObject(i).getJSONObject("data") as JSONObject;
+                                // check if worth adding
+                                var found: Boolean = false;
 
-                            // check if worth adding
-                            var found : Boolean = false;
+                                for (j in 0 until subreddit_posts_list.size) {
+                                    if (dataJson.getString("name") == subreddit_posts_list.get(j).Image_name)
+                                        found = true;
+                                }
 
-                            for (j in 0 until subreddit_posts_list.size){
-                                if(dataJson.getString("name") == subreddit_posts_list.get(j).Image_name)
-                                    found = true;
-                            }
-
-                            if (dataJson.getBoolean("over_18") || found || dataJson.optBoolean("is_video",false))
-                                continue;
-                            //----------------------------------------------
-
-
-                            //add the image
-                            //get image name to skip it next time
-                            last_before_id = dataJson.getString("name");
-
-                            //check again if its an image
-                            if(dataJson.getString("thumbnail") == "self" || dataJson.getString("thumbnail") == "default")
-                                continue;
-
-
-                            //parse image gallery post
-                           if(dataJson.optBoolean("is_gallery",false)){
-                               val gallery_images_name = dataJson.getJSONObject("gallery_data").getJSONArray("items");
-
-                               for(i in 0 until gallery_images_name.length()){
-                                   try {
-                                       val current_metadata =
-                                           dataJson.getJSONObject("media_metadata").getJSONObject(
-                                               gallery_images_name.getJSONObject(i)
-                                                   .getString("media_id")
-                                           );
-                                       Log.i("Reddit_Api", "Gallery found")
-                                       val list_image_gallery: List_image = List_image(
-                                           current_metadata.getJSONObject("s").getString("u")
-                                               .replace("amp;", ""),
-                                           current_metadata.getJSONArray("p")
-                                               .getJSONObject(previewQulaity).getString("u")
-                                               .replace("amp;", ""),
-                                           dataJson.getString("name"),
-                                           dataJson.getString("author"),
-                                           dataJson.getString("title"),
-                                           "reddit.com${dataJson.getString("permalink")}"
-                                       );
-                                       temp_list += list_image_gallery;
-                                   }catch (e: JSONException){
-                                       Log.e("Reddit_Api", e.toString())
-                                   }
-
-                               }
-                               continue;
-                           }
-
-                            val one_post: List_image;
-                            if(dataJson.optString("preview").isNullOrBlank()){
-                                one_post = List_image(
-                                    dataJson.getString("url"),
-                                    dataJson.getString("url"),
-                                    dataJson.getString("name"),
-                                    dataJson.getString("author"),
-                                    dataJson.getString("title"),
-                                    "reddit.com${dataJson.getString("permalink")}"
+                                if (dataJson.getBoolean("over_18") || found || dataJson.optBoolean(
+                                        "is_video",
+                                        false
+                                    )
                                 )
+                                    continue;
+                                //----------------------------------------------
 
-                            }else{
-                                val image_source_url = dataJson
-                                    .getJSONObject("preview").getJSONArray("images").getJSONObject(0)
-                                    .getJSONObject("source").getString("url").replace("amp;","");
 
-                                val image_preview_url = dataJson
-                                    .getJSONObject("preview").getJSONArray("images").getJSONObject(0)
-                                    .getJSONArray("resolutions").getJSONObject(previewQulaity).getString("url").replace("amp;","");
-                                //parse json into data to use
-                                one_post = List_image(
-                                    image_source_url,
-                                    image_preview_url,
-                                    dataJson.getString("name"),
-                                    dataJson.getString("author"),
-                                    dataJson.getString("title"),
-                                    "reddit.com${dataJson.getString("permalink")}"
+                                //add the image
+                                //get image name to skip it next time
+                                last_before_id = dataJson.getString("name");
+
+                                //check again if its an image
+                                if (dataJson.getString("thumbnail") == "self" || dataJson.getString(
+                                        "thumbnail"
+                                    ) == "default"
                                 )
+                                    continue;
+
+
+                                //parse image gallery post
+                                if (dataJson.optBoolean("is_gallery", false)) {
+                                    val gallery_images_name = dataJson.getJSONObject("gallery_data")
+                                        .getJSONArray("items");
+
+                                    for (i in 0 until gallery_images_name.length()) {
+                                        try {
+                                            val current_metadata =
+                                                dataJson.getJSONObject("media_metadata")
+                                                    .getJSONObject(
+                                                        gallery_images_name.getJSONObject(i)
+                                                            .getString("media_id")
+                                                    );
+                                            Log.i("Reddit_Api", "Gallery found")
+                                            val list_image_gallery: List_image = List_image(
+                                                current_metadata.getJSONObject("s").getString("u")
+                                                    .replace("amp;", ""),
+                                                current_metadata.getJSONArray("p")
+                                                    .getJSONObject(previewQulaity).getString("u")
+                                                    .replace("amp;", ""),
+                                                dataJson.getString("name"),
+                                                dataJson.getString("author"),
+                                                dataJson.getString("title"),
+                                                "reddit.com${dataJson.getString("permalink")}"
+                                            );
+                                            temp_list += list_image_gallery;
+                                        } catch (e: JSONException) {
+                                            Log.e("Reddit_Api", e.toString())
+                                        }
+
+                                    }
+                                    continue;
+                                }
+
+                                val one_post: List_image;
+                                if (dataJson.optString("preview").isNullOrBlank()) {
+                                    one_post = List_image(
+                                        dataJson.getString("url"),
+                                        dataJson.getString("url"),
+                                        dataJson.getString("name"),
+                                        dataJson.getString("author"),
+                                        dataJson.getString("title"),
+                                        "reddit.com${dataJson.getString("permalink")}"
+                                    )
+
+                                } else {
+                                    val image_source_url = dataJson
+                                        .getJSONObject("preview").getJSONArray("images")
+                                        .getJSONObject(0)
+                                        .getJSONObject("source").getString("url")
+                                        .replace("amp;", "");
+
+                                    val image_preview_url = dataJson
+                                        .getJSONObject("preview").getJSONArray("images")
+                                        .getJSONObject(0)
+                                        .getJSONArray("resolutions").getJSONObject(previewQulaity)
+                                        .getString("url").replace("amp;", "");
+                                    //parse json into data to use
+                                    one_post = List_image(
+                                        image_source_url,
+                                        image_preview_url,
+                                        dataJson.getString("name"),
+                                        dataJson.getString("author"),
+                                        dataJson.getString("title"),
+                                        "reddit.com${dataJson.getString("permalink")}"
+                                    )
+                                }
+
+
+
+
+                                temp_list += one_post;
+                                //----------------------------------
                             }
-
-
-
-
-                            temp_list += one_post;
-                            //----------------------------------
+                            catch (e:Exception ){
+                                Log.i("Reddit_Api","Reddit_Api for loop erorr")
+                            }
                         }
 
                         if(temp_list.isNotEmpty()){
