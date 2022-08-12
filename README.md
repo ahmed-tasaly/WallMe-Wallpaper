@@ -14,10 +14,18 @@
 
 </div>
 
-</br></br>
+
 
 <span style="color:#1be44a" > 
 
+
+[<h2 align="center">Download</h2>]("https://github.com/Alaory/WallMe-Wallpaper/releases")
+
+
+[<h4 align="center">Support me </h4>](https://www.patreon.com/Alaory)
+
+------------------------------------
+</br></br></br>
 
 ### what is this ?
 
@@ -94,7 +102,7 @@ it needs a lot of work
 </span>
 
 - [x] add reddit support 
-- [ ] add reddit settings
+- [x] add reddit settings
 - [ ] add more ui I SAID MORE
 - [ ] add auto wallpaper changer with preferred croping
 - [ ] add wallhaven support
@@ -129,6 +137,5 @@ graph TD;
 
   for the librays
 
-[<h3>Support me </h3>](https://www.patreon.com/Alaory)
 
 
