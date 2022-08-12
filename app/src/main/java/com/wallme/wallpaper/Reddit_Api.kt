@@ -26,8 +26,13 @@ class Reddit_Api(subredditname: String) {
         var Subreddits : Array<Reddit_Api> = emptyArray();
         //global post last index list
         var last_index : Int = 0;
-
+        //image preview quality
         var previewQulaity: Int = 1 // from 0 to 5
+        enum class  ListMode {
+            HOT,
+            NEW,
+            TOP
+        }
 
 
         fun Update_Api_key(callback_update: () -> Unit = {}) {

@@ -10,8 +10,9 @@
 
 
     <color name="navigation">#393E46</color>
-    <color name="Buttons">#FFD369</color>
+    <color name="Selected">#FFD369</color>
     <color name="Background">#222831</color>
     <color name="widget">#393E46</color>
-    <color name="loading">#EEEEEE</color>
+    <color name="Buttons">#EEEEEE</color>
+
 </resources>

@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/Background"
     tools:context=".MainActivity">
 
 
@@ -34,6 +35,8 @@
         android:layout_margin="30dp"
         app:menu="@menu/navigation_menu"
         android:background="@drawable/sheetrounded"
+        app:itemTextColor="@color/multicolor_state"
+        app:itemIconTint="@color/multicolor_state"
         android:id="@+id/bottom_navigation"
         />
 

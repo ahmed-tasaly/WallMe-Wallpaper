@@ -12,6 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.compose.ui.text.toLowerCase
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 
 
@@ -65,6 +67,7 @@ class Reddit_settings : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
+        //image preview quality spinner
         var image_preview_quality = view.findViewById(R.id.image_quality_spinner) as Spinner;
 
         ArrayAdapter.createFromResource(requireContext(),R.array.preview_quality,android.R.layout.simple_spinner_item).also { arrayAdapter ->
@@ -76,30 +79,28 @@ class Reddit_settings : Fragment() {
 
         image_preview_quality.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(parent : AdapterView<*>?, view : View?, pos : Int, selectedItem: Long) {
-
                 if(view != null){
                     val current_view = view as TextView;
                     current_view.setTextColor(Color.parseColor("#EEEEEE"))
                 }
-
-
                 Reddit_Api.previewQulaity =  selectedItem.toInt();
                 Log.i("Reddit_settings","user selected $selectedItem")
-
-
             }
-
             override fun onNothingSelected(p0: AdapterView<*>?) {
                 Log.i("Reddit_settings","spinner nothing selected")
             }
-
-
         }
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+        val timeperiod = view.findViewById(R.id.timePeriod_chipGroup) as ChipGroup;
+
+
+
+
+
+        //subreddit input box and the save button
         val inputtext = view.findViewById(R.id.inputText) as TextInputEditText;
-
         inputtext.setText(subredditsNames);
-
         view.findViewById<Button>(R.id.save_button_reddit_settings).setOnClickListener {
             parse_subreddits(inputtext.text!!.toString().lowercase());
             Reddit_posts.userHitSave = true;

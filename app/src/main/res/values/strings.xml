@@ -12,4 +12,12 @@
         <item>very high</item>
         <item>ultra</item>
     </string-array>
+    <string-array name="TimePeriod">
+        <item>now</item>
+        <item>today</item>
+        <item>week</item>
+        <item>month</item>
+        <item>year</item>
+        <item>all</item>
+    </string-array>
 </resources>
