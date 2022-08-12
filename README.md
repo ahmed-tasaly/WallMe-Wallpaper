@@ -19,7 +19,7 @@
 <span style="color:#1be44a" > 
 
 
-[<h2 align="center">Download</h2>]("https://github.com/Alaory/WallMe-Wallpaper/releases")
+[<h2 align="center">Download</h2>](https://github.com/Alaory/WallMe-Wallpaper/releases)
 
 
 [<h4 align="center">Support me </h4>](https://www.patreon.com/Alaory)
