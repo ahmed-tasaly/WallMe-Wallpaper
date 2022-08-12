@@ -28,11 +28,10 @@ class Reddit_Api(subredditname: String) {
         var last_index : Int = 0;
         //image preview quality
         var previewQulaity: Int = 1 // from 0 to 5
-        enum class  ListMode {
-            HOT,
-            NEW,
-            TOP
-        }
+        //list mode
+        var listMode = "Hot";
+        //time period
+        var timeperiod = "&t=year";
 
 
         fun Update_Api_key(callback_update: () -> Unit = {}) {
@@ -89,10 +88,16 @@ class Reddit_Api(subredditname: String) {
             Log.i("Reddit_Api", api_key)
             val url: String;
 
+            if (listMode != "Top")
+                timeperiod = "";
+
             if(subreddit_posts_list.isNotEmpty())
-                url = "https://oauth.reddit.com/r/$subreddit/top?count=25&after=${last_before_id}&t=year";
+                url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?count=100&after=${last_before_id}${timeperiod.lowercase()}";
             else
-                url = "https://oauth.reddit.com/r/$subreddit/top?limit=25&t=year";
+                url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?limit=100${timeperiod.lowercase()}";
+
+
+            Log.i("Reddit_Api",url);
 
 
             val json_req = Request.Builder()

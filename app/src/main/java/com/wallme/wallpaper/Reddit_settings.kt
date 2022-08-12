@@ -12,17 +12,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.compose.ui.text.toLowerCase
+import androidx.core.view.get
+import androidx.core.view.isVisible
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
+import org.w3c.dom.Text
 
 
 class Reddit_settings : Fragment() {
 
 
     companion object{
-        var subreddits_list_names : List<String> = listOf("mobilewallpaper");
-        var subredditsNames = "mobilewallpaper";
+        var subreddits_list_names : List<String> = listOf("wallpaper");
+        var subredditsNames = "wallpaper";
+        var CheckedChipListMode : String = "Hot";
+        var TimePeriod = "";
+        var TimePeridLastInt = 0;
+        var image_preview_qualiy_int = 2;
 
         fun parse_subreddits(SUBREDDITS : String){
             subredditsNames = SUBREDDITS;
@@ -41,7 +48,7 @@ class Reddit_settings : Fragment() {
 
         fun loadprefs(context: Context){
             val sharedprefs = PreferenceManager.getDefaultSharedPreferences(context);
-            val subtemp : String? = sharedprefs.getString("subreddits","mobilewallpaper");
+            val subtemp : String? = sharedprefs.getString("subreddits","wallpaper");
             val imagepreview = sharedprefs.getInt("image_preview",2);
 
 
@@ -83,7 +90,7 @@ class Reddit_settings : Fragment() {
                     val current_view = view as TextView;
                     current_view.setTextColor(Color.parseColor("#EEEEEE"))
                 }
-                Reddit_Api.previewQulaity =  selectedItem.toInt();
+                image_preview_qualiy_int =  selectedItem.toInt();
                 Log.i("Reddit_settings","user selected $selectedItem")
             }
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -92,9 +99,32 @@ class Reddit_settings : Fragment() {
         }
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-        val timeperiod = view.findViewById(R.id.timePeriod_chipGroup) as ChipGroup;
+        val listmode = view.findViewById(R.id.timePeriod_chipGroup) as ChipGroup;
+        var timepriote = view.findViewById(R.id.TopTimePeriod) as Spinner;
+
+        listmode.setOnCheckedStateChangeListener { group, checkedIds ->
+            CheckedChipListMode = group.findViewById<Chip>(checkedIds[0]).text.toString();
+            timepriote.isVisible = CheckedChipListMode == "Top";
+        }
 
 
+        ArrayAdapter.createFromResource(requireContext(),R.array.TimePeriod,android.R.layout.simple_spinner_item).also{ arrayAdapter ->
+            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            timepriote.adapter = arrayAdapter;
+            timepriote.setSelection(TimePeridLastInt);
+        }
+
+        timepriote.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                val current_view = p0!!.selectedView as TextView?;
+                Log.i("Reddit_settings","${current_view?.text} is selected")
+                TimePeriod = "&t=${current_view?.text.toString().lowercase()}"
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+
+            }
+        }
 
 
 
@@ -105,6 +135,9 @@ class Reddit_settings : Fragment() {
             parse_subreddits(inputtext.text!!.toString().lowercase());
             Reddit_posts.userHitSave = true;
             savepref(subredditsNames,requireContext());
+            Reddit_Api.listMode = CheckedChipListMode;
+            Reddit_Api.previewQulaity = image_preview_qualiy_int;
+            Reddit_Api.timeperiod = TimePeriod;
         }
 
 
