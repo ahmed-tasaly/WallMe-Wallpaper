@@ -1,12 +1,11 @@
-package com.wallme.wallpaper
+package com.alaory.wallmewallpaper
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.preference.PreferenceManager
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.wallme.wallpaper.databinding.ActivityMainBinding
+import com.alaory.wallmewallpaper.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(){
 
@@ -45,11 +44,6 @@ class MainActivity : AppCompatActivity(){
         fragman.replace(R.id.container,fragment);
         fragman.commit();
     }
-
-
-
-    external fun stringFromJNI(): String
-
 
 
 }

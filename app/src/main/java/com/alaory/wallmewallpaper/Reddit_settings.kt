@@ -1,7 +1,6 @@
-package com.wallme.wallpaper
+package com.alaory.wallmewallpaper
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -11,14 +10,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.compose.ui.text.toLowerCase
 import androidx.core.view.children
-import androidx.core.view.get
 import androidx.core.view.isVisible
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
-import org.w3c.dom.Text
+import com.alaory.wallmewallpaper.R
 
 
 class Reddit_settings : Fragment() {

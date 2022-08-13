@@ -1,4 +1,4 @@
-package com.wallme.wallpaper
+package com.alaory.wallmewallpaper
 
 import android.content.Context
 import android.content.Intent
@@ -16,7 +16,6 @@ import androidx.core.graphics.drawable.toBitmap
 import coil.ImageLoader
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileOutputStream
 
 
 class Image_Activity(): AppCompatActivity(){

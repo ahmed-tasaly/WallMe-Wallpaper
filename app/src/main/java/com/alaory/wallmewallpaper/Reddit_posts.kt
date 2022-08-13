@@ -1,4 +1,4 @@
-package com.wallme.wallpaper
+package com.alaory.wallmewallpaper
 
 import android.content.Intent
 import android.graphics.drawable.Drawable

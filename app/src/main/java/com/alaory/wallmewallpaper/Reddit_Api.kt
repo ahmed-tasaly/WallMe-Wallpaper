@@ -1,4 +1,4 @@
-package com.wallme.wallpaper
+package com.alaory.wallmewallpaper
 
 import android.util.Log
 import okhttp3.*
@@ -39,7 +39,7 @@ class Reddit_Api(subredditname: String) {
             val Myrequest = Request.Builder()
                 .url("https://www.reddit.com/api/v1/access_token?grant_type=https%3A%2F%2Foauth.reddit.com%2Fgrants%2Finstalled_client&device_id=DO_NOT_TRACK_THIS_DEVICE")
                 .post(RequestBody.create("application/x-www-form-urlencoded".toMediaTypeOrNull(),"="))
-                .addHeader("Authorization", "Basic ${com.wallme.wallpaper.BuildConfig.API_KEY_Base}")
+                .addHeader("Authorization", "Basic ${com.alaory.wallmewallpaper.BuildConfig.API_KEY_Base}")
                 .addHeader("content-type", "application/x-www-form-urlencoded")
                 .build()
 
