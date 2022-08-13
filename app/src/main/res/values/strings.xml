@@ -2,7 +2,7 @@
     <string name="app_name">Wallme-Wallpaper</string>
     <string name="subreddits_input">Please input the subreddit name with \"+\" to separate them if you have more the one</string>
     <string name="preview_quality"> preview image quality</string>
-    <string name="defualt_subreddi">mobilewallpaper</string>
+    <string name="defualt_subreddi">wallpaper</string>
 
     <string-array name="preview_quality">
         <item>very low</item>

@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.compose.ui.text.toLowerCase
+import androidx.core.view.children
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import com.google.android.material.chip.Chip
@@ -28,7 +29,7 @@ class Reddit_settings : Fragment() {
         var subredditsNames = "wallpaper";
         var CheckedChipListMode : String = "Hot";
         var TimePeriod = "";
-        var TimePeridLastInt = 0;
+        var TimePeridLastInt = 4;
         var image_preview_qualiy_int = 2;
 
         fun parse_subreddits(SUBREDDITS : String){
@@ -38,25 +39,47 @@ class Reddit_settings : Fragment() {
             subreddits_list_names = subredditsNames.split("+");
         }
 
-        private fun savepref(subreddits : String,context: Context){
+        private fun savepref(context: Context){
             val redditSettings = PreferenceManager.getDefaultSharedPreferences(context);
-            redditSettings.edit().putString("subreddits",subreddits).apply().apply {
-                Log.i("Reddit_settings","Settings have been saved with value $subreddits");
-            };
-            redditSettings.edit().putInt("image_preview",Reddit_Api.previewQulaity).apply();
+            redditSettings.edit().putString("subreddits",subredditsNames).apply();
+            redditSettings.edit().putInt("image_preview",image_preview_qualiy_int).apply();
+            redditSettings.edit().putInt("timePeriod",TimePeridLastInt).apply();
+            redditSettings.edit().putString("listmode",CheckedChipListMode).apply();
+            redditSettings.edit().putString("timePeriodString",TimePeriod).apply();
+
         }
 
         fun loadprefs(context: Context){
             val sharedprefs = PreferenceManager.getDefaultSharedPreferences(context);
             val subtemp : String? = sharedprefs.getString("subreddits","wallpaper");
-            val imagepreview = sharedprefs.getInt("image_preview",2);
+            val templistmode = sharedprefs.getString("listmode","Hot");
+            val temptimeperiod = sharedprefs.getString("timePeriodString","");
 
-
+            //set local settings
             subredditsNames = subtemp!!;
-            Reddit_Api.previewQulaity = imagepreview!!;
+            CheckedChipListMode = templistmode!!;
+            TimePeriod = temptimeperiod!!;
+            image_preview_qualiy_int = sharedprefs.getInt("image_preview",2);
+            TimePeridLastInt = sharedprefs.getInt("timePeriod",4);
 
+            //set reddit api settings
+            Reddit_Api.listMode = CheckedChipListMode;
+            Reddit_Api.previewQulaity = image_preview_qualiy_int;
+            Reddit_Api.timeperiod = timePreValue();
+            //set subreddits
             parse_subreddits(subredditsNames);
         }
+
+        fun timePreValue(): String {
+            return if(CheckedChipListMode.lowercase() == "top"){
+                TimePeriod;
+            }else{
+                "";
+            }
+        }
+
+
+
     }
 
 
@@ -98,22 +121,34 @@ class Reddit_settings : Fragment() {
             }
         }
         //-----------------------------------------------------------------------------------------------------------------------------------------------------
-
+        //list mode with time period for top listing
         val listmode = view.findViewById(R.id.timePeriod_chipGroup) as ChipGroup;
-        var timepriote = view.findViewById(R.id.TopTimePeriod) as Spinner;
+        val timepriote = view.findViewById(R.id.TopTimePeriod) as Spinner;
 
+        //on start check for user selection in shredprefrences
+        for(child in listmode.children){
+            val tempchild = child as Chip;
+            tempchild.isChecked = tempchild.text == CheckedChipListMode;
+            timepriote.isVisible = CheckedChipListMode == "Top";
+            Reddit_Api.timeperiod = timePreValue();
+        }
+
+        //on change chip set user new chip
         listmode.setOnCheckedStateChangeListener { group, checkedIds ->
             CheckedChipListMode = group.findViewById<Chip>(checkedIds[0]).text.toString();
             timepriote.isVisible = CheckedChipListMode == "Top";
+            Reddit_Api.timeperiod = timePreValue();
         }
 
-
+        //time period now week month etc
         ArrayAdapter.createFromResource(requireContext(),R.array.TimePeriod,android.R.layout.simple_spinner_item).also{ arrayAdapter ->
             arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             timepriote.adapter = arrayAdapter;
             timepriote.setSelection(TimePeridLastInt);
+
         }
 
+        //when user change time period
         timepriote.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 val current_view = p0!!.selectedView as TextView?;
@@ -131,13 +166,18 @@ class Reddit_settings : Fragment() {
         //subreddit input box and the save button
         val inputtext = view.findViewById(R.id.inputText) as TextInputEditText;
         inputtext.setText(subredditsNames);
+
+        //when user clicks save
         view.findViewById<Button>(R.id.save_button_reddit_settings).setOnClickListener {
             parse_subreddits(inputtext.text!!.toString().lowercase());
+            subredditsNames = inputtext.text!!.toString().lowercase();
             Reddit_posts.userHitSave = true;
-            savepref(subredditsNames,requireContext());
             Reddit_Api.listMode = CheckedChipListMode;
             Reddit_Api.previewQulaity = image_preview_qualiy_int;
-            Reddit_Api.timeperiod = TimePeriod;
+
+            Reddit_Api.timeperiod = timePreValue();
+
+            savepref(requireContext());
         }
 
 

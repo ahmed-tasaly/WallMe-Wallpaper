@@ -88,8 +88,6 @@ class Reddit_Api(subredditname: String) {
             Log.i("Reddit_Api", api_key)
             val url: String;
 
-            if (listMode != "Top")
-                timeperiod = "";
 
             if(subreddit_posts_list.isNotEmpty())
                 url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?count=100&after=${last_before_id}${timeperiod.lowercase()}";

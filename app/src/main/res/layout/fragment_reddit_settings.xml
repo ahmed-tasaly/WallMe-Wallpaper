@@ -116,7 +116,6 @@
                         android:layout_height="wrap_content"
                         android:text="Hot"
                         android:checkable="true"
-                        android:checked="true"
                         android:textColor="@color/black"
                         app:chipBackgroundColor="@color/multicolor_state" />
 
