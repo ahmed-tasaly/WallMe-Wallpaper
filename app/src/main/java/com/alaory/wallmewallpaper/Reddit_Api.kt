@@ -90,9 +90,9 @@ class Reddit_Api(subredditname: String) {
 
 
             if(subreddit_posts_list.isNotEmpty())
-                url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?count=100&after=${last_before_id}${timeperiod.lowercase()}";
+                url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?count=25&after=${last_before_id}${timeperiod.lowercase()}";
             else
-                url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?limit=100${timeperiod.lowercase()}";
+                url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?limit=25${timeperiod.lowercase()}";
 
 
             Log.i("Reddit_Api",url);
@@ -188,7 +188,7 @@ class Reddit_Api(subredditname: String) {
                                             );
                                             temp_list += list_image_gallery;
                                         } catch (e: JSONException) {
-                                            Log.e("Reddit_Api", e.toString())
+                                            Log.e("Reddit_Api", "gallary error: ${e.toString()}, Url is: $url")
                                         }
 
                                     }

@@ -16,9 +16,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Wallpaper"
         tools:targetApi="21">
-        <activity android:name="com.alaory.wallmewallpaper.Image_Activity" android:exported="true" android:parentActivityName="com.alaory.wallmewallpaper.MainActivity" />
+        <activity android:name="com.alaory.wallmewallpaper.Image_Activity" android:screenOrientation="portrait" android:exported="true" android:parentActivityName="com.alaory.wallmewallpaper.MainActivity" />
         <activity
             android:name="com.alaory.wallmewallpaper.MainActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

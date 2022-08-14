@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/wallhaven_posts_list"
+        android:icon="@drawable/ic_wallhaven_2"
+        android:title="Wallhaven"/>
+
     <item android:id="@+id/Reddit_posts_List"
-        android:icon="@drawable/reddit_ico"
+        android:icon="@drawable/reddit_ic"
+        android:checked="true"
         android:title="Reddit"
         />
-    <item android:id="@+id/reddit_settings"
-        android:icon="@drawable/settings"
-        android:title="reddit settings"/>
+
+
 </menu>

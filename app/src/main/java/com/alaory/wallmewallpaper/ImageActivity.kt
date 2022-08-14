@@ -13,6 +13,7 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.isVisible
 import coil.ImageLoader
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -82,6 +83,10 @@ class Image_Activity(): AppCompatActivity(){
         auther_post.setText("posted by: ${myData.Image_auther}");
         url_post.setText(myData.post_url)
 
+        if(myData.Image_auther == "")
+            wallhaven_api.imageInfo(myData) { runOnUiThread {auther_post.setText("posted by: ${myData.Image_auther}"); } }
+        if (myData.Image_title == "")
+            titlePost.isVisible = false;
 
         //load local bitmap and ui imageview data and do it in a callback
         ImageLoader(applicationContext).enqueue(coil.request.ImageRequest.Builder(this)

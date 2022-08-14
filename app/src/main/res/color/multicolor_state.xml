@@ -3,6 +3,9 @@
     <item android:state_checked="true" android:color="@color/Selected"/>
     <item android:state_checked="false" android:color="@color/Buttons"/>
 
+    <item android:color="@color/Selected" android:state_enabled="true"/>
+    <item android:color="@color/Buttons" android:state_enabled="false"/>
+
     <item android:color="@color/Selected" android:state_selected="true"/>
     <item android:color="@color/Buttons" android:state_selected="false"/>
 </selector>

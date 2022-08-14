@@ -5,25 +5,32 @@
       <map>
         <entry key="../../../../../layout/custom_preview.xml" value="0.2125" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.3295" />
+        <entry key="app/src/main/res/drawable/filter_ic.xml" value="0.3295" />
         <entry key="app/src/main/res/drawable/homelist_ic.xml" value="0.3295" />
         <entry key="app/src/main/res/drawable/ic_baseline_horizontal_rule_24.xml" value="0.3525" />
+        <entry key="app/src/main/res/drawable/ic_filter.xml" value="0.3295" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.3295" />
         <entry key="app/src/main/res/drawable/ic_round_save_24.xml" value="0.3525" />
         <entry key="app/src/main/res/drawable/ic_round_wallpaper_24.xml" value="0.3525" />
+        <entry key="app/src/main/res/drawable/ic_wallhaven_2.xml" value="0.3295" />
         <entry key="app/src/main/res/drawable/image_placeholder.xml" value="0.3525" />
+        <entry key="app/src/main/res/drawable/reddit_ic.xml" value="0.3295" />
         <entry key="app/src/main/res/drawable/reddit_ico.xml" value="0.3295" />
         <entry key="app/src/main/res/drawable/settings.xml" value="0.3295" />
         <entry key="app/src/main/res/drawable/sheetrounded.xml" value="0.3525" />
         <entry key="app/src/main/res/drawable/textInput.xml" value="0.3295" />
         <entry key="app/src/main/res/drawable/textinput.xml" value="0.3295" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.27787851314596557" />
         <entry key="app/src/main/res/layout/fragment_reddit__posts.xml" value="0.2834544677212484" />
         <entry key="app/src/main/res/layout/fragment_reddit_posts.xml" value="0.29585292860196666" />
         <entry key="app/src/main/res/layout/fragment_reddit_settings.xml" value="0.29585292860196666" />
+        <entry key="app/src/main/res/layout/fragment_wallhaven_posts.xml" value="0.29585292860196666" />
         <entry key="app/src/main/res/layout/image_info.xml" value="0.29585292860196666" />
         <entry key="app/src/main/res/layout/image_scrolable.xml" value="0.29585292860196666" />
         <entry key="app/src/main/res/layout/mygridlayout.xml" value="0.18385416666666668" />
         <entry key="app/src/main/res/layout/show_image_fs.xml" value="0.67" />
+        <entry key="app/src/main/res/menu/filter.xml" value="0.2949978623343309" />
+        <entry key="app/src/main/res/menu/filter_menu.xml" value="0.29585292860196666" />
         <entry key="app/src/main/res/menu/menu_bottom.xml" value="0.2949978623343309" />
         <entry key="app/src/main/res/menu/navigation_menu.xml" value="0.2949978623343309" />
       </map>

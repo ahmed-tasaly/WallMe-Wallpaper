@@ -15,15 +15,9 @@ import coil.ImageLoader
 
 
 
-class MyAdab(onimageclick : MyAdab.OnImageClick): RecyclerView.Adapter<MyAdab.myviewholder>() {
+class Reddit_adab(onimageclick : Reddit_adab.OnImageClick): RecyclerView.Adapter<Reddit_adab.myviewholder>() {
     private var onimgclick = onimageclick;
     lateinit var context: Context;
-    companion object{
-        enum class Image_Mode {
-            Reddit
-        }
-        var Current_mode: Image_Mode = Image_Mode.Reddit;
-    }
     //on create the image
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): myviewholder {
         val item_view = LayoutInflater.from(parent.context).inflate(R.layout.image_scrolable,parent,false);
@@ -33,7 +27,7 @@ class MyAdab(onimageclick : MyAdab.OnImageClick): RecyclerView.Adapter<MyAdab.my
 
     //set image data
     override fun onBindViewHolder(mytypes: myviewholder, position: Int) {
-        if(Current_mode == Image_Mode.Reddit){
+
             val request = coil.request.ImageRequest.Builder(this.context)
                 .data(Reddit_Api.reddit_global_posts.get(position).Image_thumbnail)
                 .target(mytypes.image_main)
@@ -56,7 +50,7 @@ class MyAdab(onimageclick : MyAdab.OnImageClick): RecyclerView.Adapter<MyAdab.my
                 )
                 .build()
             var resu = ImageLoader(this.context).enqueue(request);
-        }
+
 
         mytypes.root_view.setOnClickListener {
             onimgclick.onImageClick(position,mytypes.image_main.drawable);
@@ -65,15 +59,13 @@ class MyAdab(onimageclick : MyAdab.OnImageClick): RecyclerView.Adapter<MyAdab.my
 
     //get list size
     override fun getItemCount(): Int {
-        if(Current_mode == Image_Mode.Reddit){
-            return Reddit_Api.reddit_global_posts.size;
-        }
-        return  0;
+
+        return Reddit_Api.reddit_global_posts.size;
+
     }
     //update list and recycleview
     fun refresh_itemList(){
-        if(Current_mode == Image_Mode.Reddit)
-            notifyItemInserted(Reddit_Api.last_index);
+        notifyItemInserted(Reddit_Api.last_index);
     }
 
     //what does the view hold

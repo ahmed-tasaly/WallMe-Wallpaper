@@ -11,10 +11,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class Reddit_posts : Fragment(),MyAdab.OnImageClick {
+class Reddit_posts : Fragment(),Reddit_adab.OnImageClick {
 
     private lateinit var myrec: RecyclerView;
-    private lateinit var PostsAdabter: MyAdab;
+    private lateinit var PostsAdabter: Reddit_adab;
 
     companion object{
          var firsttime = true;
@@ -35,7 +35,7 @@ class Reddit_posts : Fragment(),MyAdab.OnImageClick {
             for (i in Reddit_settings.subreddits_list_names){
                 reddit_api += Reddit_Api(i);
             }
-            PostsAdabter = MyAdab(this);
+            PostsAdabter = Reddit_adab(this);
             update_adabter();
             firsttime = false;
             userHitSave = false;
