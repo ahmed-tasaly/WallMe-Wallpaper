@@ -84,7 +84,7 @@ as now of development nothing much. however check the todo list to see the commi
 
 <div align=center>
 
-<img src="./Images/phone.jpeg" alt="drawing" width=200/>
+<img src="./Images/phone.jpg" alt="drawing" width=200/>
 
 </div>
 
