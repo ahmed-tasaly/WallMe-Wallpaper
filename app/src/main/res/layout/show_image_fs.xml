@@ -47,6 +47,7 @@
                 android:background="@color/widget"
                 app:layout_constraintTop_toBottomOf="@+id/full_image">
 
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -113,7 +114,23 @@
                     android:text="Title"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/TagGroup"
+                        android:layout_marginTop="20dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:visibility="invisible"
+                        app:layout_constraintTop_toBottomOf="@+id/save_imageButton">
+
+
+                    </com.google.android.material.chip.ChipGroup>
+
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 

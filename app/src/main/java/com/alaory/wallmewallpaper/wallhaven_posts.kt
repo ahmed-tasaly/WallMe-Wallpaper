@@ -62,9 +62,9 @@ class wallhaven_posts : Fragment() , Wallhaven_adab.OnImageClick{
     override fun onImageClick(Pos: Int, thumbnail: Drawable) {
         try{
             var intent = Intent(requireContext(),Image_Activity::class.java);
-            wallhaven_api.imageInfo(wallhaven_api.wallhaven_homepage_posts[Pos]);
             Image_Activity.myData = wallhaven_api.wallhaven_homepage_posts[Pos];
             Image_Activity.thumbnail = thumbnail;
+            Image_Activity.postmode = Image_Activity.mode.wallhaven;
             startActivity(intent);
         }catch (e:Exception){
             Log.e("wallhaven_posts",e.toString())

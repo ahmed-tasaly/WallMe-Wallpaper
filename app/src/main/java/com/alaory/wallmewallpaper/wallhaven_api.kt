@@ -17,7 +17,7 @@ class wallhaven_api {
 
         fun GethomePagePosts(page: Int = currentPage,callback: () -> Unit = {}){
             val homepagereq = Request.Builder()
-                .url("https://wallhaven.cc/api/v1/search?page=$page")
+                .url("https://wallhaven.cc/api/v1/search?page=$page&sorting=relevance&order=desc")
                 .build();
 
             wallhavenRequest.newCall(homepagereq).enqueue(object : Callback{
@@ -83,6 +83,16 @@ class wallhaven_api {
                         val body = response.body!!.string();
                         val data = JSONObject(body).getJSONObject("data");
                         listimage_ref.Image_auther = data.getJSONObject("uploader").getString("username");
+                        try {
+                            Image_Activity.TagNameList = emptyArray();
+                            val TagsJson = data.getJSONArray("tags");
+                            for(i in 0 until TagsJson.length())
+                                Image_Activity.TagNameList += TagsJson.getJSONObject(i).getString("name");
+
+                        }catch (e : JSONException){
+                            Log.e("wallhaven_api","Tag error ${e.toString()}")
+                        }
+
                         callback();
                     }catch (e: JSONException){
                         Log.e("wallhaven_api",e.toString());

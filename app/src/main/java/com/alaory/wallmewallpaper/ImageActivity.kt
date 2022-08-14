@@ -9,12 +9,15 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import coil.ImageLoader
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import java.io.ByteArrayOutputStream
 import java.io.File
 
@@ -26,6 +29,14 @@ class Image_Activity(): AppCompatActivity(){
     private lateinit var url_post: TextView;
     private lateinit var Full_image: ImageView;
     private lateinit var mybitmap: Bitmap;
+    private lateinit var taggroup: ChipGroup;
+
+    enum class mode{
+        wallhaven,
+        reddit
+    }
+
+
 
     private lateinit var cricle_prograssBar : ProgressBar;
     //to check if the image is loaded
@@ -36,6 +47,10 @@ class Image_Activity(): AppCompatActivity(){
         lateinit var myData : List_image;
         lateinit var thumbnail: Drawable;
         //save bitmap to file and load it as a uri
+        //mode
+        var postmode = mode.reddit;
+        //wallhaven tags
+        var TagNameList : Array<String> = emptyArray();
 
 
         fun saveImage(context: Context, image: Bitmap,Name : String): String {
@@ -72,21 +87,34 @@ class Image_Activity(): AppCompatActivity(){
         //set the activit as a main screen
         setContentView(R.layout.show_image_fs);
         //set the ui elements
-        titlePost = findViewById<TextView>(R.id.title_post);
-        auther_post = findViewById<TextView>(R.id.auther_post);
-        url_post = findViewById<TextView>(R.id.url_post);
-        Full_image = findViewById<ImageView>(R.id.full_image);
-        cricle_prograssBar = findViewById<ProgressBar>(R.id.cricle_prograssBar_FullImage);
-
+        titlePost = findViewById(R.id.title_post);
+        auther_post = findViewById(R.id.auther_post);
+        url_post = findViewById(R.id.url_post);
+        Full_image = findViewById(R.id.full_image);
+        cricle_prograssBar = findViewById(R.id.cricle_prograssBar_FullImage);
+        taggroup = findViewById(R.id.TagGroup);
+        taggroup.isVisible = false;
 
         titlePost.setText(myData.Image_title);
         auther_post.setText("posted by: ${myData.Image_auther}");
         url_post.setText(myData.post_url)
 
-        if(myData.Image_auther == "")
-            wallhaven_api.imageInfo(myData) { runOnUiThread {auther_post.setText("posted by: ${myData.Image_auther}"); } }
-        if (myData.Image_title == "")
+        if(postmode == mode.wallhaven){
+
+            wallhaven_api.imageInfo(myData) {
+                runOnUiThread {
+                    taggroup.isVisible = true;
+                    auther_post.setText("posted by: ${myData.Image_auther}");
+                    for (i in TagNameList){
+                        val TagChip = LayoutInflater.from(this).inflate(R.layout.tagchip,taggroup,false) as Chip;
+                        TagChip.text = i;
+                        taggroup.addView(TagChip)
+                    }
+                }
+            }
             titlePost.isVisible = false;
+        }
+
 
         //load local bitmap and ui imageview data and do it in a callback
         ImageLoader(applicationContext).enqueue(coil.request.ImageRequest.Builder(this)

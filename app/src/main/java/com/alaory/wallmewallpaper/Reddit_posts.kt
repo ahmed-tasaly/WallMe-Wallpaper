@@ -95,6 +95,7 @@ class Reddit_posts : Fragment(),Reddit_adab.OnImageClick {
             val intent = Intent(requireContext(), Image_Activity::class.java);
             Image_Activity.myData = Reddit_Api.reddit_global_posts.get(Pos);
             Image_Activity.thumbnail = thumbnail;
+            Image_Activity.postmode = Image_Activity.mode.reddit;
             startActivity(intent);
         }catch (e: Exception){
             Log.e("Reddit_posts","error while trying to set image activity")
