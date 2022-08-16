@@ -1,5 +1,6 @@
 package com.alaory.wallmewallpaper
 
+
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -12,15 +13,15 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 
-class wallhaven_posts : Fragment() , Wallhaven_adab.OnImageClick{
+class TagFragment(val Tag: wallhaven_api.Tag) : Fragment() , Wallhaven_adab.OnImageClick{
 
     lateinit var wallhaven_recycle : RecyclerView;
     lateinit var wallhaven_adabter : Wallhaven_adab;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        wallhaven_adabter = Wallhaven_adab(wallhaven_api.wallhaven_homepage_posts,this);
-        wallhaven_api.GethomePagePosts {
+        wallhaven_adabter = Wallhaven_adab(Tag.Tag_Post_list,this);
+        wallhaven_api.TagPosts(Tag){
             update_adabter();
         }
     }
@@ -30,7 +31,7 @@ class wallhaven_posts : Fragment() , Wallhaven_adab.OnImageClick{
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_wallhaven_posts, container, false)
+        return inflater.inflate(R.layout.fragment_tagfragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,8 +54,7 @@ class wallhaven_posts : Fragment() , Wallhaven_adab.OnImageClick{
     }
 
     fun update_adabter(){
-        wallhaven_api.currentPage++;
-        wallhaven_api.GethomePagePosts {
+        wallhaven_api.TagPosts(this.Tag) {
             requireActivity().runOnUiThread {
                 wallhaven_adabter.refresh_itemList();
             }

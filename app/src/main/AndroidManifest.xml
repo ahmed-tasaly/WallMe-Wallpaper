@@ -2,10 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.alaory.wallmewallpaper">
+
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
-    <uses-permission android:name="android.permission.SET_WALLPAPER_HINTS"/>
+    <uses-permission android:name="android.permission.SET_WALLPAPER_HINTS" />
 
     <application
         android:allowBackup="true"
@@ -16,11 +17,23 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Wallpaper"
         tools:targetApi="21">
-        <activity android:name="com.alaory.wallmewallpaper.Image_Activity" android:screenOrientation="portrait" android:exported="true" android:parentActivityName="com.alaory.wallmewallpaper.MainActivity" />
         <activity
-            android:name="com.alaory.wallmewallpaper.MainActivity"
-            android:screenOrientation="portrait"
-            android:exported="true">
+            android:name=".TagActivity"
+            android:exported="false" />
+        <activity
+            android:name=".tagActivity"
+            android:exported="false"
+            android:label="@string/title_activity_tag"
+            android:theme="@style/Theme.Wallpaper.NoActionBar" />
+        <activity
+            android:name=".Image_Activity"
+            android:exported="true"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

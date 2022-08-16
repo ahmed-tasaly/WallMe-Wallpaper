@@ -2,6 +2,7 @@ package com.alaory.wallmewallpaper
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,9 +12,15 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 
-class Wallhaven_adab(onimageclick : OnImageClick): RecyclerView.Adapter<Wallhaven_adab.Post>() {
+class Wallhaven_adab(var listPosts: MutableList<List_image>, onimageclick : OnImageClick): RecyclerView.Adapter<Wallhaven_adab.Post>() {
+
+
     var imgclick = onimageclick;
+
+
     lateinit var context: Context;
+
+
     class Post(view : View) : RecyclerView.ViewHolder(view) {
         var root_view = itemView.findViewById(R.id.root_imageView) as ConstraintLayout;
         var image_main = itemView.findViewById(R.id.image_main) as ImageView;
@@ -28,7 +35,7 @@ class Wallhaven_adab(onimageclick : OnImageClick): RecyclerView.Adapter<Wallhave
 
     override fun onBindViewHolder(holder: Post, position: Int) {
         val request = coil.request.ImageRequest.Builder(this.context)
-            .data(wallhaven_api.wallhaven_homepage_posts.get(position).Image_thumbnail)
+            .data(listPosts!!.get(position).Image_thumbnail)
             .target(holder.image_main)
             .placeholder(R.drawable.image_placeholder)
             .fallback(com.google.android.material.R.drawable.ic_mtrl_chip_close_circle)
@@ -56,10 +63,10 @@ class Wallhaven_adab(onimageclick : OnImageClick): RecyclerView.Adapter<Wallhave
     }
 
     fun refresh_itemList(){
-        notifyItemInserted(wallhaven_api.wallhaven_homepage_posts.lastIndex);
+        notifyItemInserted(listPosts!!.lastIndex);
     }
     override fun getItemCount(): Int {
-        return wallhaven_api.wallhaven_homepage_posts.size;
+        return listPosts!!.size;
     }
     interface OnImageClick{
         fun onImageClick(Pos: Int,thumbnail: Drawable);

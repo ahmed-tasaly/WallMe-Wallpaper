@@ -13,9 +13,15 @@ class MainActivity : AppCompatActivity(){
     private lateinit var binding: ActivityMainBinding;
     private lateinit var myrec: RecyclerView;
 
+
     private var redditPosts  = Reddit_posts();
     private var reddit_filter = Reddit_settings();
     private var wallhavenPosts = wallhaven_posts();
+
+    companion object{
+        var Tag_fragment : TagFragment? = null
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -24,7 +30,12 @@ class MainActivity : AppCompatActivity(){
 
         binding = ActivityMainBinding.inflate(layoutInflater);
         setContentView(binding.root);
-        change_fragment(redditPosts);
+
+        if(Tag_fragment == null)
+            change_fragment(redditPosts);
+        else
+            change_fragment(Tag_fragment!!)
+
 
         Reddit_Api.Update_Api_key{
             redditPosts.update_adabter();
@@ -52,7 +63,8 @@ class MainActivity : AppCompatActivity(){
 
     }
 
-    private fun change_fragment(fragment: Fragment){
+
+    fun change_fragment(fragment: Fragment){
         var fragman = supportFragmentManager.beginTransaction();
         fragman.replace(R.id.container,fragment);
         fragman.commit();

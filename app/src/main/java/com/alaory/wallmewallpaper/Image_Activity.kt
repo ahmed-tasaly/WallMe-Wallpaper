@@ -15,6 +15,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import coil.ImageLoader
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -108,6 +109,19 @@ class Image_Activity(): AppCompatActivity(){
                     for (i in TagNameList){
                         val TagChip = LayoutInflater.from(this).inflate(R.layout.tagchip,taggroup,false) as Chip;
                         TagChip.text = i;
+
+                        TagChip.setOnClickListener {
+
+                            try {
+                                val tempTag = wallhaven_api.Tag(i);
+                                val tagFragment = TagFragment(tempTag);
+                                val intent = Intent(this, MainActivity::class.java);
+                                MainActivity.Tag_fragment = tagFragment;
+                                startActivity(intent);
+                            }catch (e: Exception){
+                                Log.e("Reddit_posts","error while trying to set image activity")
+                            }
+                        }
                         taggroup.addView(TagChip)
                     }
                 }
