@@ -19,12 +19,10 @@
         tools:targetApi="21">
         <activity
             android:name=".TagActivity"
-            android:exported="false" />
-        <activity
-            android:name=".tagActivity"
             android:exported="false"
-            android:label="@string/title_activity_tag"
-            android:theme="@style/Theme.Wallpaper.NoActionBar" />
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"
+            />
         <activity
             android:name=".Image_Activity"
             android:exported="true"

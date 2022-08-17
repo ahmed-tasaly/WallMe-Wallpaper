@@ -12,7 +12,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 
-class Wallhaven_adab(var listPosts: MutableList<List_image>, onimageclick : OnImageClick): RecyclerView.Adapter<Wallhaven_adab.Post>() {
+class Wallhaven_adab(private var listPosts: MutableList<List_image>, onimageclick : OnImageClick): RecyclerView.Adapter<Wallhaven_adab.Post>() {
 
 
     var imgclick = onimageclick;
@@ -35,7 +35,7 @@ class Wallhaven_adab(var listPosts: MutableList<List_image>, onimageclick : OnIm
 
     override fun onBindViewHolder(holder: Post, position: Int) {
         val request = coil.request.ImageRequest.Builder(this.context)
-            .data(listPosts!!.get(position).Image_thumbnail)
+            .data(listPosts.get(position).Image_thumbnail)
             .target(holder.image_main)
             .placeholder(R.drawable.image_placeholder)
             .fallback(com.google.android.material.R.drawable.ic_mtrl_chip_close_circle)
@@ -63,10 +63,10 @@ class Wallhaven_adab(var listPosts: MutableList<List_image>, onimageclick : OnIm
     }
 
     fun refresh_itemList(){
-        notifyItemInserted(listPosts!!.lastIndex);
+        notifyItemInserted(listPosts.lastIndex);
     }
     override fun getItemCount(): Int {
-        return listPosts!!.size;
+        return listPosts.size;
     }
     interface OnImageClick{
         fun onImageClick(Pos: Int,thumbnail: Drawable);

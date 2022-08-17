@@ -17,10 +17,7 @@ class MainActivity : AppCompatActivity(){
     private var redditPosts  = Reddit_posts();
     private var reddit_filter = Reddit_settings();
     private var wallhavenPosts = wallhaven_posts();
-
-    companion object{
-        var Tag_fragment : TagFragment? = null
-    }
+    private var wallhaven_filter = wallhaven_settings();
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,10 +28,7 @@ class MainActivity : AppCompatActivity(){
         binding = ActivityMainBinding.inflate(layoutInflater);
         setContentView(binding.root);
 
-        if(Tag_fragment == null)
-            change_fragment(redditPosts);
-        else
-            change_fragment(Tag_fragment!!)
+        change_fragment(redditPosts);
 
 
         Reddit_Api.Update_Api_key{
@@ -56,6 +50,7 @@ class MainActivity : AppCompatActivity(){
         findViewById<FloatingActionButton>(R.id.filterbutton).setOnClickListener {
             when(bottomnav.selectedItemId){
                 R.id.Reddit_posts_List -> {change_fragment(reddit_filter);true}
+                R.id.wallhaven_posts_list -> {change_fragment(wallhaven_filter);true}
                 else -> {true}
             }
         }

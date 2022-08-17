@@ -93,8 +93,8 @@ class Reddit_posts : Fragment(),Reddit_adab.OnImageClick {
     override fun onImageClick(Pos: Int,thumbnail : Drawable) {
         try {
             val intent = Intent(requireContext(), Image_Activity::class.java);
-            Image_Activity.myData = Reddit_Api.reddit_global_posts.get(Pos);
-            Image_Activity.thumbnail = thumbnail;
+            Image_Activity.MYDATA = Reddit_Api.reddit_global_posts.get(Pos);
+            Image_Activity.THUMBNAIL = thumbnail;
             Image_Activity.postmode = Image_Activity.mode.reddit;
             startActivity(intent);
         }catch (e: Exception){

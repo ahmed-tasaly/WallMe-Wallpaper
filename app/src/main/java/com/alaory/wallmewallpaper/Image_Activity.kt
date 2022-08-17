@@ -32,6 +32,9 @@ class Image_Activity(): AppCompatActivity(){
     private lateinit var mybitmap: Bitmap;
     private lateinit var taggroup: ChipGroup;
 
+    lateinit var myData : List_image;
+    lateinit var thumbnail: Drawable;
+
     enum class mode{
         wallhaven,
         reddit
@@ -45,8 +48,8 @@ class Image_Activity(): AppCompatActivity(){
 
     companion object{
         //the clicked data by the user
-        lateinit var myData : List_image;
-        lateinit var thumbnail: Drawable;
+        lateinit var MYDATA : List_image;
+        lateinit var THUMBNAIL: Drawable;
         //save bitmap to file and load it as a uri
         //mode
         var postmode = mode.reddit;
@@ -85,6 +88,8 @@ class Image_Activity(): AppCompatActivity(){
     override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle);
         this.supportActionBar!!.hide();
+        myData = MYDATA
+        thumbnail = THUMBNAIL
         //set the activit as a main screen
         setContentView(R.layout.show_image_fs);
         //set the ui elements
@@ -113,10 +118,10 @@ class Image_Activity(): AppCompatActivity(){
                         TagChip.setOnClickListener {
 
                             try {
-                                val tempTag = wallhaven_api.Tag(i);
-                                val tagFragment = TagFragment(tempTag);
-                                val intent = Intent(this, MainActivity::class.java);
-                                MainActivity.Tag_fragment = tagFragment;
+                                val tempTag = wallhaven_api.Tag("&q=+$i");
+                                val intent = Intent(this, TagActivity::class.java);
+                                intent.flags = (Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                TagActivity.Tag_Assing = tempTag;
                                 startActivity(intent);
                             }catch (e: Exception){
                                 Log.e("Reddit_posts","error while trying to set image activity")

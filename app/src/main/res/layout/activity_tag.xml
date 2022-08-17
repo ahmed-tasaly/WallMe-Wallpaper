@@ -11,11 +11,11 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tag_recyclye"
-        android:layoutDirection="ltr"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="-3dp"
         android:background="@color/Background"
-        />
+        android:layoutDirection="ltr" />
 
 
 </RelativeLayout>
