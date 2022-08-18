@@ -103,9 +103,9 @@ it needs a lot of work
 
 - [x] add reddit support 
 - [x] add reddit settings
-- [ ] add more ui I SAID MORE
+- [x] add wallhaven support
 - [ ] add auto wallpaper changer with preferred croping
-- [ ] add wallhaven support
+- [ ] add more ui I SAID MORE
 - [ ] more plans comming
 
 
