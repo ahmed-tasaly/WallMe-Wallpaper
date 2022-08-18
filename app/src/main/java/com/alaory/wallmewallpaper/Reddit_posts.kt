@@ -1,6 +1,8 @@
 package com.alaory.wallmewallpaper
 
 import android.content.Intent
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -11,10 +13,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class Reddit_posts : Fragment(),Reddit_adab.OnImageClick {
+class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
 
-    private lateinit var myrec: RecyclerView;
-    private lateinit var PostsAdabter: Reddit_adab;
+    private var myrec: RecyclerView? = null;
+    private var PostsAdabter: Image_list_adapter? = null;
+
 
     companion object{
          var firsttime = true;
@@ -25,21 +28,27 @@ class Reddit_posts : Fragment(),Reddit_adab.OnImageClick {
     var reddit_api : Array<Reddit_Api> = emptyArray();
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
         if(firsttime || userHitSave){
+            Log.i("Reddit_posts","i have beeen created");
             reddit_api = emptyArray();
             Reddit_Api.Subreddits = emptyArray();
-            Reddit_Api.reddit_global_posts = emptyArray();
+            Reddit_Api.reddit_global_posts = emptyList<List_image>().toMutableList();
 
             for (i in Reddit_settings.subreddits_list_names){
                 reddit_api += Reddit_Api(i);
             }
-            PostsAdabter = Reddit_adab(this);
+            PostsAdabter = Image_list_adapter(Reddit_Api.reddit_global_posts,this);
             update_adabter();
             firsttime = false;
             userHitSave = false;
         }
+
+        if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
+            update_adabter();
+
 
     }
 
@@ -47,17 +56,18 @@ class Reddit_posts : Fragment(),Reddit_adab.OnImageClick {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState);
+        update_adabter();
 
 
         myrec = view.findViewById(R.id.fragmentrec) as RecyclerView;
-        myrec.layoutManager = GridLayoutManager(requireContext(),2, GridLayoutManager.VERTICAL,false);
-        myrec.setHasFixedSize(false);
-        myrec.adapter = PostsAdabter;
+        myrec!!.layoutManager = GridLayoutManager(requireContext(),MainActivity.num_post_in_Column, GridLayoutManager.VERTICAL,false);
+        myrec!!.setHasFixedSize(false);
+        myrec?.adapter = PostsAdabter;
 
-        myrec.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+        myrec!!.addOnScrollListener(object : RecyclerView.OnScrollListener(){
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if(!myrec.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE && isAdded){
+                if(!myrec!!.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE && isAdded){
                     Log.i("MainRecyclerView", "User hit bottom");
                     update_adabter();
                 }
@@ -82,7 +92,7 @@ class Reddit_posts : Fragment(),Reddit_adab.OnImageClick {
             Reddit_Api.get_shuffle_andGive {
                 if(isAdded) {
                     requireActivity().runOnUiThread {
-                        PostsAdabter.refresh_itemList();
+                        PostsAdabter?.refresh_itemList();
                     }
                 }
             }

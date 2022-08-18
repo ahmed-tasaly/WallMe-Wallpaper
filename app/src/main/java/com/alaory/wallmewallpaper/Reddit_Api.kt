@@ -21,7 +21,7 @@ class Reddit_Api(subredditname: String) {
         //okhttp client
         var reddit = OkHttpClient();
         //list of all subreddits posts
-        var reddit_global_posts : Array<List_image> = emptyArray();
+        var reddit_global_posts : MutableList<List_image> = emptyList<List_image>().toMutableList();
         //list of subreddits that have been made
         var Subreddits : Array<Reddit_Api> = emptyArray();
         //global post last index list

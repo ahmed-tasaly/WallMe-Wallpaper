@@ -2,7 +2,6 @@ package com.alaory.wallmewallpaper
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,13 +11,13 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 
-class Wallhaven_adab(private var listPosts: MutableList<List_image>, onimageclick : OnImageClick): RecyclerView.Adapter<Wallhaven_adab.Post>() {
+class Image_list_adapter(private var listPosts: MutableList<List_image>, onimageclick : OnImageClick): RecyclerView.Adapter<Image_list_adapter.Post>() {
 
 
     var imgclick = onimageclick;
 
 
-    lateinit var context: Context;
+     var context: Context? = null;
 
 
     class Post(view : View) : RecyclerView.ViewHolder(view) {
@@ -34,7 +33,7 @@ class Wallhaven_adab(private var listPosts: MutableList<List_image>, onimageclic
     }
 
     override fun onBindViewHolder(holder: Post, position: Int) {
-        val request = coil.request.ImageRequest.Builder(this.context)
+        val request = coil.request.ImageRequest.Builder(this.context!!)
             .data(listPosts.get(position).Image_thumbnail)
             .target(holder.image_main)
             .placeholder(R.drawable.image_placeholder)
@@ -55,7 +54,7 @@ class Wallhaven_adab(private var listPosts: MutableList<List_image>, onimageclic
 
             )
             .build()
-        var resu = ImageLoader(this.context).enqueue(request);
+        var resu = ImageLoader(this.context!!).enqueue(request);
 
         holder.root_view.setOnClickListener {
             imgclick.onImageClick(position,holder.image_main.drawable);

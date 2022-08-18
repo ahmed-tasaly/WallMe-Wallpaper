@@ -1,6 +1,7 @@
 package com.alaory.wallmewallpaper
 
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -12,17 +13,15 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 
-class wallhaven_posts : Fragment() , Wallhaven_adab.OnImageClick{
+class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
-    lateinit var wallhaven_recycle : RecyclerView;
-    lateinit var wallhaven_adabter : Wallhaven_adab;
+     var wallhaven_recycle : RecyclerView? = null;
+     var wallhaven_adabter : Image_list_adapter? = null;
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        wallhaven_adabter = Wallhaven_adab(wallhaven_api.wallhaven_homepage_posts,this);
-        wallhaven_api.GethomePagePosts {
-            update_adabter();
-        }
+
     }
 
     override fun onCreateView(
@@ -35,27 +34,37 @@ class wallhaven_posts : Fragment() , Wallhaven_adab.OnImageClick{
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        wallhaven_adabter = Image_list_adapter(wallhaven_api.wallhaven_homepage_posts,this);
         wallhaven_recycle = view.findViewById(R.id.wallhavenRec) as RecyclerView;
-        wallhaven_recycle.layoutManager = GridLayoutManager(requireContext(),2,GridLayoutManager.VERTICAL,false);
-        wallhaven_recycle.setHasFixedSize(false)
-        wallhaven_recycle.adapter = wallhaven_adabter;
+        wallhaven_recycle!!.layoutManager = GridLayoutManager(requireContext(),MainActivity.num_post_in_Column,GridLayoutManager.VERTICAL,false);
+        wallhaven_recycle!!.setHasFixedSize(false)
+        wallhaven_recycle?.adapter = wallhaven_adabter;
 
-        wallhaven_recycle.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+        if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
+            update_adabter();
+
+        wallhaven_recycle!!.addOnScrollListener(object : RecyclerView.OnScrollListener(){
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if(!wallhaven_recycle.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE && isAdded){
+                if(!wallhaven_recycle!!.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE && isAdded){
                     Log.i("MainRecyclerView", "User hit bottom");
                     update_adabter();
                 }
 
             }
         })
+
+
+
+
     }
+
+
 
     fun update_adabter(){
         wallhaven_api.GethomePagePosts {
             requireActivity().runOnUiThread {
-                wallhaven_adabter.refresh_itemList();
+                wallhaven_adabter!!.refresh_itemList();
             }
         }
     }

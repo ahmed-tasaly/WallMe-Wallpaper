@@ -21,7 +21,7 @@ class wallhaven_api {
                 .build();
 
             wallhavenRequest.newCall(homepagereq).enqueue(object : Callback{
-                lateinit var responseJson : JSONObject;
+
                 override fun onFailure(call: Call, e: IOException) {
                     Log.e("wallhaven_api",e.toString());
                 }
@@ -30,7 +30,7 @@ class wallhaven_api {
                     try {
                         val body = response.body!!.string();
                         Log.i("wallhaven_api",body);
-                        responseJson = JSONObject(body);
+                        var responseJson = JSONObject(body);
                         val data = responseJson.getJSONArray("data");
 
                         for (i in 0 until data.length()) {
@@ -82,7 +82,7 @@ class wallhaven_api {
                 .build();
             Log.i("wallhaven_api","TagPosts URL: $url")
             wallhavenRequest.newCall(tagPosts_request).enqueue(object : Callback{
-                lateinit var responseJson : JSONObject;
+
                 override fun onFailure(call: Call, e: IOException) {
                     Log.e("wallhaven_api","Tag request failed: $e")
                 }
@@ -91,7 +91,7 @@ class wallhaven_api {
                     try {
                         val body = response.body!!.string();
                         Log.i("wallhaven_api",body);
-                        responseJson = JSONObject(body);
+                        var responseJson  = JSONObject(body);
                         val data = responseJson.getJSONArray("data");
                         for (i in 0 until data.length()) {
                             var post: List_image;

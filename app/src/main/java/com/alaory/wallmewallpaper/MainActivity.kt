@@ -1,5 +1,7 @@
 package com.alaory.wallmewallpaper
 
+import android.content.res.Configuration
+import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,8 +12,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity(){
 
-    private lateinit var binding: ActivityMainBinding;
-    private lateinit var myrec: RecyclerView;
+    private var binding: ActivityMainBinding? = null;
 
 
     private var redditPosts  = Reddit_posts();
@@ -19,14 +20,38 @@ class MainActivity : AppCompatActivity(){
     private var wallhavenPosts = wallhaven_posts();
     private var wallhaven_filter = wallhaven_settings();
 
+    companion object{
+        var num_post_in_Column = 2;
+        var last_orein = Configuration.ORIENTATION_PORTRAIT;
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
         this.supportActionBar!!.hide();
         Reddit_settings.loadprefs(this);
 
+
+        when(Resources.getSystem().configuration.orientation){
+            Configuration.ORIENTATION_PORTRAIT ->{
+                num_post_in_Column = 2;
+                last_orein = Configuration.ORIENTATION_PORTRAIT;
+            }
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                num_post_in_Column = 4;
+                last_orein = Configuration.ORIENTATION_LANDSCAPE;
+            }
+            Configuration.ORIENTATION_UNDEFINED -> {
+                num_post_in_Column = 2;
+                last_orein = Configuration.ORIENTATION_UNDEFINED;
+            }
+        }
+
+
+
+
         binding = ActivityMainBinding.inflate(layoutInflater);
-        setContentView(binding.root);
+        setContentView(binding!!.root);
 
         change_fragment(redditPosts);
 
