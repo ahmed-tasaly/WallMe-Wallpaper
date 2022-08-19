@@ -3,6 +3,9 @@ package com.alaory.wallmewallpaper
 
 
 import android.util.Log
+import androidx.core.view.children
+import androidx.core.view.iterator
+import com.google.android.material.chip.Chip
 import okhttp3.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -15,11 +18,28 @@ class wallhaven_api {
         var currentPage: Int = 1;
 
 
+
         fun GethomePagePosts(sorting: String = "&sorting=favorites",ordering:String = "&order=desc" ,callback: () -> Unit = {}){
+            var Tags_String = "&q=";
+            try{
+                for(i  in wallhaven_settings.TagBox?.children!!){
+                    val tempChip = i as Chip
+                    if(tempChip.text != "Add")
+                        Tags_String += ("+${tempChip.text}");
+                }
+            }catch (e:Exception){
+                Log.e("wallhaven_api",e.toString())
+            }
+
+
+
+            val url_homepage = "https://wallhaven.cc/api/v1/search?page=$currentPage${sorting}${ordering}${if(Tags_String != "&q=")Tags_String else ""}";
+
             val homepagereq = Request.Builder()
-                .url("https://wallhaven.cc/api/v1/search?page=$currentPage${sorting}${ordering}&q=+nature+landscape-sky&categories=010")
+                .url(url_homepage)
                 .build();
 
+            Log.i("wallhaven_api","Home page Url $url_homepage")
             wallhavenRequest.newCall(homepagereq).enqueue(object : Callback{
 
                 override fun onFailure(call: Call, e: IOException) {
@@ -60,8 +80,8 @@ class wallhaven_api {
                             }
                         }
                         if(data.length() > 1){
-                            callback();
                             currentPage++;
+                            callback();
                         }
 
                     }
