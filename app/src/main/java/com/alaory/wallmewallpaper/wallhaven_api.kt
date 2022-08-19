@@ -14,7 +14,10 @@ import java.io.IOException
 class wallhaven_api {
     companion object{
         val wallhavenRequest  = OkHttpClient();
+
+
         var wallhaven_homepage_posts : MutableList<List_image> = emptyList<List_image>().toMutableList();
+        var lastindex: Int = 0;
         var currentPage: Int = 1;
 
 
@@ -22,10 +25,8 @@ class wallhaven_api {
         fun GethomePagePosts(sorting: String = "&sorting=favorites",ordering:String = "&order=desc" ,callback: () -> Unit = {}){
             var Tags_String = "&q=";
             try{
-                for(i  in wallhaven_settings.TagBox?.children!!){
-                    val tempChip = i as Chip
-                    if(tempChip.text != "Add")
-                        Tags_String += ("+${tempChip.text}");
+                for(i in wallhaven_settings.TagsSequnce){
+                    Tags_String += ("+$i");
                 }
             }catch (e:Exception){
                 Log.e("wallhaven_api",e.toString())
@@ -49,9 +50,13 @@ class wallhaven_api {
                 override fun onResponse(call: Call, response: Response) {
                     try {
                         val body = response.body!!.string();
-                        Log.i("wallhaven_api",body);
-                        var responseJson = JSONObject(body);
+
+                        val responseJson = JSONObject(body);
                         val data = responseJson.getJSONArray("data");
+
+                        Log.i("wallhaven_api",body);
+
+                        var TempList : Array<List_image> = emptyArray();
 
                         for (i in 0 until data.length()) {
                             try {
@@ -74,13 +79,16 @@ class wallhaven_api {
                                     "",
                                     postInfo.getString("url")
                                 );
-                                wallhaven_homepage_posts += post;
+
+                                TempList += post;
                             } catch (e: JSONException) {
                                 Log.e("wallhaven_api", e.toString());
                             }
                         }
-                        if(data.length() > 1){
+                        if(TempList.size > 0){
                             currentPage++;
+                            lastindex = wallhaven_homepage_posts.size;
+                            wallhaven_homepage_posts += TempList;
                             callback();
                         }
 
@@ -92,6 +100,7 @@ class wallhaven_api {
 
             })
         }
+
 
         //request tag page
         fun TagPosts(tag: Tag,sorting: String = "&sorting=views",ordering:String = "&order=desc" ,callback: () -> Unit = {}){
@@ -111,8 +120,11 @@ class wallhaven_api {
                     try {
                         val body = response.body!!.string();
                         Log.i("wallhaven_api",body);
-                        var responseJson  = JSONObject(body);
+                        val responseJson  = JSONObject(body);
                         val data = responseJson.getJSONArray("data");
+
+                        var tempList: Array<List_image> = emptyArray();
+
                         for (i in 0 until data.length()) {
                             var post: List_image;
                             val postInfo = data.getJSONObject(i);
@@ -132,10 +144,12 @@ class wallhaven_api {
                                 "",
                                 postInfo.getString("url")
                             );
-                            tag.Tag_Post_list += post;
+                            tempList += post;
                         }
-                        if(data.length() > 0){
+                        if(tempList.size > 0){
                             tag.Page_Tag++;
+                            tag.lastindex = tag.Tag_Post_list.size;
+                            tag.Tag_Post_list += tempList;
                             callback();
                         }
                     }catch (e:JSONException){
@@ -196,6 +210,7 @@ class wallhaven_api {
     data class Tag(
         var Name_Tag: String,
         var Page_Tag: Int=1,
+        var lastindex : Int = 0,
         var Tag_Post_list: MutableList<List_image> = emptyList<List_image>().toMutableList()
     )
 

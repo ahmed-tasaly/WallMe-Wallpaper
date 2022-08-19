@@ -2,6 +2,7 @@ package com.alaory.wallmewallpaper
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,15 +55,22 @@ class Image_list_adapter(private var listPosts: MutableList<List_image>, onimage
 
             )
             .build()
-        var resu = ImageLoader(this.context!!).enqueue(request);
+
+        ImageLoader(this.context!!).enqueue(request);
 
         holder.root_view.setOnClickListener {
             imgclick.onImageClick(position,holder.image_main.drawable);
         }
     }
 
-    fun refresh_itemList(){
-        notifyItemInserted(listPosts.lastIndex);
+    fun refresh_itemList(LastIndex : Int){
+        try {
+            //notifyDataSetChanged();//i really hate this. but i got no idea on how to solve it...Unless YOU yes YOUUUUU do you know a solution :)
+            notifyItemInserted(LastIndex);
+        }catch (e:Exception){
+            Log.i("Image_list_adapter",e.toString());
+        }
+
     }
     override fun getItemCount(): Int {
         return listPosts.size;

@@ -65,7 +65,7 @@ class TagActivity : AppCompatActivity(),Image_list_adapter.OnImageClick {
     fun update_adabter(){
         wallhaven_api.TagPosts(tag_post_list!!) {
             runOnUiThread {
-                TagAdab!!.refresh_itemList();
+                tag_post_list?.lastindex?.let { TagAdab!!.refresh_itemList(it) };
             }
         }
     }

@@ -99,7 +99,7 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
             Reddit_Api.get_shuffle_andGive {
                 if(isAdded) {
                     requireActivity().runOnUiThread {
-                        PostsAdabter?.refresh_itemList();
+                        PostsAdabter?.refresh_itemList(Reddit_Api.last_index);
                     }
                 }
             }

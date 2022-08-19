@@ -26,6 +26,7 @@ class Reddit_Api(subredditname: String) {
         var Subreddits : Array<Reddit_Api> = emptyArray();
         //global post last index list
         var last_index : Int = 0;
+        var last_tempListSize : Int = 0;
         //image preview quality
         var previewQulaity: Int = 1 // from 0 to 5
         //list mode
@@ -69,7 +70,10 @@ class Reddit_Api(subredditname: String) {
                     if(subreddit == Subreddits.lastIndex){
                         Log.i("Reddit_Api","temp_array_of_posts size is ${temp_array_of_posts.size}")
                         temp_array_of_posts.shuffle();
-                        last_index = reddit_global_posts.size
+                        if((reddit_global_posts.size - last_index - last_tempListSize) == 0)
+                            last_index = reddit_global_posts.size;
+
+                        last_tempListSize = temp_array_of_posts.size;
                         reddit_global_posts += temp_array_of_posts;
                         callback_update();
                     }

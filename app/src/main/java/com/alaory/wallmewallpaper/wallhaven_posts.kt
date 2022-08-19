@@ -65,7 +65,7 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
     fun update_adabter(){
         wallhaven_api.GethomePagePosts {
             requireActivity().runOnUiThread {
-                wallhaven_adabter?.refresh_itemList();
+                wallhaven_adabter!!.refresh_itemList(wallhaven_api.lastindex);
             }
         }
     }

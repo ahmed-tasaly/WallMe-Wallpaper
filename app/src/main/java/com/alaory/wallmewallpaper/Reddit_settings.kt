@@ -169,9 +169,11 @@ class Reddit_settings : Fragment() {
             parse_subreddits(inputtext.text!!.toString().lowercase());
             subredditsNames = inputtext.text!!.toString().lowercase();
             Reddit_posts.userHitSave = true;
+
             Reddit_Api.listMode = CheckedChipListMode;
             Reddit_Api.previewQulaity = image_preview_qualiy_int;
             Reddit_Api.timeperiod = timePreValue();
+
             savepref(requireContext());
 
             MainActivity.change_fragment(MainActivity.redditPosts);
