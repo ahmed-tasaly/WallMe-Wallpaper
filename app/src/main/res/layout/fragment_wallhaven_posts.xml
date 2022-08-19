@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/Background"
-    tools:context=".Reddit_posts">
+    tools:context=".wallhaven_posts">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/wallhavenRec"

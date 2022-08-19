@@ -18,8 +18,9 @@
         />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -28,6 +29,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="30dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="30dp"
             android:background="@drawable/sheetrounded"
             app:itemIconTint="@color/multicolor_state"
             app:itemTextColor="@color/multicolor_state"
@@ -36,6 +39,7 @@
             app:layout_constraintEnd_toStartOf="@+id/filterbutton"
             app:layout_constraintStart_toStartOf="parent"
             app:menu="@menu/navigation_menu" />
+
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/filterbutton"
@@ -51,6 +55,7 @@
             app:tint="@color/Selected"
             android:layout_toEndOf="@+id/bottom_navigation"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>

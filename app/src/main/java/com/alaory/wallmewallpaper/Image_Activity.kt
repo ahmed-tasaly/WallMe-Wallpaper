@@ -101,8 +101,8 @@ class Image_Activity(): AppCompatActivity(){
             }
         }
 
-
-
+        //update screen orein
+        MainActivity.checkorein();
 
 
         myData = MYDATA!!

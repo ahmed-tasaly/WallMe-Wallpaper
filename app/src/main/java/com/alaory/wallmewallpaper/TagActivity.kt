@@ -1,10 +1,15 @@
 package com.alaory.wallmewallpaper
 
 import android.content.Intent
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.drawable.Drawable
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.WindowManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -20,15 +25,27 @@ class TagActivity : AppCompatActivity(),Image_list_adapter.OnImageClick {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tag)
+        setContentView(R.layout.activity_tag);
+
+        if(Configuration.ORIENTATION_LANDSCAPE == Resources.getSystem().configuration.orientation){
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ){
+                window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+            }
+        }
         this.supportActionBar!!.hide();
+
+        MainActivity.checkorein();
+
+        //set local data
         tag_post_list = Tag_Assing;
         TagAdab = Image_list_adapter(tag_post_list!!.Tag_Post_list,this);
+
         update_adabter();
 
         Tag_recyclerView = findViewById(R.id.tag_recyclye);
 
-        Tag_recyclerView!!.layoutManager = GridLayoutManager(this,2,
+        Tag_recyclerView!!.layoutManager = GridLayoutManager(this,MainActivity.num_post_in_Column,
             GridLayoutManager.VERTICAL,false);
         Tag_recyclerView!!.setHasFixedSize(false)
         Tag_recyclerView!!.adapter = TagAdab;
@@ -37,18 +54,17 @@ class TagActivity : AppCompatActivity(),Image_list_adapter.OnImageClick {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if(!Tag_recyclerView!!.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE ){
-                    Log.i("MainRecyclerView", "User hit bottom");
                     update_adabter();
                 }
             }
         })
+
     }
+
 
     fun update_adabter(){
         wallhaven_api.TagPosts(tag_post_list!!) {
             runOnUiThread {
-                for (i in tag_post_list!!.Tag_Post_list)
-                    Log.i("TagActivity","Tag: ${tag_post_list!!.Name_Tag}, Page: ${tag_post_list!!.Page_Tag} , Post: ${i.post_url}")
                 TagAdab!!.refresh_itemList();
             }
         }

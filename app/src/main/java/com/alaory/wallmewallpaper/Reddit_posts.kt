@@ -31,6 +31,7 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
+
         if(firsttime || userHitSave){
             Log.i("Reddit_posts","i have beeen created");
             reddit_api = emptyArray();
@@ -49,6 +50,8 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
         if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
             update_adabter();
 
+        if(PostsAdabter == null)
+            PostsAdabter = Image_list_adapter(Reddit_Api.reddit_global_posts,this);
 
     }
 
@@ -56,13 +59,17 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState);
-        update_adabter();
+
+
 
 
         myrec = view.findViewById(R.id.fragmentrec) as RecyclerView;
         myrec!!.layoutManager = GridLayoutManager(requireContext(),MainActivity.num_post_in_Column, GridLayoutManager.VERTICAL,false);
         myrec!!.setHasFixedSize(false);
         myrec?.adapter = PostsAdabter;
+
+        if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
+            update_adabter();
 
         myrec!!.addOnScrollListener(object : RecyclerView.OnScrollListener(){
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {

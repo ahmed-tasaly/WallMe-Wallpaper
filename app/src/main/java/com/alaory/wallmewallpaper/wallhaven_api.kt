@@ -59,7 +59,7 @@ class wallhaven_api {
                                 Log.e("wallhaven_api", e.toString());
                             }
                         }
-                        if(data.length() > 0){
+                        if(data.length() > 1){
                             callback();
                             currentPage++;
                         }

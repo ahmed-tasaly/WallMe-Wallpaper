@@ -20,7 +20,9 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(savedInstanceState);
+
+        wallhaven_adabter = Image_list_adapter(wallhaven_api.wallhaven_homepage_posts,this);
 
     }
 
@@ -34,7 +36,7 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        wallhaven_adabter = Image_list_adapter(wallhaven_api.wallhaven_homepage_posts,this);
+
         wallhaven_recycle = view.findViewById(R.id.wallhavenRec) as RecyclerView;
         wallhaven_recycle!!.layoutManager = GridLayoutManager(requireContext(),MainActivity.num_post_in_Column,GridLayoutManager.VERTICAL,false);
         wallhaven_recycle!!.setHasFixedSize(false)
@@ -47,7 +49,6 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if(!wallhaven_recycle!!.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE && isAdded){
-                    Log.i("MainRecyclerView", "User hit bottom");
                     update_adabter();
                 }
 
@@ -64,7 +65,7 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
     fun update_adabter(){
         wallhaven_api.GethomePagePosts {
             requireActivity().runOnUiThread {
-                wallhaven_adabter!!.refresh_itemList();
+                wallhaven_adabter?.refresh_itemList();
             }
         }
     }

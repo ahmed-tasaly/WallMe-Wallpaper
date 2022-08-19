@@ -94,6 +94,7 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/SortBox_"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/image_preview_container"
@@ -155,20 +156,31 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/SortBox_"
+                android:paddingBottom="75dp"
+                >
+                <Button
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+
+                    android:id="@+id/save_button_reddit_settings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="30dp"
+                    android:backgroundTint="@color/Buttons"
+                    android:textColor="@color/black"
+                    android:text="Save" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
         </RelativeLayout>
 
     </ScrollView>
 
-    <Button
-        android:id="@+id/save_button_reddit_settings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="40dp"
-        android:layout_marginBottom="120dp"
-        android:backgroundTint="@color/Buttons"
-        android:textColor="@color/black"
-        android:text="Save" />
+
 
 </RelativeLayout>
