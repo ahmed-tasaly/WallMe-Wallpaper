@@ -31,13 +31,13 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_wallhaven_posts, container, false)
+        return inflater.inflate(R.layout.postlist_mainwindow, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        wallhaven_recycle = view.findViewById(R.id.wallhavenRec) as RecyclerView;
+        wallhaven_recycle = view.findViewById(R.id.fragmentrec) as RecyclerView;
         wallhaven_recycle!!.layoutManager = GridLayoutManager(requireContext(),MainActivity.num_post_in_Column,GridLayoutManager.VERTICAL,false);
         wallhaven_recycle!!.setHasFixedSize(false)
         wallhaven_recycle?.adapter = wallhaven_adabter;
@@ -81,6 +81,8 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
         }catch (e:Exception){
             Log.e("wallhaven_posts",e.toString())
         }
-
     }
+
+
+
 }

@@ -15,12 +15,21 @@
         />
 
     <ProgressBar
+        android:id="@+id/loading_recyclye"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/fragmentrec"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginLeft="1dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginRight="-1dp" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="25dp"/>
+    <TextView
+        android:id="@+id/loading_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Loading"
+        android:textSize="30sp"
+        android:layout_below="@+id/loading_recyclye"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/white"
+        />
 </RelativeLayout>

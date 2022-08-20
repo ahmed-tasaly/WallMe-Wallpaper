@@ -16,6 +16,8 @@ class Reddit_Api(subredditname: String) {
     companion object{
         //reddit rquest token
         var api_key = "NOKEY";
+        //number of posts to load
+        var PostRequestNumber = 75;
         //token time left
         var time_left = 0;
         //okhttp client
@@ -94,9 +96,9 @@ class Reddit_Api(subredditname: String) {
 
 
             if(subreddit_posts_list.isNotEmpty())
-                url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?count=25&after=${last_before_id}${timeperiod.lowercase()}";
+                url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?limit=$PostRequestNumber&after=${last_before_id}${timeperiod.lowercase()}";
             else
-                url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?limit=25${timeperiod.lowercase()}";
+                url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?limit=$PostRequestNumber${timeperiod.lowercase()}";
 
 
             Log.i("Reddit_Api",url);

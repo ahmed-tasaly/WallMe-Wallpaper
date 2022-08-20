@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 
@@ -16,16 +17,8 @@ class Image_list_adapter(private var listPosts: MutableList<List_image>, onimage
 
 
     var imgclick = onimageclick;
+    var context: Context? = null;
 
-
-     var context: Context? = null;
-
-
-    class Post(view : View) : RecyclerView.ViewHolder(view) {
-        var root_view = itemView.findViewById(R.id.root_imageView) as ConstraintLayout;
-        var image_main = itemView.findViewById(R.id.image_main) as ImageView;
-        var cricle_prograssBar = itemView.findViewById(R.id.cricle_prograssBar) as ProgressBar;
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Post {
         val itemtoView = LayoutInflater.from(parent.context).inflate(R.layout.image_scrolable,parent,false);
@@ -63,6 +56,10 @@ class Image_list_adapter(private var listPosts: MutableList<List_image>, onimage
         }
     }
 
+
+
+
+
     fun refresh_itemList(LastIndex : Int){
         try {
             //notifyDataSetChanged();//i really hate this. but i got no idea on how to solve it...Unless YOU yes YOUUUUU do you know a solution :)
@@ -72,10 +69,32 @@ class Image_list_adapter(private var listPosts: MutableList<List_image>, onimage
         }
 
     }
+
+
+
+
+
     override fun getItemCount(): Int {
         return listPosts.size;
     }
+
+
+
+
     interface OnImageClick{
         fun onImageClick(Pos: Int,thumbnail: Drawable);
     }
+
+
+    class Post(view : View) : RecyclerView.ViewHolder(view) {
+        var root_view = itemView.findViewById(R.id.root_imageView) as ConstraintLayout;
+        var image_main = itemView.findViewById(R.id.image_main) as ImageView;
+        var cricle_prograssBar = itemView.findViewById(R.id.cricle_prograssBar) as ProgressBar;
+    }
+
+
+
+
+
+
 }

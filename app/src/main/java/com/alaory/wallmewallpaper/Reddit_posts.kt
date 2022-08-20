@@ -1,7 +1,6 @@
 package com.alaory.wallmewallpaper
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -68,6 +67,8 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
         myrec!!.setHasFixedSize(false);
         myrec?.adapter = PostsAdabter;
 
+
+
         if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
             update_adabter();
 
@@ -75,7 +76,7 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if(!myrec!!.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE && isAdded){
-                    Log.i("MainRecyclerView", "User hit bottom");
+
                     update_adabter();
                 }
 
@@ -90,7 +91,7 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_reddit_posts, container, false)
+        return inflater.inflate(R.layout.postlist_mainwindow, container, false)
     }
 
 
@@ -118,5 +119,6 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
             Log.e("Reddit_posts","error while trying to set image activity")
         }
     }
+
 
 }
