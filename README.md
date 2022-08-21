@@ -27,6 +27,15 @@
 ------------------------------------
 </br></br></br>
 
+## Note: 
+
+    this is the first time i use kotlin for something
+    and also my first android app :) 
+    soooo expect a loooooooot of bugs
+
+</br>
+
+
 ### what is this ?
 
 </span>
@@ -102,11 +111,18 @@ it needs a lot of work
 </span>
 
 - [x] add reddit support 
-- [x] add reddit settings
+- [x] add reddit filter settings
 - [x] add wallhaven support
+- [ ] add wallhaven filter settings 
+- [ ] add landscape mode for tablets
+- [ ] add verical mode for phones
+- [ ] add favtorite page
+- [ ] add wallhaven sub page
+- [ ] add prograss bar when downloading an image
 - [ ] add auto wallpaper changer with preferred croping
 - [ ] add more ui I SAID MORE
 - [ ] more plans comming
+- [ ] go to sleep
 
 
 

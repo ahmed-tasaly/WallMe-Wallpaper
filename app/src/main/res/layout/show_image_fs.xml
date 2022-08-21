@@ -34,6 +34,7 @@
                 style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+
                 app:layout_constraintBottom_toBottomOf="@+id/full_image"
                 app:layout_constraintEnd_toEndOf="@+id/full_image"
                 app:layout_constraintStart_toStartOf="parent"
