@@ -122,6 +122,8 @@ class Image_Activity(): AppCompatActivity(){
         auther_post!!.setText("posted by: ${myData?.Image_auther}");
         url_post!!.setText(myData?.post_url)
 
+
+        //set wallhaven post info with tag functionality
         if(postmode == mode.wallhaven){
 
             wallhaven_api.imageInfo(myData!!) {

@@ -16,11 +16,13 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
 
     private var myrec: RecyclerView? = null;
     private var PostsAdabter: Image_list_adapter? = null;
+    private var mLayoutManager : RecyclerView.LayoutManager? = null;
 
 
     companion object{
          var firsttime = true;
          var userHitSave = false;
+         var scrollListener : BottonLoading.ViewLodMore? = null;
     }
 
 
@@ -41,13 +43,13 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
                 reddit_api += Reddit_Api(i);
             }
             PostsAdabter = Image_list_adapter(Reddit_Api.reddit_global_posts,this);
-            update_adabter();
+            LoadMore();
             firsttime = false;
             userHitSave = false;
         }
 
         if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
-            update_adabter();
+            LoadMore();
 
         if(PostsAdabter == null)
             PostsAdabter = Image_list_adapter(Reddit_Api.reddit_global_posts,this);
@@ -59,32 +61,22 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState);
 
-
-
-
         myrec = view.findViewById(R.id.fragmentrec) as RecyclerView;
-        myrec!!.layoutManager = GridLayoutManager(requireContext(),MainActivity.num_post_in_Column, GridLayoutManager.VERTICAL,false);
-        myrec!!.setHasFixedSize(false);
-        myrec?.adapter = PostsAdabter;
+        SetRVLayoutManager();
+        SetRvScrollListener();
 
 
-
+        //for screen rotaion
         if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
-            update_adabter();
+            LoadMore();
 
-        myrec!!.addOnScrollListener(object : RecyclerView.OnScrollListener(){
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if(!myrec!!.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE && isAdded){
-
-                    update_adabter();
-                }
-
-            }
-        })
 
 
     }
+
+
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -96,10 +88,43 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
 
 
 
-    fun update_adabter(){
+
+    private fun SetRVLayoutManager(){
+        mLayoutManager = GridLayoutManager(requireContext(),MainActivity.num_post_in_Column);
+        myrec!!.layoutManager = mLayoutManager;
+        myrec!!.setHasFixedSize(false);
+        myrec?.adapter = PostsAdabter;
+        (mLayoutManager as GridLayoutManager?)!!.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
+            override fun getSpanSize(position: Int): Int {
+                return when(PostsAdabter!!.getItemViewType(position)){
+                    0 -> 1
+                    1 -> MainActivity.num_post_in_Column
+                    else -> -1
+                }
+            }
+        }
+    }
+
+
+
+    private fun SetRvScrollListener(){
+        scrollListener = BottonLoading.ViewLodMore(mLayoutManager as GridLayoutManager);
+        scrollListener!!.setOnLoadMoreListener(object : BottonLoading.OnLoadMoreListener{
+            override fun onLoadMore() {
+                LoadMore();
+                PostsAdabter!!.addLoadingView();
+            }
+        })
+        myrec!!.addOnScrollListener(scrollListener!!);
+    }
+
+
+
+    fun LoadMore(){
             Reddit_Api.get_shuffle_andGive {
                 if(isAdded) {
                     requireActivity().runOnUiThread {
+                        PostsAdabter?.removeLoadingView();
                         PostsAdabter?.refresh_itemList(Reddit_Api.last_index);
                     }
                 }

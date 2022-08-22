@@ -86,6 +86,7 @@ class wallhaven_api {
                             }
                         }
                         if(TempList.size > 0){
+                            wallhaven_posts.bottomloading?.setLoaded();
                             currentPage++;
                             lastindex = wallhaven_homepage_posts.size;
                             wallhaven_homepage_posts += TempList;

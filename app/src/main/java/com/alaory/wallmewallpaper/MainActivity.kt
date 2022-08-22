@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.alaory.wallmewallpaper.databinding.ActivityMainBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -97,8 +96,8 @@ class MainActivity : AppCompatActivity(){
 
         //pull posts from apis
         Reddit_Api.Update_Api_key{
-            redditPosts.update_adabter();
-            wallhaven_api.GethomePagePosts();
+            redditPosts.LoadMore();
+            wallhavenPosts.LoadMore();
         }//init wallhaven & reddit api to get the key and set data to array
 
         //set buttom navigtion

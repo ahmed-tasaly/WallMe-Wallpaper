@@ -70,6 +70,8 @@ class Reddit_Api(subredditname: String) {
                     temp_array_of_posts += posts;
 
                     if(subreddit == Subreddits.lastIndex){
+                        Reddit_posts.scrollListener!!.setLoaded();
+
                         Log.i("Reddit_Api","temp_array_of_posts size is ${temp_array_of_posts.size}")
                         temp_array_of_posts.shuffle();
                         if((reddit_global_posts.size - last_index - last_tempListSize) == 0)

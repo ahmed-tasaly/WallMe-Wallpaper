@@ -17,54 +17,72 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
      var wallhaven_recycle : RecyclerView? = null;
      var wallhaven_adabter : Image_list_adapter? = null;
+     var mLayoutManager : RecyclerView.LayoutManager? =null;
+
+    companion object{
+        var bottomloading : BottonLoading.ViewLodMore? = null;
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
-
         wallhaven_adabter = Image_list_adapter(wallhaven_api.wallhaven_homepage_posts,this);
-
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.postlist_mainwindow, container, false)
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         wallhaven_recycle = view.findViewById(R.id.fragmentrec) as RecyclerView;
-        wallhaven_recycle!!.layoutManager = GridLayoutManager(requireContext(),MainActivity.num_post_in_Column,GridLayoutManager.VERTICAL,false);
-        wallhaven_recycle!!.setHasFixedSize(false)
-        wallhaven_recycle?.adapter = wallhaven_adabter;
+        SetRVLayoutManager();
+        SetRvScrollListener();
 
         if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
-            update_adabter();
+            LoadMore();
 
-        wallhaven_recycle!!.addOnScrollListener(object : RecyclerView.OnScrollListener(){
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if(!wallhaven_recycle!!.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE && isAdded){
-                    update_adabter();
+    }
+
+    private fun SetRVLayoutManager(){
+        mLayoutManager = GridLayoutManager(requireContext(),MainActivity.num_post_in_Column);
+        wallhaven_recycle!!.layoutManager = mLayoutManager;
+        wallhaven_recycle!!.setHasFixedSize(false);
+        wallhaven_recycle?.adapter = wallhaven_adabter;
+        (mLayoutManager as GridLayoutManager?)!!.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
+            override fun getSpanSize(position: Int): Int {
+                return when(wallhaven_adabter!!.getItemViewType(position)){
+                    0 -> 1
+                    1 -> MainActivity.num_post_in_Column
+                    else -> -1
                 }
-
             }
-        })
-
-
-
-
+        }
     }
 
 
 
-    fun update_adabter(){
+    private fun SetRvScrollListener(){
+        bottomloading = BottonLoading.ViewLodMore(mLayoutManager as GridLayoutManager);
+        bottomloading!!.setOnLoadMoreListener(object : BottonLoading.OnLoadMoreListener{
+            override fun onLoadMore() {
+                LoadMore();
+                wallhaven_adabter!!.addLoadingView();
+            }
+        })
+        wallhaven_recycle!!.addOnScrollListener(bottomloading!!);
+    }
+
+
+    fun LoadMore(){
         wallhaven_api.GethomePagePosts {
             requireActivity().runOnUiThread {
+                wallhaven_adabter!!.removeLoadingView();
                 wallhaven_adabter!!.refresh_itemList(wallhaven_api.lastindex);
             }
         }
