@@ -18,10 +18,8 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
      var wallhaven_recycle : RecyclerView? = null;
      var wallhaven_adabter : Image_list_adapter? = null;
      var mLayoutManager : RecyclerView.LayoutManager? =null;
+     var bottomloading : BottonLoading.ViewLodMore? = null;
 
-    companion object{
-        var bottomloading : BottonLoading.ViewLodMore? = null;
-    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +45,11 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
         if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
             LoadMore();
 
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        wallhaven_adabter!!.removeLoadingView();
     }
 
     private fun SetRVLayoutManager(){
@@ -81,9 +84,12 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
     fun LoadMore(){
         wallhaven_api.GethomePagePosts {
-            requireActivity().runOnUiThread {
-                wallhaven_adabter!!.removeLoadingView();
-                wallhaven_adabter!!.refresh_itemList(wallhaven_api.lastindex);
+            bottomloading?.setLoaded();
+            if(isAdded){
+                requireActivity().runOnUiThread {
+                    wallhaven_adabter!!.removeLoadingView();
+                    wallhaven_adabter!!.refresh_itemList(wallhaven_api.lastindex);
+                }
             }
         }
     }

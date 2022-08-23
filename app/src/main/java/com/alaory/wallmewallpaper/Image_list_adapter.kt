@@ -90,6 +90,9 @@ class Image_list_adapter(private var listPosts: MutableList<List_image>, onimage
 
 
     fun addLoadingView(){
+        if(LoadingIndex != -1)
+            removeLoadingView();
+
         listPosts.add(
             List_image("LOADING","")
         );

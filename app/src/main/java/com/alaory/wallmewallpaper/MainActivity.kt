@@ -63,6 +63,7 @@ class MainActivity : AppCompatActivity(){
     }
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
         if(Configuration.ORIENTATION_LANDSCAPE == Resources.getSystem().configuration.orientation){

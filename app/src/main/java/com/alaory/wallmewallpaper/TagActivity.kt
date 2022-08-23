@@ -15,8 +15,13 @@ import androidx.recyclerview.widget.RecyclerView
 
 class TagActivity : AppCompatActivity(),Image_list_adapter.OnImageClick {
 
+    private var MlaoutManager : RecyclerView.LayoutManager? = null;
+    private var scrolllistener : BottonLoading.ViewLodMore? = null;
+
+
     companion object{
         var Tag_Assing : wallhaven_api.Tag = wallhaven_api.Tag("");
+
     }
 
      var TagAdab : Image_list_adapter? = null;
@@ -40,31 +45,56 @@ class TagActivity : AppCompatActivity(),Image_list_adapter.OnImageClick {
         //set local data
         tag_post_list = Tag_Assing;
         TagAdab = Image_list_adapter(tag_post_list!!.Tag_Post_list,this);
-
-        update_adabter();
-
         Tag_recyclerView = findViewById(R.id.tag_recyclye);
 
-        Tag_recyclerView!!.layoutManager = GridLayoutManager(this,MainActivity.num_post_in_Column,
-            GridLayoutManager.VERTICAL,false);
-        Tag_recyclerView!!.setHasFixedSize(false)
-        Tag_recyclerView!!.adapter = TagAdab;
+        /*
+            @brief set local var and set layout mangaer and scroll callback
+         */
 
-        Tag_recyclerView!!.addOnScrollListener(object : RecyclerView.OnScrollListener(){
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if(!Tag_recyclerView!!.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE ){
-                    update_adabter();
-                }
-            }
-        })
+
+
+        LoadMore();
+        setLayoutForRv();
+        setScrollListenerForRv();
 
     }
 
 
-    fun update_adabter(){
+    private fun setLayoutForRv(){
+        MlaoutManager = GridLayoutManager(this,MainActivity.num_post_in_Column);
+        Tag_recyclerView!!.layoutManager = MlaoutManager;
+        Tag_recyclerView!!.setHasFixedSize(false);
+        Tag_recyclerView!!.adapter = TagAdab;
+        (MlaoutManager as GridLayoutManager)!!.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
+            override fun getSpanSize(position: Int): Int {
+                return when(TagAdab!!.getItemViewType(position)){
+                    0 -> 1
+                    1 -> MainActivity.num_post_in_Column
+                    else -> -1
+                }
+            }
+        }
+    }
+
+    private fun setScrollListenerForRv(){
+        scrolllistener = BottonLoading.ViewLodMore(MlaoutManager as GridLayoutManager);
+        scrolllistener!!.setOnLoadMoreListener(object : BottonLoading.OnLoadMoreListener{
+            override fun onLoadMore() {
+                TagAdab!!.addLoadingView();
+                LoadMore();
+            }
+        })
+        Tag_recyclerView!!.addOnScrollListener(scrolllistener!!);
+
+    }
+
+
+
+    fun LoadMore(){
         wallhaven_api.TagPosts(tag_post_list!!) {
+            scrolllistener!!.setLoaded();
             runOnUiThread {
+                TagAdab!!.removeLoadingView();
                 tag_post_list?.lastindex?.let { TagAdab!!.refresh_itemList(it) };
             }
         }

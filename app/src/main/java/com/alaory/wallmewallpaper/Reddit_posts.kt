@@ -17,12 +17,12 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
     private var myrec: RecyclerView? = null;
     private var PostsAdabter: Image_list_adapter? = null;
     private var mLayoutManager : RecyclerView.LayoutManager? = null;
-
+    var scrollListener : BottonLoading.ViewLodMore? = null;
 
     companion object{
          var firsttime = true;
          var userHitSave = false;
-         var scrollListener : BottonLoading.ViewLodMore? = null;
+
     }
 
 
@@ -74,9 +74,10 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
 
     }
 
-
-
-
+    override fun onDetach() {
+        super.onDetach()
+        PostsAdabter!!.removeLoadingView();
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -122,6 +123,7 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
 
     fun LoadMore(){
             Reddit_Api.get_shuffle_andGive {
+                scrollListener!!.setLoaded();
                 if(isAdded) {
                     requireActivity().runOnUiThread {
                         PostsAdabter?.removeLoadingView();
