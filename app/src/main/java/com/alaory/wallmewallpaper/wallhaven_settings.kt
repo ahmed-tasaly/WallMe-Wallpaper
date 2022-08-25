@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
+import androidx.core.view.marginBottom
 import androidx.fragment.app.strictmode.RetainInstanceUsageViolation
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -69,13 +70,13 @@ class wallhaven_settings : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        TagBox = view.findViewById(R.id.TagChipGroup_box);
+        TagBox = view.findViewById(R.id.TagChipGroup_box_whitelist);
 
         for(i in TagsSequnce)
             addChip(i,requireContext(),resources);
 
 
-        view.findViewById<Chip>(R.id.AddChip_box).setOnClickListener {
+        view.findViewById<Chip>(R.id.AddChip_box_whitelist).setOnClickListener {
             val builder = AlertDialog.Builder(requireContext())
             val inputText = EditText(requireContext());
 

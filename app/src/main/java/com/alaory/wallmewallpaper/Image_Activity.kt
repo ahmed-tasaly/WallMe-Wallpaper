@@ -203,6 +203,8 @@ class Image_Activity(): AppCompatActivity(){
             if(loaded) {
                 saveImage(applicationContext,mybitmap!!, myData!!.Image_name);
                 Toast.makeText(this,"Image has been saved to your photos directory",Toast.LENGTH_LONG).show();
+            } else{
+                Toast.makeText(this,"Please wait for the image to load",Toast.LENGTH_LONG).show();
             }
         };
         Log.i("Image_Activity","Info url ${myData?.Image_url} name ${myData?.Image_name} thumbnail ${myData?.Image_thumbnail}");
@@ -224,8 +226,8 @@ class Image_Activity(): AppCompatActivity(){
             }catch (e:Exception){
                 Log.e("Image_Activity",e.toString())
             }
-
-
+        }else{
+            Toast.makeText(this,"Please wait for the image to load",Toast.LENGTH_LONG).show();
         }
     }
 

@@ -84,10 +84,11 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
     fun LoadMore(){
         wallhaven_api.GethomePagePosts {
-            bottomloading?.setLoaded();
+
             if(isAdded){
                 requireActivity().runOnUiThread {
-                    wallhaven_adabter!!.removeLoadingView();
+                    wallhaven_adabter?.removeLoadingView();
+                    bottomloading?.setLoaded();
                     wallhaven_adabter!!.refresh_itemList(wallhaven_api.lastindex);
                 }
             }

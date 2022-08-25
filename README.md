@@ -30,7 +30,7 @@
 ## Note: 
 
     this is the first time i use kotlin for something
-    and also my first releast android app :) 
+    and also my first released android app :) 
     soooo expect a loooooooot of bugs
 
 </br>

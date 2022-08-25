@@ -66,7 +66,7 @@
                     android:layout_marginTop="8dp"
                     android:background="@color/widget"
 
-                    android:src="@drawable/ic_round_wallpaper_24"
+                    android:src="@drawable/ic_image"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/url_post" />
 
@@ -78,7 +78,7 @@
                     android:layout_marginStart="32dp"
                     android:layout_marginTop="8dp"
                     android:background="@color/widget"
-                    android:src="@drawable/ic_round_save_24"
+                    android:src="@drawable/ic_save"
                     app:layout_constraintStart_toEndOf="@+id/set_imageButton"
                     app:layout_constraintTop_toBottomOf="@+id/url_post" />
 

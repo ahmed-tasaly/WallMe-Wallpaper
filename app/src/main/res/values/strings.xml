@@ -12,6 +12,8 @@
         <item>very high</item>
         <item>ultra</item>
     </string-array>
+
+
     <string-array name="TimePeriod">
         <item>now</item>
         <item>today</item>
@@ -20,6 +22,17 @@
         <item>year</item>
         <item>all</item>
     </string-array>
+
+    <string-array name="wallhaven_sortlist">
+        <item>Relevance</item>
+        <item>Random</item>
+        <item>Date_added</item>
+        <item>Views</item>
+        <item>Favorites</item>
+        <item>Toplist</item>
+        <item>Hot</item>
+    </string-array>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

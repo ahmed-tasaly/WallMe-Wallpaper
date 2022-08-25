@@ -4,54 +4,185 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/Background">
+
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/TagBox"
         android:layout_width="match_parent"
-        android:layout_margin="30dp"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:background="@drawable/border_line">
+
         <TextView
             android:id="@+id/TagChipBox_name"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/Buttons"
+            android:layout_margin="20dp"
             android:text="Tags"
+            android:textColor="@color/Buttons"
             android:textSize="20sp"
-            />
-        <androidx.constraintlayout.widget.ConstraintLayout
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/WhiteListName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginVertical="15dp"
+            android:layout_marginLeft="20dp"
+            android:text="WhiteList"
+            android:textColor="@color/Buttons"
+            android:textSize="17sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/TagChipBox_name"
+            app:layout_constraintTop_toBottomOf="@+id/TagChipBox_name" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/whitelistTagBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:background="@drawable/textinput"
-            >
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/WhiteListName">
+
+
             <com.google.android.material.chip.ChipGroup
-                android:id="@+id/TagChipGroup_box"
+                android:id="@+id/TagChipGroup_box_whitelist"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_height="wrap_content">
+
+                app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.chip.Chip
-                    android:id="@+id/AddChip_box"
+                    android:id="@+id/AddChip_box_whitelist"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Add"
+                    android:layout_margin="10dp"
                     android:clickable="true"
                     android:focusable="true"
-                    app:chipIcon="@drawable/add_ic"
                     android:layoutDirection="rtl"
+                    android:text="Add"
                     android:textColor="@color/black"
                     app:chipBackgroundColor="@color/multicolor_state"
-                    />
+                    app:chipIcon="@drawable/add_ic" />
 
             </com.google.android.material.chip.ChipGroup>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <TextView
+            android:id="@+id/BalckListName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:layout_marginLeft="20dp"
+            android:text="BlackList"
+            android:textColor="@color/Buttons"
+            android:textSize="17sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/whitelistTagBox" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/textinput"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/BalckListName">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/TagChipGroup_box_blacklist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/AddChip_box_blacklist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layoutDirection="rtl"
+                    android:text="Add"
+                    android:textColor="@color/black"
+                    app:chipBackgroundColor="@color/multicolor_state"
+                    app:chipIcon="@drawable/add_ic" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/TagBox"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="10dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/border_line">
+
+
+        <Spinner
+            android:id="@+id/listmode_wallhavem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:background="@drawable/textinput"
+            android:entries="@array/wallhaven_sortlist"
+            android:padding="10dp"
+            android:popupBackground="@color/widget"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/listmode_wallhavem">
+
+            <com.google.android.material.chip.Chip
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:chipBackgroundColor="@color/multicolor_state"
+                android:checked="true"
+                android:checkable="true"
+                android:textColor="@color/black"
+                android:textSize="15dp"
+                android:text="Portrait" />
+
+            <com.google.android.material.chip.Chip
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:chipBackgroundColor="@color/multicolor_state"
+                android:checked="true"
+                android:checkable="true"
+                android:textColor="@color/black"
+                android:textSize="15dp"
+                android:text="LandScape" />
+
+        </com.google.android.material.chip.ChipGroup>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -123,10 +123,10 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
 
     fun LoadMore(){
             Reddit_Api.get_shuffle_andGive {
-                scrollListener!!.setLoaded();
                 if(isAdded) {
                     requireActivity().runOnUiThread {
                         PostsAdabter?.removeLoadingView();
+                        scrollListener?.setLoaded();
                         PostsAdabter?.refresh_itemList(Reddit_Api.last_index);
                     }
                 }
