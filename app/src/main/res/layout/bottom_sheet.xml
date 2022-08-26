@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:background="@drawable/sheetrounded"
+        android:background="@drawable/bottomsheetshape"
         >
             <ImageButton
                 android:id="@+id/pullbottom"
@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/pull_ic"
                 android:layout_gravity="center_horizontal"
-                android:background="@color/widget"
+                android:background="@color/transparent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"

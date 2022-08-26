@@ -14,10 +14,13 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowInsetsController
 import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import coil.ImageLoader
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -90,6 +93,32 @@ class Image_Activity(): AppCompatActivity(){
     }
 
 
+    private fun setWallpaper(){
+        //set the wallpaper
+        if(loaded){
+            try {
+                val uri_image = Bitmap_toUri(applicationContext,mybitmap!!);
+                val intent = Intent(Intent.ACTION_ATTACH_DATA);
+                intent.addCategory((Intent.CATEGORY_DEFAULT));
+                intent.setDataAndType(uri_image,"image/*");
+                intent.putExtra("mimeType","image/*")
+                this.startActivity(Intent.createChooser(intent,"Set as:"));
+            }catch (e:Exception){
+                Log.e("Image_Activity",e.toString())
+            }
+        }else{
+            Toast.makeText(this,"Please wait for the image to load",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private fun HideSystemBar(){
+        if(Configuration.ORIENTATION_LANDSCAPE == Resources.getSystem().configuration.orientation){
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ){
+                window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+            }
+        }
+    }
 
 
 
@@ -99,13 +128,7 @@ class Image_Activity(): AppCompatActivity(){
         super.onCreate(bundle);
         //activity system and app bar
         this.supportActionBar!!.hide();
-        if(Configuration.ORIENTATION_LANDSCAPE == Resources.getSystem().configuration.orientation){
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ){
-                window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-            }
-        }
-
+        HideSystemBar();
         //update screen orein
         MainActivity.checkorein();
 
@@ -266,23 +289,5 @@ class Image_Activity(): AppCompatActivity(){
 
     }
 
-
-    private fun setWallpaper(){
-        //set the wallpaper
-        if(loaded){
-            try {
-                val uri_image = Bitmap_toUri(applicationContext,mybitmap!!);
-                val intent = Intent(Intent.ACTION_ATTACH_DATA);
-                intent.addCategory((Intent.CATEGORY_DEFAULT));
-                intent.setDataAndType(uri_image,"image/*");
-                intent.putExtra("mimeType","image/*")
-                this.startActivity(Intent.createChooser(intent,"Set as:"));
-            }catch (e:Exception){
-                Log.e("Image_Activity",e.toString())
-            }
-        }else{
-            Toast.makeText(this,"Please wait for the image to load",Toast.LENGTH_LONG).show();
-        }
-    }
 
 }
