@@ -1,6 +1,5 @@
 package com.alaory.wallmewallpaper
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -19,14 +18,12 @@ import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import coil.ImageLoader
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.ortiz.touchview.TouchImageView
 import java.io.ByteArrayOutputStream
 import java.io.File
 
@@ -36,7 +33,7 @@ class Image_Activity(): AppCompatActivity(){
     private var titlePost: TextView? = null;
     private var auther_post: TextView? = null;
     private var url_post: TextView? = null;
-    private var Full_image: ImageView? = null;
+    private var Full_image: TouchImageView? = null;
     private var mybitmap: Bitmap? = null;
     private var taggroup: ChipGroup? = null;
 
@@ -97,7 +94,7 @@ class Image_Activity(): AppCompatActivity(){
 
 
 
-    @SuppressLint("InflateParams")
+
     override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle);
         //activity system and app bar
@@ -121,7 +118,7 @@ class Image_Activity(): AppCompatActivity(){
         //bottom sheet
         val bottomsheetfragment = findViewById<FrameLayout>(R.id.ImageInfo_BottomSheet);
         BottomSheetBehavior.from(bottomsheetfragment).apply {
-            peekHeight = 150;
+            peekHeight = 300;
             this.state = BottomSheetBehavior.STATE_COLLAPSED;
 
 
@@ -139,9 +136,8 @@ class Image_Activity(): AppCompatActivity(){
             saveWallpaperButton = Views.findViewById(R.id.save_imageButton);
 
 
-
+            //pull buttonimage
             Views.findViewById<ImageButton>(R.id.pullbottom).setOnClickListener {
-
                 if(this.state == BottomSheetBehavior.STATE_EXPANDED)
                     this.state = BottomSheetBehavior.STATE_COLLAPSED;
                 else
@@ -153,6 +149,10 @@ class Image_Activity(): AppCompatActivity(){
                     rotationXBy(180f);
                 }
             }
+
+
+
+
         }
 
         //----------------------------------------------------
@@ -162,7 +162,7 @@ class Image_Activity(): AppCompatActivity(){
         Full_image = findViewById(R.id.full_image);
         cricle_prograssBar = findViewById(R.id.cricle_prograssBar_FullImage);
 
-
+        //set text for image info
         titlePost!!.setText(myData?.Image_title);
         auther_post!!.setText("posted by: ${myData?.Image_auther}");
         url_post!!.setText(myData?.post_url)
@@ -171,6 +171,7 @@ class Image_Activity(): AppCompatActivity(){
 
 
         //-----------------------------------------------------------------
+
         //set wallhaven post info with tag functionality
         if(postmode == mode.wallhaven){
 

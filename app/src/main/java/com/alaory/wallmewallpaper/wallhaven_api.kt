@@ -26,7 +26,7 @@ class wallhaven_api {
             var Tags_String = "&q=";
             try{
                 for(i in wallhaven_settings.TagsSequnce){
-                    Tags_String += ("+$i");
+                    Tags_String += i;
                 }
             }catch (e:Exception){
                 Log.e("wallhaven_api",e.toString())

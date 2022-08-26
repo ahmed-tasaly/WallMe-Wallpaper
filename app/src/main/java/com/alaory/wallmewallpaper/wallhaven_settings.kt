@@ -22,10 +22,12 @@ import com.google.android.material.chip.ChipGroup
 
 class wallhaven_settings : Fragment() {
 
-    var TagBox: ChipGroup? = null;
+    var TagBoxWhiteList: ChipGroup? = null;
+    var TagBoxBlackList: ChipGroup? = null;
+
 
     companion object{
-        var TagsSequnce: MutableList<String> = listOf<String>("nature").toMutableList();
+        var TagsSequnce: MutableList<String> = listOf<String>("+nature").toMutableList();
     }
 
     fun removeTag(TagName : String){
@@ -44,18 +46,22 @@ class wallhaven_settings : Fragment() {
 
     fun addChip(name : String,context: Context,resources: android.content.res.Resources){
 
-        val tagchipTemp = LayoutInflater.from(context).inflate(R.layout.tagchip,TagBox,false) as Chip;
+        val tagchipTemp = LayoutInflater.from(context).inflate(R.layout.tagchip,null) as Chip;
 
         if(name != ""){
-            tagchipTemp.text = name;
+            tagchipTemp.text = name.drop(1);
             tagchipTemp.chipIcon = ResourcesCompat.getDrawable(resources,R.drawable.remove_ic,null);
 
             tagchipTemp.setOnClickListener {
-                TagBox?.removeView(tagchipTemp);
+                TagBoxWhiteList?.removeView(tagchipTemp);
                 removeTag(name);
             }
 
-            TagBox?.addView(tagchipTemp);
+
+            if(name[0] == '+')
+                TagBoxWhiteList?.addView(tagchipTemp);
+            else
+                TagBoxBlackList?.addView(tagchipTemp);
         }
     }
 
@@ -70,7 +76,8 @@ class wallhaven_settings : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        TagBox = view.findViewById(R.id.TagChipGroup_box_whitelist);
+        TagBoxWhiteList = view.findViewById(R.id.TagChipGroup_box_whitelist);
+        TagBoxBlackList = view.findViewById(R.id.TagChipGroup_box_blacklist);
 
         for(i in TagsSequnce)
             addChip(i,requireContext(),resources);
@@ -87,7 +94,7 @@ class wallhaven_settings : Fragment() {
             builder.setTitle("Add Tag");
 
             builder.setPositiveButton("Add",DialogInterface.OnClickListener { dialogInterface, i ->
-                val inputStringText = inputText.text.toString().lowercase();
+                val inputStringText = "+${inputText.text.toString().lowercase()}";
                 var found = false;
                 for (j in TagsSequnce)
                     if(j == inputStringText)
@@ -107,5 +114,35 @@ class wallhaven_settings : Fragment() {
 
         }
 
+        view.findViewById<Chip>(R.id.AddChip_box_blacklist).setOnClickListener {
+            val builder = AlertDialog.Builder(requireContext())
+            val inputText = EditText(requireContext());
+
+            inputText.hint = "Enter a Tag name";
+            inputText.inputType = InputType.TYPE_CLASS_TEXT
+
+            builder.setView(inputText);
+            builder.setTitle("Add Tag");
+
+            builder.setPositiveButton("Add",DialogInterface.OnClickListener { dialogInterface, i ->
+                val inputStringText = "-${inputText.text.toString().lowercase()}";
+                var found = false;
+                for (j in TagsSequnce)
+                    if(j == inputStringText)
+                        found = true;
+
+
+                if(!found){
+                    TagsSequnce += inputStringText;
+                    addChip(inputStringText,requireContext(),resources);
+                }
+
+            })
+
+            builder.setNegativeButton("Cancel",DialogInterface.OnClickListener { dialogInterface, i -> })
+
+            builder.show();
+
+        }
     }
 }

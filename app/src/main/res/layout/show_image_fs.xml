@@ -11,26 +11,25 @@
     android:background="@color/Background"
     app:layout_constraintTop_toTopOf="parent">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        >
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layoutDirection="ltr"
+            android:layout_gravity="center"
             android:id="@+id/image_fs">
 
-            <ImageView
+            <com.ortiz.touchview.TouchImageView
                 android:id="@+id/full_image"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                app:layout_constraintStart_toStartOf="parent"
+                android:layout_height="match_parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@tools:sample/avatars" />
+                android:scaleType="centerCrop"
+                tools:srcCompat="@tools:sample/avatars"
+                />
 
             <ProgressBar
                 android:id="@+id/cricle_prograssBar_FullImage"
@@ -44,13 +43,11 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
 
     <FrameLayout
         android:id="@+id/ImageInfo_BottomSheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         />
 

@@ -1,114 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layoutDirection="ltr"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/bottomsheetshape"
-    android:layout_marginBottom="40dp"
-    >
-        <ImageButton
-            android:id="@+id/pullbottom"
-            android:layout_width="match_parent"
-            android:layout_marginHorizontal="40dp"
-            android:paddingBottom="10dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/pull_ic"
-            android:layout_gravity="center_horizontal"
-            android:background="@color/widget"
-            />
+    android:paddingTop="50dp"
+    android:layout_height="match_parent" >
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginBottom="16dp"
-            android:layout_width="match_parent"
-            android:paddingBottom="20dp"
-            android:layout_height="wrap_content">
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/set_imageButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="8dp"
-                app:backgroundTint="@color/Buttons"
-                android:src="@drawable/ic_image"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/url_post" />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/save_imageButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="8dp"
-                app:backgroundTint="@color/Buttons"
-                android:src="@drawable/ic_save"
-                app:layout_constraintStart_toEndOf="@+id/set_imageButton"
-                app:layout_constraintTop_toBottomOf="@+id/url_post" />
-
-            <TextView
-                android:id="@+id/auther_post"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-
-                android:text="Auther name"
-                android:paddingBottom="20dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/title_post" />
-
-            <TextView
-                android:id="@+id/url_post"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:paddingBottom="20dp"
-
-                android:autoLink="web"
-                android:text="url"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/auther_post" />
-
-            <TextView
-
-                android:id="@+id/title_post"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:paddingBottom="20dp"
-                android:text="Title"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/sheetrounded"
+        >
+            <ImageButton
+                android:id="@+id/pullbottom"
                 android:layout_width="match_parent"
+                android:layout_marginHorizontal="40dp"
+                android:paddingBottom="10dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:src="@drawable/pull_ic"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/widget"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/save_imageButton"
-                >
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/TagGroup"
-                android:layout_marginTop="20dp"
+                />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginBottom="16dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:paddingBottom="20dp"
+                android:layout_height="wrap_content">
 
-                android:visibility="invisible"
-                app:layout_constraintTop_toBottomOf="@+id/save_imageButton">
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/set_imageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="8dp"
+                    app:backgroundTint="@color/Buttons"
+                    android:src="@drawable/ic_image"
+                    app:borderWidth="0dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/url_post" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/save_imageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="8dp"
+                    app:backgroundTint="@color/Buttons"
+                    android:src="@drawable/ic_save"
+                    app:borderWidth="0dp"
+                    app:layout_constraintStart_toEndOf="@+id/set_imageButton"
+                    app:layout_constraintTop_toBottomOf="@+id/url_post" />
+
+                <TextView
+                    android:id="@+id/auther_post"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+
+                    android:text="Auther name"
+                    android:paddingBottom="20dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/title_post" />
+
+                <TextView
+                    android:id="@+id/url_post"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingBottom="20dp"
+
+                    android:autoLink="web"
+                    android:text="url"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/auther_post" />
+
+                <TextView
+
+                    android:id="@+id/title_post"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingBottom="20dp"
+                    android:text="Title"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
 
-            </com.google.android.material.chip.ChipGroup>
-            </ScrollView>
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/TagGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+
+                        android:visibility="invisible"
+                        app:layout_constraintTop_toBottomOf="@+id/save_imageButton">
+
+                    </com.google.android.material.chip.ChipGroup>
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

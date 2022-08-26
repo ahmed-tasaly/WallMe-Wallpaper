@@ -147,11 +147,10 @@ graph TD;
 
 
 
-### thanks to 
+### librays
     - coil 
     - okhttp
-
-  for the librays
+    - TouchImageView
 
 
 
