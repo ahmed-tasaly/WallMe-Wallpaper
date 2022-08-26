@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -11,7 +11,11 @@
     android:background="@color/Background"
     app:layout_constraintTop_toTopOf="parent">
 
-
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        >
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -26,7 +30,6 @@
                 android:scaleType="centerCrop"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-
                 tools:srcCompat="@tools:sample/avatars" />
 
             <ProgressBar
@@ -34,110 +37,26 @@
                 style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 app:layout_constraintBottom_toBottomOf="@+id/full_image"
                 app:layout_constraintEnd_toEndOf="@+id/full_image"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:background="@color/widget"
-                app:layout_constraintTop_toBottomOf="@+id/full_image">
-
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_margin="16dp"
-                    android:layout_width="match_parent"
-                    android:paddingBottom="20dp"
-                    android:layout_height="wrap_content">
-
-                <ImageButton
-                    android:id="@+id/set_imageButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-
-                    android:layout_marginTop="8dp"
-                    android:background="@color/widget"
-
-                    android:src="@drawable/ic_image"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/url_post" />
-
-                <ImageButton
-                    android:id="@+id/save_imageButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@color/widget"
-                    android:src="@drawable/ic_save"
-                    app:layout_constraintStart_toEndOf="@+id/set_imageButton"
-                    app:layout_constraintTop_toBottomOf="@+id/url_post" />
-
-                <TextView
-                    android:id="@+id/auther_post"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-
-                    android:text="Auther name"
-                    android:paddingBottom="20dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/title_post" />
-
-                <TextView
-                    android:id="@+id/url_post"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingBottom="20dp"
-
-                    android:autoLink="web"
-                    android:text="url"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/auther_post" />
-
-                <TextView
-
-                    android:id="@+id/title_post"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingBottom="20dp"
-                    android:text="Title"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                    <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/TagGroup"
-                        android:layout_marginTop="20dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        android:visibility="invisible"
-                        app:layout_constraintTop_toBottomOf="@+id/save_imageButton">
-
-
-                    </com.google.android.material.chip.ChipGroup>
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </ScrollView>
+
+    <FrameLayout
+        android:id="@+id/ImageInfo_BottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        />
+
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
 

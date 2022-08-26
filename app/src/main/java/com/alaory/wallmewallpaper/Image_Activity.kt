@@ -1,5 +1,6 @@
 package com.alaory.wallmewallpaper
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -22,6 +23,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import coil.ImageLoader
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import java.io.ByteArrayOutputStream
@@ -36,6 +39,10 @@ class Image_Activity(): AppCompatActivity(){
     private var Full_image: ImageView? = null;
     private var mybitmap: Bitmap? = null;
     private var taggroup: ChipGroup? = null;
+
+
+    private var setWallPaperButton : ImageButton? = null;
+    private var saveWallpaperButton : ImageButton? = null;
 
      var myData : List_image? = null;
      var thumbnail: Drawable? = null;
@@ -90,6 +97,7 @@ class Image_Activity(): AppCompatActivity(){
 
 
 
+    @SuppressLint("InflateParams")
     override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle);
         //activity system and app bar
@@ -104,25 +112,65 @@ class Image_Activity(): AppCompatActivity(){
         //update screen orein
         MainActivity.checkorein();
 
-
         myData = MYDATA!!
         thumbnail = THUMBNAIL!!
         //set the activit as a main screen
         setContentView(R.layout.show_image_fs);
+
+        //-----------------------------------------------------------------
+        //bottom sheet
+        val bottomsheetfragment = findViewById<FrameLayout>(R.id.ImageInfo_BottomSheet);
+        BottomSheetBehavior.from(bottomsheetfragment).apply {
+            peekHeight = 150;
+            this.state = BottomSheetBehavior.STATE_COLLAPSED;
+
+
+
+            val Views = LayoutInflater.from(this@Image_Activity).inflate(R.layout.bottom_sheet,null);
+            bottomsheetfragment.addView(Views);
+
+            //set bottom sheet info
+            taggroup = Views.findViewById(R.id.TagGroup);
+            taggroup!!.isVisible = false;
+            titlePost = Views.findViewById(R.id.title_post);
+            auther_post = Views.findViewById(R.id.auther_post);
+            url_post = Views.findViewById(R.id.url_post);
+            setWallPaperButton = Views.findViewById(R.id.set_imageButton);
+            saveWallpaperButton = Views.findViewById(R.id.save_imageButton);
+
+
+
+            Views.findViewById<ImageButton>(R.id.pullbottom).setOnClickListener {
+
+                if(this.state == BottomSheetBehavior.STATE_EXPANDED)
+                    this.state = BottomSheetBehavior.STATE_COLLAPSED;
+                else
+                    this.state = BottomSheetBehavior.STATE_EXPANDED;
+
+                it.animate().apply {
+                    duration = 300;
+
+                    rotationXBy(180f);
+                }
+            }
+        }
+
+        //----------------------------------------------------
+
+
         //set the ui elements
-        titlePost = findViewById(R.id.title_post);
-        auther_post = findViewById(R.id.auther_post);
-        url_post = findViewById(R.id.url_post);
         Full_image = findViewById(R.id.full_image);
         cricle_prograssBar = findViewById(R.id.cricle_prograssBar_FullImage);
-        taggroup = findViewById(R.id.TagGroup);
-        taggroup!!.isVisible = false;
+
 
         titlePost!!.setText(myData?.Image_title);
         auther_post!!.setText("posted by: ${myData?.Image_auther}");
         url_post!!.setText(myData?.post_url)
 
 
+
+
+        //-----------------------------------------------------------------
         //set wallhaven post info with tag functionality
         if(postmode == mode.wallhaven){
 
@@ -152,6 +200,8 @@ class Image_Activity(): AppCompatActivity(){
             }
             titlePost!!.isVisible = false;
         }
+
+        //------------------------------------------------------------------
 
 
         //load local bitmap and ui imageview data and do it in a callback
@@ -196,10 +246,12 @@ class Image_Activity(): AppCompatActivity(){
             .build()
         );
 
-
+        //--------------------------------------------------------------------------
         //set the wallpaper set button
-        findViewById<ImageButton>(R.id.set_imageButton).setOnClickListener { setWallpaper(); };
-        findViewById<ImageButton>(R.id.save_imageButton).setOnClickListener {
+        setWallPaperButton?.setOnClickListener { setWallpaper(); };
+
+
+        saveWallpaperButton?.setOnClickListener {
             if(loaded) {
                 saveImage(applicationContext,mybitmap!!, myData!!.Image_name);
                 Toast.makeText(this,"Image has been saved to your photos directory",Toast.LENGTH_LONG).show();
@@ -207,8 +259,9 @@ class Image_Activity(): AppCompatActivity(){
                 Toast.makeText(this,"Please wait for the image to load",Toast.LENGTH_LONG).show();
             }
         };
-        Log.i("Image_Activity","Info url ${myData?.Image_url} name ${myData?.Image_name} thumbnail ${myData?.Image_thumbnail}");
 
+        Log.i("Image_Activity","Info url ${myData?.Image_url} name ${myData?.Image_name} thumbnail ${myData?.Image_thumbnail}");
+        //------------------------------------------------------------------------------
 
     }
 
