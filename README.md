@@ -46,15 +46,15 @@
 
 <div align=center>
 
-<img src="./Images/phone.jpg" alt="drawing" width=200/>
-<img src="./Images/phone2.jpg" alt="drawing" width=200/>
-<img src="./Images/phone3.jpg" alt="drawing" width=200/>
-<img src="./Images/phone4.jpg" alt="drawing" width=200/>
-<img src="./Images/phone5.jpg" alt="drawing" width=200/>
-<img src="./Images/phone6.jpg" alt="drawing" width=200/>
-<img src="./Images/phone7.jpg" alt="drawing" width=200/>
-<img src="./Images/phone8.jpg" alt="drawing" width=200/>
-<img src="./Images/phone9.jpg" alt="drawing" width=200/>
+<img src="./Images/phone.jpg" alt="drawing" width=100/>
+<img src="./Images/phone2.jpg" alt="drawing" width=100/>
+<img src="./Images/phone3.jpg" alt="drawing" width=100/>
+<img src="./Images/phone4.jpg" alt="drawing" width=100/>
+<img src="./Images/phone5.jpg" alt="drawing" width=100/>
+<img src="./Images/phone6.jpg" alt="drawing" width=100/>
+<img src="./Images/phone7.jpg" alt="drawing" width=100/>
+<img src="./Images/phone8.jpg" alt="drawing" width=100/>
+<img src="./Images/phone9.jpg" alt="drawing" width=100/>
 
 
 
