@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
+import android.widget.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import androidx.core.view.marginBottom
@@ -24,6 +24,20 @@ class wallhaven_settings : Fragment() {
 
     var TagBoxWhiteList: ChipGroup? = null;
     var TagBoxBlackList: ChipGroup? = null;
+
+
+    var sorting : String = "favorites";
+    var ordering : String = "desc";
+    var ratio : String = "";
+    var categories : String = "010"
+    var sortingint = 4;
+
+
+    var Ratio_TagGroup : ChipGroup ? = null;
+    var AddChip_box_whitelist : Chip ? = null;
+    var AddChip_box_blacklist : Chip ? = null;
+    var categories_TagGroup : ChipGroup? = null;
+    var listmode_wallhaven: Spinner? = null;
 
 
     companion object{
@@ -65,13 +79,35 @@ class wallhaven_settings : Fragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+
+    private fun setUidata(){
+        Log.i("categories_TagGroup",categories);
+        for ( child in categories_TagGroup?.children!!){
+
+            if((child as Chip).text.toString().lowercase() == "general" )
+                child.isChecked = categories[0] == '1';
+            else if(child.text.toString().lowercase() == "anime" )
+                child.isChecked = categories[1] == '1';
+
+        }
+
+        for ( child in Ratio_TagGroup?.children!!){
+            val tempchild = child as Chip;
+            if(tempchild.text.toString().lowercase() == ratio)
+                tempchild.isChecked = true;
+        }
+
+        listmode_wallhaven?.setSelection(sortingint);
+
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_wallhaven_settings, container, false)
     }
+
+
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -79,11 +115,25 @@ class wallhaven_settings : Fragment() {
         TagBoxWhiteList = view.findViewById(R.id.TagChipGroup_box_whitelist);
         TagBoxBlackList = view.findViewById(R.id.TagChipGroup_box_blacklist);
 
+        Ratio_TagGroup =  view.findViewById(R.id.Ratio_TagGroup);
+        AddChip_box_whitelist = view.findViewById(R.id.AddChip_box_whitelist);
+        AddChip_box_blacklist  = view.findViewById(R.id.AddChip_box_blacklist)
+        categories_TagGroup  = view.findViewById(R.id.categories_TagGroup);
+        listmode_wallhaven = view.findViewById(R.id.listmode_wallhaven);
+
+
+
+        setUidata();
+
         for(i in TagsSequnce)
             addChip(i,requireContext(),resources);
 
 
-        view.findViewById<Chip>(R.id.AddChip_box_whitelist).setOnClickListener {
+
+
+        //----------------------------------------------
+        //white list tags
+        AddChip_box_whitelist?.setOnClickListener {
             val builder = AlertDialog.Builder(requireContext())
             val inputText = EditText(requireContext());
 
@@ -111,10 +161,10 @@ class wallhaven_settings : Fragment() {
             builder.setNegativeButton("Cancel",DialogInterface.OnClickListener { dialogInterface, i -> })
 
             builder.show();
-
         }
 
-        view.findViewById<Chip>(R.id.AddChip_box_blacklist).setOnClickListener {
+        //black list tags
+        AddChip_box_blacklist?.setOnClickListener {
             val builder = AlertDialog.Builder(requireContext())
             val inputText = EditText(requireContext());
 
@@ -144,5 +194,61 @@ class wallhaven_settings : Fragment() {
             builder.show();
 
         }
+        //----------------------------------------------
+
+        Ratio_TagGroup?.setOnCheckedStateChangeListener { group, checkedIds ->
+            if(checkedIds.size != 1){
+                ratio = "";
+            }else{
+                ratio = group.findViewById<Chip>(checkedIds[0]).text.toString().lowercase()
+            }
+        }
+
+        categories_TagGroup?.setOnCheckedStateChangeListener { group, checkedIds ->
+            if(checkedIds.size == 2){
+                categories = "110";
+            }else if(group.findViewById<Chip>(checkedIds[0]).text.toString().lowercase() == "anime"){
+                categories = "010";
+            }else{
+                categories = "100";
+            }
+
+        }
+
+        listmode_wallhaven?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, itemslected: Long) {
+                sorting = (parent?.selectedView as TextView?)?.text.toString().lowercase();
+                sortingint = itemslected.toInt();
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+
+            }
+        }
+
+
+        view.findViewById<Button>(R.id.save_button_wallhaven_settings).setOnClickListener {
+            wallhaven_api.categories = if(categories != "") "&categories=$categories" else "";
+            wallhaven_api.sorting = if(sorting != "") "&sorting=$sorting" else "";
+            wallhaven_api.ratio = if(ratio != "") "&ratios=$ratio" else "";
+            wallhaven_api.ordering = if(ordering != "") "&order=$ordering" else "";
+
+
+            wallhaven_api.wallhaven_homepage_posts = emptyList<List_image>().toMutableList();
+            wallhaven_posts.userhitsave = true;
+            MainActivity.change_fragment(MainActivity.wallhavenPosts);
+
+        }
+
+        view.findViewById<Button>(R.id.cancel_button_wallhaven_settings).setOnClickListener {
+            MainActivity.change_fragment(MainActivity.wallhavenPosts);
+        }
+
+
     }
+
+
+
+
+
 }

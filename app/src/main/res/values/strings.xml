@@ -33,6 +33,15 @@
         <item>Hot</item>
     </string-array>
 
+    <string-array name="wallhavenTimePriod" >
+        <item>day</item>
+        <item>3 days</item>
+        <item>week</item>
+        <item>month</item>
+        <item>3 months</item>
+        <item>6 months</item>
+        <item>year</item>
+    </string-array>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

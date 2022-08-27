@@ -38,6 +38,16 @@ class Reddit_Api(subredditname: String) {
 
         fun Update_Api_key(callback_update: () -> Unit = {}) {
             Log.i("Reddit_Api", "Function called");
+            try{
+                if(com.alaory.wallmewallpaper.BuildConfig.API_KEY_Base.toString().trim() == ""){
+                    callback_update();
+                    return
+                }
+            }catch (e : Exception){
+                callback_update();
+                return;
+            }
+
             val Myrequest = Request.Builder()
                 .url("https://www.reddit.com/api/v1/access_token?grant_type=https%3A%2F%2Foauth.reddit.com%2Fgrants%2Finstalled_client&device_id=DO_NOT_TRACK_THIS_DEVICE")
                 .post(RequestBody.create("application/x-www-form-urlencoded".toMediaTypeOrNull(),"="))
@@ -92,16 +102,21 @@ class Reddit_Api(subredditname: String) {
 
 
     fun get_subreddit_posts(callback_update: (list_data : Array<List_image>) -> Unit= {}){
-        if(api_key != "NOKEY"){
+
             Log.i("Reddit_Api", api_key)
             val url: String;
 
-
-            if(subreddit_posts_list.isNotEmpty())
-                url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?limit=$PostRequestNumber&after=${last_before_id}${timeperiod.lowercase()}";
-            else
-                url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?limit=$PostRequestNumber${timeperiod.lowercase()}";
-
+            if(api_key == "NOKEY"){
+                if(subreddit_posts_list.isNotEmpty())
+                    url = "https://reddit.com/r/$subreddit/${listMode.lowercase()}.json?limit=$PostRequestNumber&after=${last_before_id}${timeperiod.lowercase()}";
+                else
+                    url = "https://reddit.com/r/$subreddit/${listMode.lowercase()}.json?limit=$PostRequestNumber${timeperiod.lowercase()}";
+            }else{
+                if(subreddit_posts_list.isNotEmpty())
+                    url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?limit=$PostRequestNumber&after=${last_before_id}${timeperiod.lowercase()}";
+                else
+                    url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?limit=$PostRequestNumber${timeperiod.lowercase()}";
+            }
 
             Log.i("Reddit_Api",url);
 
@@ -260,7 +275,6 @@ class Reddit_Api(subredditname: String) {
 
                 }
             });
-        }
 
     }
 

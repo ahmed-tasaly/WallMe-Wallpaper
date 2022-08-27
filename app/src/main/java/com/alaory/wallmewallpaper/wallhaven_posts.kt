@@ -20,11 +20,19 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
      var mLayoutManager : RecyclerView.LayoutManager? =null;
      var bottomloading : BottonLoading.ViewLodMore? = null;
 
+    companion object{
+        var userhitsave : Boolean = false;
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
         wallhaven_adabter = Image_list_adapter(wallhaven_api.wallhaven_homepage_posts,this);
+        if(userhitsave){
+            LoadMore();
+            userhitsave = false;
+        }
+
     }
 
     override fun onCreateView(

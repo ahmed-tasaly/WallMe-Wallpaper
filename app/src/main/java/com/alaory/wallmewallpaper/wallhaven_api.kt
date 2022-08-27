@@ -20,9 +20,13 @@ class wallhaven_api {
         var lastindex: Int = 0;
         var currentPage: Int = 1;
 
+        var sorting : String = "&sorting=favorites";
+        var ordering : String = "&order=desc";
+        var ratio : String = "";
+        var categories : String = "&categories=010"
 
 
-        fun GethomePagePosts(sorting: String = "&sorting=favorites",ordering:String = "&order=desc" ,callback: () -> Unit = {}){
+        fun GethomePagePosts(callback: () -> Unit = {}){
             var Tags_String = "&q=";
             try{
                 for(i in wallhaven_settings.TagsSequnce){
@@ -34,7 +38,7 @@ class wallhaven_api {
 
 
 
-            val url_homepage = "https://wallhaven.cc/api/v1/search?page=$currentPage${sorting}${ordering}${if(Tags_String != "&q=")Tags_String else ""}";
+            val url_homepage = "https://wallhaven.cc/api/v1/search?page=$currentPage${sorting}${ratio}${ordering}${categories}${if(Tags_String != "&q=")Tags_String else ""}";
 
             val homepagereq = Request.Builder()
                 .url(url_homepage)

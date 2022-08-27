@@ -178,7 +178,7 @@ class Reddit_settings : Fragment() {
 
             MainActivity.change_fragment(MainActivity.redditPosts);
         }
-1
+
         view.findViewById<Button>(R.id.cancel_button_reddit_settings).setOnClickListener {
             loadprefs(requireContext());
             MainActivity.change_fragment(MainActivity.redditPosts);
