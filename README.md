@@ -36,6 +36,39 @@
 </br>
 
 
+###  how does the app look like
+
+
+
+</span> 
+</br>
+</br>
+
+<div align=center>
+
+<img src="./Images/phone.jpg" alt="drawing" width=200/>
+<img src="./Images/phone2.jpg" alt="drawing" width=200/>
+<img src="./Images/phone3.jpg" alt="drawing" width=200/>
+<img src="./Images/phone4.jpg" alt="drawing" width=200/>
+<img src="./Images/phone5.jpg" alt="drawing" width=200/>
+<img src="./Images/phone6.jpg" alt="drawing" width=200/>
+<img src="./Images/phone7.jpg" alt="drawing" width=200/>
+<img src="./Images/phone8.jpg" alt="drawing" width=200/>
+<img src="./Images/phone9.jpg" alt="drawing" width=200/>
+
+
+
+
+</div>
+
+</br>
+
+it needs a lot of work
+
+</br>
+</br>
+
+
 ### what is this ?
 
 </span>
@@ -81,28 +114,7 @@ you don't need this app, it is aimed at people who realy want to feel comfortabl
 as now of development nothing much. however check the todo list to see the comming features
 
 </br>
-<span style="color:#1be44a" > 
 
-###  how does the app look like
-
-
-
-</span> 
-</br>
-</br>
-
-<div align=center>
-
-<img src="./Images/phone.jpg" alt="drawing" width=200/>
-
-</div>
-
-</br>
-
-it needs a lot of work
-
-</br>
-</br>
 
 
 <span style="color:#50e41b" > 
