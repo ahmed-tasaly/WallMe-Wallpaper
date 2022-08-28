@@ -16,8 +16,8 @@ class MainActivity : AppCompatActivity(){
 
     private var binding: ActivityMainBinding? = null;
 
-
-
+    var wallhaven_filter = wallhaven_settings();
+    var reddit_filter = Reddit_settings();
 
 
 
@@ -30,9 +30,8 @@ class MainActivity : AppCompatActivity(){
 
         //fragmenst
          var redditPosts  = Reddit_posts();
-         var reddit_filter = Reddit_settings();
          var wallhavenPosts = wallhaven_posts();
-         var wallhaven_filter = wallhaven_settings();
+
 
 
         fun checkorein(){
@@ -55,7 +54,7 @@ class MainActivity : AppCompatActivity(){
 
         fun change_fragment(fragment: Fragment){
             LastFragmentMode = fragment;
-            var fragman = mainactivity?.supportFragmentManager?.beginTransaction();
+            val fragman = mainactivity?.supportFragmentManager?.beginTransaction();
             fragman?.replace(R.id.container,fragment);
             fragman?.commit();
 
@@ -81,6 +80,7 @@ class MainActivity : AppCompatActivity(){
 
         //update settings
         Reddit_settings.loadprefs(this);
+        wallhaven_settings.loadprefs(this);
 
         //set ui
         binding = ActivityMainBinding.inflate(layoutInflater);

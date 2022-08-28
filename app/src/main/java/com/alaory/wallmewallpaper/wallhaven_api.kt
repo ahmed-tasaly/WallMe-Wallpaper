@@ -24,6 +24,7 @@ class wallhaven_api {
         var ordering : String = "&order=desc";
         var ratio : String = "";
         var categories : String = "&categories=010"
+        var timeperiod: String = "";
 
 
         fun GethomePagePosts(callback: () -> Unit = {}){
@@ -38,7 +39,7 @@ class wallhaven_api {
 
 
 
-            val url_homepage = "https://wallhaven.cc/api/v1/search?page=$currentPage${sorting}${ratio}${ordering}${categories}${if(Tags_String != "&q=")Tags_String else ""}";
+            val url_homepage = "https://wallhaven.cc/api/v1/search?page=$currentPage${sorting}${ratio}${ordering}$timeperiod${categories}${if(Tags_String != "&q=")Tags_String else ""}";
 
             val homepagereq = Request.Builder()
                 .url(url_homepage)

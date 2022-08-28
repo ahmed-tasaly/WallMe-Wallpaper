@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:layout_width="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
+<ScrollView
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layoutDirection="ltr"
     android:background="@color/Background">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/TagBox"
@@ -130,11 +137,58 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/liststyle_wallhaven"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/TagBox"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="10dp"
+        android:background="@drawable/border_line">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <Spinner
+                android:id="@+id/listmode_wallhaven"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/textinput"
+                android:entries="@array/wallhaven_sortlist"
+                android:padding="10dp"
+                android:popupBackground="@color/widget" />
+
+            <Spinner
+                android:visibility="gone"
+                android:id="@+id/listmode_timePeriod_wallhaven"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_toEndOf="@+id/listmode_wallhaven"
+                android:background="@drawable/textinput"
+                android:entries="@array/wallhavenTimePriod"
+                android:padding="10dp"
+                android:popupBackground="@color/widget" />
+
+        </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/listmodeandtype"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/TagBox"
+        android:layout_below="@+id/liststyle_wallhaven"
         android:layout_marginHorizontal="20dp"
         android:layout_marginVertical="10dp"
         android:layout_marginStart="20dp"
@@ -144,57 +198,34 @@
         android:background="@drawable/border_line">
 
 
-        <Spinner
-            android:id="@+id/listmode_wallhaven"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:background="@drawable/textinput"
-            android:entries="@array/wallhaven_sortlist"
-            android:padding="10dp"
-            android:popupBackground="@color/widget"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Spinner
-            android:visibility="invisible"
-            android:id="@+id/timePeriod_wallhaven"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:background="@drawable/textinput"
-            android:entries="@array/wallhavenTimePriod"
-            android:padding="10dp"
-            android:popupBackground="@color/widget"
-            app:layout_constraintStart_toEndOf="@+id/listmode_wallhaven"
-            app:layout_constraintTop_toTopOf="parent" />
 
 
         <TextView
+            android:id="@+id/RatioText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Show"
+            android:text="Ratio"
             android:textColor="@color/white"
             android:textSize="22sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/Ratio_TagGroup"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/listmode_wallhaven" />
+            android:layout_marginTop="10dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/Ratio_TagGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+
             app:singleSelection="true"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/listmode_wallhaven">
+            app:layout_constraintTop_toBottomOf="@+id/RatioText">
 
             <com.google.android.material.chip.Chip
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checkable="true"
-                android:checked="true"
                 android:text="Portrait"
                 android:textColor="@color/black"
                 android:textSize="15dp"
@@ -212,15 +243,31 @@
 
         </com.google.android.material.chip.ChipGroup>
 
+
+        <TextView
+            android:id="@+id/CategoryText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Category"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:layout_marginVertical="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/Ratio_TagGroup"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            />
+
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/categories_TagGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
             app:selectionRequired="true"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/Ratio_TagGroup">
+            app:layout_constraintTop_toBottomOf="@+id/CategoryText"
+            app:layout_constraintBottom_toBottomOf="parent"
+            >
 
             <com.google.android.material.chip.Chip
                 android:layout_width="wrap_content"
@@ -244,12 +291,14 @@
         </com.google.android.material.chip.ChipGroup>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/listmodeandtype"
         android:layout_marginHorizontal="20dp"
-        >
+        android:paddingBottom="70dp">
+
         <Button
             android:id="@+id/cancel_button_wallhaven_settings"
             android:layout_width="wrap_content"
@@ -274,3 +323,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>
+</ScrollView>
