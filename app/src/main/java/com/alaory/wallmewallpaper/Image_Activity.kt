@@ -1,10 +1,13 @@
 package com.alaory.wallmewallpaper
 
+import android.app.WallpaperManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Bitmap
+import android.graphics.Rect
+import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
@@ -26,6 +29,7 @@ import coil.ImageLoader
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.ortiz.touchview.OnTouchImageViewListener
 import com.ortiz.touchview.TouchImageView
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -69,6 +73,10 @@ class Image_Activity(): AppCompatActivity(){
         var TagNameList : Array<String> = emptyArray();
 
 
+
+
+
+
         fun saveImage(context: Context, image: Bitmap,Name : String): String {
             val imageByteStream = ByteArrayOutputStream();
             image.compress(Bitmap.CompressFormat.PNG,100,imageByteStream);
@@ -76,6 +84,10 @@ class Image_Activity(): AppCompatActivity(){
             val path = MediaStore.Images.Media.insertImage(context.contentResolver,image,Name,null);
             return path;
         }
+
+
+
+
 
         fun Bitmap_toUri(context: Context, image: Bitmap): Uri? {
             var bytes = ByteArrayOutputStream();
@@ -93,23 +105,69 @@ class Image_Activity(): AppCompatActivity(){
     }
 
 
-    private fun setWallpaper(){
+
+
+
+    private fun setWallpaper(width : Int, height : Int){
         //set the wallpaper
         if(loaded){
-            try {
-                val uri_image = Bitmap_toUri(applicationContext,mybitmap!!);
-                val intent = Intent(Intent.ACTION_ATTACH_DATA);
-                intent.addCategory((Intent.CATEGORY_DEFAULT));
-                intent.setDataAndType(uri_image,"image/*");
-                intent.putExtra("mimeType","image/*")
-                this.startActivity(Intent.createChooser(intent,"Set as:"));
+//            try {
+//                val uri_image = Bitmap_toUri(applicationContext,mybitmap!!);
+//                val intent = Intent(Intent.ACTION_ATTACH_DATA);
+//                intent.addCategory((Intent.CATEGORY_DEFAULT));
+//                intent.setDataAndType(uri_image,"image/*");
+//                intent.putExtra("mimeType","image/*")
+//                this.startActivity(Intent.createChooser(intent,"Set as:"));
+//            }catch (e:Exception){
+//                Log.e("Image_Activity",e.toString())
+//            }
+            try{
+                val screenWidth = resources.displayMetrics.widthPixels;
+                val screenHeight = resources.displayMetrics.heightPixels;
+
+                val wallpapermanager = WallpaperManager.getInstance(this);
+                wallpapermanager.suggestDesiredDimensions(screenWidth,screenHeight);
+
+
+                val scaledWidth = if(mybitmap!!.width > resources.displayMetrics.widthPixels) mybitmap!!.width else resources.displayMetrics.widthPixels;
+                val scaledHeight = if(mybitmap!!.height > resources.displayMetrics.heightPixels) mybitmap!!.height else resources.displayMetrics.heightPixels;
+
+                val MyeditedWallpaper : Bitmap = Bitmap.createScaledBitmap(mybitmap!!,scaledWidth,scaledHeight,false);
+
+
+                var minWidth = if(width > resources.displayMetrics.widthPixels) resources.displayMetrics.widthPixels else width;
+                var minHeight = if(height > resources.displayMetrics.heightPixels) resources.displayMetrics.heightPixels else height;
+
+                var startWidth: Int = 0;
+
+                if(Configuration.ORIENTATION_LANDSCAPE == Resources.getSystem().configuration.orientation)
+                    minHeight = resources.displayMetrics.heightPixels;
+                else{
+                    startWidth = minWidth
+                    minWidth = resources.displayMetrics.widthPixels;
+                }
+
+
+                val WallPaperBitmap : Bitmap = Bitmap.createBitmap(MyeditedWallpaper,startWidth,0,minWidth,minHeight);
+
+
+
+                wallpapermanager.setBitmap(WallPaperBitmap);
+                Toast.makeText(this,"Image has been set as Wallpaper :)",Toast.LENGTH_LONG).show();
+
             }catch (e:Exception){
                 Log.e("Image_Activity",e.toString())
-            }
+           }
+
         }else{
             Toast.makeText(this,"Please wait for the image to load",Toast.LENGTH_LONG).show();
         }
     }
+
+
+
+
+
 
     private fun HideSystemBar(){
         if(Configuration.ORIENTATION_LANDSCAPE == Resources.getSystem().configuration.orientation){
@@ -226,7 +284,11 @@ class Image_Activity(): AppCompatActivity(){
         }
 
         //------------------------------------------------------------------
-
+        Full_image!!.setOnTouchImageViewListener(object : OnTouchImageViewListener{
+            override fun onMove() {
+                Log.i("Full_image","width:${(Full_image!!.zoomedRect.width() * Full_image!!.width).toInt() } height:${(Full_image!!.zoomedRect.height() * Full_image!!.height).toInt()}");
+            }
+        })
 
         //load local bitmap and ui imageview data and do it in a callback
         ImageLoader(applicationContext).enqueue(coil.request.ImageRequest.Builder(this)
@@ -272,7 +334,12 @@ class Image_Activity(): AppCompatActivity(){
 
         //--------------------------------------------------------------------------
         //set the wallpaper set button
-        setWallPaperButton?.setOnClickListener { setWallpaper(); };
+        setWallPaperButton?.setOnClickListener {
+            setWallpaper(
+                (Full_image!!.zoomedRect.width() * Full_image!!.width).toInt(),
+                (Full_image!!.zoomedRect.height() * Full_image!!.height).toInt()
+            );
+        };
 
 
         saveWallpaperButton?.setOnClickListener {

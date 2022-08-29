@@ -43,23 +43,22 @@ class wallhaven_settings : Fragment() {
         var sorting : String = "favorites";
         var ordering : String = "desc";
         var ratio : String = "";
-        var categories : String = "010"
+        var categories : String = "100"
         var timeperiod: String = "";
         var defualtTimePeriod: Int = 3;
         var sortingint = 4;
 
         fun loadprefs(context: Context){
-
             val wallhavenPrefs = PreferenceManager.getDefaultSharedPreferences(context);
             sorting = wallhavenPrefs.getString("sorting","favorites").toString();
             ordering = wallhavenPrefs.getString("ordering","desc").toString();
             ratio = wallhavenPrefs.getString("ratio","").toString();
-            categories = wallhavenPrefs.getString("categories","010").toString();
+            categories = wallhavenPrefs.getString("categories","100").toString();
             timeperiod = wallhavenPrefs.getString("timeperiod","").toString();
             defualtTimePeriod = wallhavenPrefs.getInt("defualtTimePeriod",3);
             sortingint = wallhavenPrefs.getInt("sortingint",4);
 
-            val tags = wallhavenPrefs.getString("tags","+nature,+clouds").toString();
+            val tags = wallhavenPrefs.getString("tags","+sunset,+portrait display").toString();
             TagsSequnce = emptyArray();
             TagsSequnce = tags.split(",").toTypedArray();
 
@@ -72,7 +71,7 @@ class wallhaven_settings : Fragment() {
             wallhaven_api.ratio = if(ratio != "") "&ratios=$ratio" else "";
             wallhaven_api.ordering = if(ordering != "") "&order=$ordering" else "";
             wallhaven_api.timeperiod = if(timeperiod != "") "&topRange=$timeperiod" else "";
-
+            wallhaven_api.currentPage = 1;
         }
 
     }

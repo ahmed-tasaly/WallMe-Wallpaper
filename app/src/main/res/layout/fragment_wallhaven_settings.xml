@@ -226,6 +226,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checkable="true"
+                android:checked="true"
                 android:text="Portrait"
                 android:textColor="@color/black"
                 android:textSize="15dp"
@@ -273,6 +274,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checkable="true"
+                android:checked="true"
                 android:text="General"
                 android:textColor="@color/black"
                 android:textSize="15dp"
@@ -282,7 +284,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checkable="true"
-                android:checked="true"
                 android:text="Anime"
                 android:textColor="@color/black"
                 android:textSize="15dp"
@@ -297,7 +298,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/listmodeandtype"
         android:layout_marginHorizontal="20dp"
-        android:paddingBottom="70dp">
+        android:paddingBottom="120dp">
 
         <Button
             android:id="@+id/cancel_button_wallhaven_settings"
