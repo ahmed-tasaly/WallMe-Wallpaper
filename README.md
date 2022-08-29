@@ -56,13 +56,13 @@
 <img src="./Images/phone9.jpg" alt="drawing" width=100/>
 
 
-
+since the app is still in development the ui may change :)
 
 </div>
 
 </br>
 
-it needs a lot of work
+
 
 </br>
 </br>
@@ -110,7 +110,7 @@ you don't need this app, it is aimed at people who realy want to feel comfortabl
 </span>
 </br>
 
-as now of development nothing much. however check the todo list to see the comming features
+as now of development only normal wallpaper app stuff. however check the todo list to see the comming features
 
 </br>
 
@@ -124,13 +124,13 @@ as now of development nothing much. however check the todo list to see the commi
 - [x] add reddit support 
 - [x] add reddit filter settings
 - [x] add wallhaven support
-- [ ] add wallhaven filter settings 
+- [x] add wallhaven filter settings 
 - [ ] add landscape mode for tablets
+- [ ] add auto wallpaper changer with preferred croping
 - [ ] add verical mode for phones
 - [ ] add favtorite page
 - [ ] add wallhaven sub page
 - [ ] add prograss bar when downloading an image
-- [ ] add auto wallpaper changer with preferred croping
 - [ ] add more ui I SAID MORE
 - [ ] more plans comming
 - [ ] go to sleep
