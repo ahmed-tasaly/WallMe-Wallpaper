@@ -1,5 +1,6 @@
 package com.alaory.wallmewallpaper
 
+import android.app.AlertDialog
 import android.app.WallpaperManager
 import android.content.Context
 import android.content.Intent
@@ -21,10 +22,12 @@ import android.view.WindowInsetsController
 import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import coil.ImageLoader
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
@@ -33,6 +36,7 @@ import com.ortiz.touchview.OnTouchImageViewListener
 import com.ortiz.touchview.TouchImageView
 import java.io.ByteArrayOutputStream
 import java.io.File
+import kotlin.math.absoluteValue
 
 
 class Image_Activity(): AppCompatActivity(){
@@ -55,6 +59,12 @@ class Image_Activity(): AppCompatActivity(){
         wallhaven,
         reddit
     }
+    enum class setmode{
+        HomeScreen,
+        LockScreen,
+        Both
+    }
+
 
 
 
@@ -102,67 +112,57 @@ class Image_Activity(): AppCompatActivity(){
             return Uri.parse(imagesaved.path);
         }
 
-    }
+
+
+        fun setWallpaper(context: Context,wallBitmap: Bitmap ,rectF: RectF,setLockScreen: setmode){
+            //set the wallpaper
+                try{
+                    val screenWidth = context.resources.displayMetrics.widthPixels;
+                    val screenHeight = context.resources.displayMetrics.heightPixels;
+
+                    val wallpapermanager = WallpaperManager.getInstance(context);
+                    wallpapermanager.suggestDesiredDimensions(screenWidth,screenHeight);
 
 
 
+                    val WallPaperBitmap : Bitmap = Bitmap.createBitmap(
+                        wallBitmap,
+                        (wallBitmap.width * rectF.left).toInt(),
+                        (wallBitmap.height * rectF.top).toInt(),
+                        (wallBitmap.width * (rectF.right - rectF.left).absoluteValue).toInt(),
+                        (wallBitmap.height * (rectF.bottom - rectF.top).absoluteValue).toInt()
+                    );
 
 
-    private fun setWallpaper(width : Int, height : Int){
-        //set the wallpaper
-        if(loaded){
-//            try {
-//                val uri_image = Bitmap_toUri(applicationContext,mybitmap!!);
-//                val intent = Intent(Intent.ACTION_ATTACH_DATA);
-//                intent.addCategory((Intent.CATEGORY_DEFAULT));
-//                intent.setDataAndType(uri_image,"image/*");
-//                intent.putExtra("mimeType","image/*")
-//                this.startActivity(Intent.createChooser(intent,"Set as:"));
-//            }catch (e:Exception){
-//                Log.e("Image_Activity",e.toString())
-//            }
-            try{
-                val screenWidth = resources.displayMetrics.widthPixels;
-                val screenHeight = resources.displayMetrics.heightPixels;
-
-                val wallpapermanager = WallpaperManager.getInstance(this);
-                wallpapermanager.suggestDesiredDimensions(screenWidth,screenHeight);
+                    when(setLockScreen){
+                        setmode.HomeScreen -> {
+                            wallpapermanager.setBitmap(WallPaperBitmap);
+                        }
+                        setmode.LockScreen -> {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                wallpapermanager.setBitmap(WallPaperBitmap,null,true,WallpaperManager.FLAG_LOCK)
+                            }else{
+                                Toast.makeText(context,"Your device version of android doesn't support lock screen wallpaper",Toast.LENGTH_LONG).show();
+                            }
+                        }
+                        else -> {}
+                    }
 
 
-                val scaledWidth = if(mybitmap!!.width > resources.displayMetrics.widthPixels) mybitmap!!.width else resources.displayMetrics.widthPixels;
-                val scaledHeight = if(mybitmap!!.height > resources.displayMetrics.heightPixels) mybitmap!!.height else resources.displayMetrics.heightPixels;
 
-                val MyeditedWallpaper : Bitmap = Bitmap.createScaledBitmap(mybitmap!!,scaledWidth,scaledHeight,false);
-
-
-                var minWidth = if(width > resources.displayMetrics.widthPixels) resources.displayMetrics.widthPixels else width;
-                var minHeight = if(height > resources.displayMetrics.heightPixels) resources.displayMetrics.heightPixels else height;
-
-                var startWidth: Int = 0;
-
-                if(Configuration.ORIENTATION_LANDSCAPE == Resources.getSystem().configuration.orientation)
-                    minHeight = resources.displayMetrics.heightPixels;
-                else{
-                    startWidth = minWidth
-                    minWidth = resources.displayMetrics.widthPixels;
+                }catch (e:Exception){
+                    Log.e("Image_Activity",e.toString())
                 }
 
-
-                val WallPaperBitmap : Bitmap = Bitmap.createBitmap(MyeditedWallpaper,startWidth,0,minWidth,minHeight);
-
-
-
-                wallpapermanager.setBitmap(WallPaperBitmap);
-                Toast.makeText(this,"Image has been set as Wallpaper :)",Toast.LENGTH_LONG).show();
-
-            }catch (e:Exception){
-                Log.e("Image_Activity",e.toString())
-           }
-
-        }else{
-            Toast.makeText(this,"Please wait for the image to load",Toast.LENGTH_LONG).show();
         }
+
     }
+
+
+
+
+
+
 
 
 
@@ -286,7 +286,12 @@ class Image_Activity(): AppCompatActivity(){
         //------------------------------------------------------------------
         Full_image!!.setOnTouchImageViewListener(object : OnTouchImageViewListener{
             override fun onMove() {
-                Log.i("Full_image","width:${(Full_image!!.zoomedRect.width() * Full_image!!.width).toInt() } height:${(Full_image!!.zoomedRect.height() * Full_image!!.height).toInt()}");
+                Log.i("Full_image","width:${(Full_image!!.zoomedRect.width() * Full_image!!.width).toInt() }" +
+                        "  height:${(Full_image!!.zoomedRect.height() * Full_image!!.height).toInt()}" +
+                        " info top: ${Full_image!!.zoomedRect.top}" +
+                        " info bottom: ${Full_image!!.zoomedRect.bottom}" +
+                        " info left: ${Full_image!!.zoomedRect.left}" +
+                        " info right: ${Full_image!!.zoomedRect.right}");
             }
         })
 
@@ -335,10 +340,61 @@ class Image_Activity(): AppCompatActivity(){
         //--------------------------------------------------------------------------
         //set the wallpaper set button
         setWallPaperButton?.setOnClickListener {
-            setWallpaper(
-                (Full_image!!.zoomedRect.width() * Full_image!!.width).toInt(),
-                (Full_image!!.zoomedRect.height() * Full_image!!.height).toInt()
-            );
+            if (!loaded){
+                Toast.makeText(this,"Please wait for the image to load",Toast.LENGTH_LONG).show();
+                return@setOnClickListener;
+            }
+
+            val alert_setwallpaper = AlertDialog.Builder(this)
+            val buttonlist = LayoutInflater.from(this).inflate(R.layout.setwallpaperalert,null) as ConstraintLayout;
+            alert_setwallpaper.setView(buttonlist);
+
+            val tempDialog = alert_setwallpaper.show();
+
+            buttonlist.findViewById<Button>(R.id.SetHomeScreen).setOnClickListener {
+                setWallpaper(
+                    this,
+                    mybitmap!!,
+                    Full_image!!.zoomedRect,
+                    setmode.HomeScreen
+                );
+                Toast.makeText(this,"Wallpaper set to Homescreen",Toast.LENGTH_LONG).show();
+                tempDialog.dismiss();
+            }
+
+            buttonlist.findViewById<Button>(R.id.SetLockScreen).setOnClickListener {
+                setWallpaper(
+                    this,
+                    mybitmap!!,
+                    Full_image!!.zoomedRect,
+                    setmode.LockScreen
+                );
+                Toast.makeText(this,"Wallpaper set to lockscreen",Toast.LENGTH_LONG).show();
+                tempDialog.dismiss();
+            }
+
+            buttonlist.findViewById<Button>(R.id.SetBothScreen).setOnClickListener {
+                val temprect = Full_image!!.zoomedRect;
+                setWallpaper(
+                    this,
+                    mybitmap!!,
+                    temprect,
+                    setmode.LockScreen
+                );
+                setWallpaper(
+                    this,
+                    mybitmap!!,
+                    temprect,
+                    setmode.HomeScreen
+                );
+
+                Toast.makeText(this,"Wallpaper set to Both",Toast.LENGTH_LONG).show();
+                tempDialog.dismiss();
+            }
+
+
+
+
         };
 
 
