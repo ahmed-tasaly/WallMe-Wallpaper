@@ -199,7 +199,11 @@ class Image_Activity(): AppCompatActivity(){
         //bottom sheet
         val bottomsheetfragment = findViewById<FrameLayout>(R.id.ImageInfo_BottomSheet);
         BottomSheetBehavior.from(bottomsheetfragment).apply {
-            peekHeight = 300;
+            if(resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT or Configuration.ORIENTATION_UNDEFINED)
+                peekHeight = ((resources.displayMetrics.heightPixels / resources.displayMetrics.density)/2.5).toInt();
+            else
+                peekHeight = ((resources.displayMetrics.widthPixels / resources.displayMetrics.density)/2.5).toInt();
+
             this.state = BottomSheetBehavior.STATE_COLLAPSED;
 
 
@@ -284,16 +288,6 @@ class Image_Activity(): AppCompatActivity(){
         }
 
         //------------------------------------------------------------------
-        Full_image!!.setOnTouchImageViewListener(object : OnTouchImageViewListener{
-            override fun onMove() {
-                Log.i("Full_image","width:${(Full_image!!.zoomedRect.width() * Full_image!!.width).toInt() }" +
-                        "  height:${(Full_image!!.zoomedRect.height() * Full_image!!.height).toInt()}" +
-                        " info top: ${Full_image!!.zoomedRect.top}" +
-                        " info bottom: ${Full_image!!.zoomedRect.bottom}" +
-                        " info left: ${Full_image!!.zoomedRect.left}" +
-                        " info right: ${Full_image!!.zoomedRect.right}");
-            }
-        })
 
         //load local bitmap and ui imageview data and do it in a callback
         ImageLoader(applicationContext).enqueue(coil.request.ImageRequest.Builder(this)

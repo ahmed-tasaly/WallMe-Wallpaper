@@ -176,12 +176,12 @@ class Reddit_settings : Fragment() {
 
             savepref(requireContext());
 
-            MainActivity.change_fragment(MainActivity.redditPosts);
+            MainActivity.change_fragment(MainActivity.redditPosts,true);
         }
 
         view.findViewById<Button>(R.id.cancel_button_reddit_settings).setOnClickListener {
             loadprefs(requireContext());
-            MainActivity.change_fragment(MainActivity.redditPosts);
+            MainActivity.change_fragment(MainActivity.redditPosts,true);
         }
 
     }

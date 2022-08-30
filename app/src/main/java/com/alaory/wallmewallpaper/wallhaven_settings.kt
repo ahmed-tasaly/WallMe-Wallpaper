@@ -143,7 +143,6 @@ class wallhaven_settings : Fragment() {
     private fun setUidata(){
         Log.i("categories_TagGroup",categories);
         for ( child in categories_TagGroup?.children!!){
-
             if((child as Chip).text.toString().lowercase() == "general" )
                 child.isChecked = categories[0] == '1';
             else if(child.text.toString().lowercase() == "anime" )
@@ -275,7 +274,7 @@ class wallhaven_settings : Fragment() {
         }
 
         categories_TagGroup?.setOnCheckedStateChangeListener { group, checkedIds ->
-            if(checkedIds.size == 2){
+            if(checkedIds.size > 1){
                 categories = "110";
             }else if(group.findViewById<Chip>(checkedIds[0]).text.toString().lowercase() == "anime"){
                 categories = "010";
@@ -322,13 +321,13 @@ class wallhaven_settings : Fragment() {
 
             wallhaven_api.wallhaven_homepage_posts = emptyList<List_image>().toMutableList();
             wallhaven_posts.userhitsave = true;
-            MainActivity.change_fragment(MainActivity.wallhavenPosts);
+            MainActivity.change_fragment(MainActivity.wallhavenPosts,true);
 
         }
 
         view.findViewById<Button>(R.id.cancel_button_wallhaven_settings).setOnClickListener {
             loadprefs(requireContext());
-            MainActivity.change_fragment(MainActivity.wallhavenPosts);
+            MainActivity.change_fragment(MainActivity.wallhavenPosts,true);
         }
 
 
