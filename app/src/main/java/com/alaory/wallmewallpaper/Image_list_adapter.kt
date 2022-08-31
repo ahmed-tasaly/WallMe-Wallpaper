@@ -12,7 +12,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 
-class Image_list_adapter(private var listPosts: MutableList<List_image>, onimageclick : OnImageClick): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class Image_list_adapter(var listPosts: MutableList<List_image>, onimageclick : OnImageClick): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val VIEW_TYPE_LOADING = 1;
     val VIEW_TYPE_ITEM = 0;

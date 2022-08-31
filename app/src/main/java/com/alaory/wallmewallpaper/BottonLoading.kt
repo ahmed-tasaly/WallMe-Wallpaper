@@ -1,5 +1,6 @@
 package com.alaory.wallmewallpaper
 
+import android.util.Log
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -25,11 +26,13 @@ class BottonLoading {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             if(dy <= 0) return;
+
             totalItemCount = MlayoutManager.itemCount;
             lastVisableItem = (MlayoutManager as GridLayoutManager).findLastVisibleItemPosition();
+
             if(!isLoading && totalItemCount <= lastVisableItem + visableThreshold){
                 onloadmore.onLoadMore();
-                isLoading =true;
+                isLoading = true;
             }
         }
     }

@@ -28,11 +28,11 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
         wallhaven_adabter = Image_list_adapter(wallhaven_api.wallhaven_homepage_posts,this);
+
         if(userhitsave){
             LoadMore();
             userhitsave = false;
         }
-
     }
 
     override fun onCreateView(
@@ -52,7 +52,6 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
         if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
             LoadMore();
-
     }
 
     override fun onDetach() {
@@ -82,8 +81,8 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
         bottomloading = BottonLoading.ViewLodMore(mLayoutManager as GridLayoutManager);
         bottomloading!!.setOnLoadMoreListener(object : BottonLoading.OnLoadMoreListener{
             override fun onLoadMore() {
-                LoadMore();
                 wallhaven_adabter!!.addLoadingView();
+                LoadMore();
             }
         })
         wallhaven_recycle!!.addOnScrollListener(bottomloading!!);
@@ -92,12 +91,13 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
     fun LoadMore(){
         wallhaven_api.GethomePagePosts {
-
             if(isAdded){
                 requireActivity().runOnUiThread {
                     wallhaven_adabter?.removeLoadingView();
                     bottomloading?.setLoaded();
-                    wallhaven_adabter!!.refresh_itemList(wallhaven_api.lastindex);
+                    wallhaven_recycle!!.post {
+                        wallhaven_adabter?.refresh_itemList(wallhaven_api.lastindex);
+                    }
                 }
             }
         }

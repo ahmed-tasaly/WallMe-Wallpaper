@@ -100,15 +100,21 @@ class MainActivity : AppCompatActivity(){
     }
 
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState);
+    private fun HideSystemBar(){
         if(Configuration.ORIENTATION_LANDSCAPE == Resources.getSystem().configuration.orientation){
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ){
                 window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
             }
         }
+    }
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState);
+
+        HideSystemBar();
+
         this.supportActionBar!!.hide();
 
 

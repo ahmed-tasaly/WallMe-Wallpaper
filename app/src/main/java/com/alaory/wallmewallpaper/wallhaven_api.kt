@@ -95,6 +95,7 @@ class wallhaven_api {
                             currentPage++;
                             lastindex = wallhaven_homepage_posts.size;
                             wallhaven_homepage_posts += TempList;
+                            Log.i("Waiting","I've been used")
                             callback();
                         }
 
