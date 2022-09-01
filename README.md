@@ -3,46 +3,58 @@
 
 # Wallme-Wallpaper
 
-<a>
-<kdb>
 
 <img src="./Images/Wallme_Wallpaper-Logo-Large.png" width=200 style="border-radius:20%"/>
-
-</kdb>
-
-</a>
-
-</div>
-
-
-
-<span style="color:#1be44a" > 
 
 
 [<h2 align="center">Download</h2>](https://github.com/Alaory/WallMe-Wallpaper/releases)
 
-
 [<h4 align="center">Support me </h4>](https://www.patreon.com/Alaory)
 
-------------------------------------
-</br></br></br>
 
-## Note: 
+</div>
 
-    this is the first time i use kotlin for something
-    and also my first released android app :) 
-    soooo expect a loooooooot of bugs
-
-</br>
-
-
-###  how does the app look like
-
+![size](https://shields.io/github/languages/code-size/Alaory/WallMe-Wallpaper?color=brightgreen)
+![files count](https://shields.io/github/directory-file-count/Alaory/WallMe-Wallpaper?color=green)
+![stars](https://img.shields.io/github/stars/alaory/wallme-wallpaper)
+![version](https://img.shields.io/github/v/tag/alaory/wallme-wallpaper)
+![license](https://img.shields.io/github/license/alaory/wallme-wallpaper)
+![](https://img.shields.io/github/commit-activity/w/Alaory/wallme-wallpaper)
+![downloads](https://img.shields.io/github/downloads/alaory/wallme-wallpaper/total)
+![language](https://img.shields.io/github/languages/top/alaory/wallme-wallpaper)
+[![Follow me](https://img.shields.io/github/followers/Alaory)](https://github.com/Alaory)
 
 
-</span> 
-</br>
-</br>
+<div align="center">
+
+<strong>
+
+Wallme-wallpaper is a wallpaper app that aims to make setting wallpapers easy and without any hassle 
+and at the same time have a lot of SFW wallpaper and with a good image quality with support more than one source of wallpapers
+
+</strong>
+
+</div>
+
+### current features 
+
+Reddit source:
+
+    you can add subreddit's name to view it's posts and set them as wallpaper 
+    you can change the list mode from Hot New and Top, you can also change image preview quality for faster image loading  
+
+Wallhaven source:
+
+    you can add tags to your home page to view images of your type, 
+    every image contains tags that you can view when you click on them 
+
+
+version 0.81a:
+    the images now can be viewed fullscreen
+    you can set the wallpaper from the app itself 
+
+
+## images 
 
 <div align=center>
 
@@ -60,108 +72,41 @@ since the app is still in development the ui may change :)
 
 </div>
 
-</br>
-
-
-
-</br>
-</br>
-
-
-### what is this ?
-
-</span>
-</br>
-
-wallme wallpaper is a wallpaper app aimed at simplicity and low peformance. it can gather images from diffrent sources such as reddit and wallhaven and put them in front of you without any hassle 
-
-</br></br>
-
-<span style="color:#1be44a" > 
-
-### why i am making it ?
-
-</span>
-
-
-</br>
-well i've used a lot of wallpaper apps only a few of them meet my requirements. so i decided to make one to what i content 
-
-</br>
-</br>
-</br>
-<span style="color:#1be44a" > 
-
-### why should i use it 
-
-</span>
-</br>
-
-you don't need this app, it is aimed at people who realy want to feel comfortable with using their phones or the one who wants a new feel for their phone
-
-
-</br>
-</br>
-
-<span style="color:#1be44a" > 
-
-### what does it offer
-
-</span>
-</br>
-
-as now of development only normal wallpaper app stuff. however check the todo list to see the comming features
-
-</br>
-
-
-
-<span style="color:#50e41b" > 
-
 ## TODO
-</span>
 
-- [x] add reddit support 
-- [x] add reddit filter settings
-- [x] add wallhaven support
-- [x] add wallhaven filter settings 
-- [ ] add landscape mode for tablets
-- [ ] add auto wallpaper changer with preferred croping
-- [ ] add verical mode for phones
-- [ ] add favtorite page
-- [ ] add wallhaven sub page
-- [ ] add prograss bar when downloading an image
-- [ ] add more ui I SAID MORE
-- [ ] more plans comming
+
+- [x] add Reddit support 
+- [x] add Reddit filter settings
+- [x] add Wallhaven support
+- [x] add Wallhaven filter settings 
+- [ ] add Wallhaven user's posts page
+- [ ] add landscape and portrait mode
+- [ ] add auto wallpaper changer with the user configuration 
+- [ ] add favorite page
+- [ ] add the ability to add images from the device to the favorite page
+- [ ] add progress bar when downloading an image
+- [ ] add more UI I SAID MORE
+- [ ] more plans coming
 - [ ] go to sleep
 
 
 
-### whats on my mind now for the app
-
-```mermaid
-graph TD;
-    MainActivity --> Reddit
-    MainActivity --> WallHaven
-    MainActivity --> Settings
-    MainActivity --> favorite_posts --> Post
-    Reddit --> show_subreddits_posts --> Post
-    Reddit --> reddit_settings --> Post_preview_quality
-    reddit_settings --> Subreddits_names
-    Settings --> where_ToSave_images_path
-    Settings --> auto_wallpaper_changer --> Time
-    Settings --> clear_cache
-    WallHaven --> main_page --> users_posts --> Post
-    main_page --> search_tags 
-    WallHaven --> wallhaven_settings --> subscription_page_users --> users_posts
-```
 
 
 
-### librays
+
+### libraries
+
     - coil 
     - okhttp
     - TouchImageView
 
 
+
+
+## Note: 
+
+    this is the first time i use Kotlin for something
+    and also my first released android app :) 
+    soooo expect a loooooooot of bugs
 
