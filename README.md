@@ -63,7 +63,6 @@ version 0.81a:
 <img src="./Images/phone11.jpg" alt="drawing" width=100/>
 <img src="./Images/phone5.jpg" alt="drawing" width=100/>
 <img src="./Images/phone6.jpg" alt="drawing" width=100/>
-<img src="./Images/phone7.jpg" alt="drawing" width=100/>
 <img src="./Images/phone8.jpg" alt="drawing" width=100/>
 <img src="./Images/phone9.jpg" alt="drawing" width=100/>
 
