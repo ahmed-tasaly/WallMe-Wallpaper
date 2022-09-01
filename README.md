@@ -58,7 +58,7 @@ version 0.81a:
 
 <div align=center>
 
-<img src="./Images/phone2.jpg" alt="drawing" width=100/>
+<img src="./Images/phone2a.jpg" alt="drawing" width=100/>
 <img src="./Images/phone3.jpg" alt="drawing" width=100/>
 <img src="./Images/phone4.jpg" alt="drawing" width=100/>
 <img src="./Images/phone5.jpg" alt="drawing" width=100/>
