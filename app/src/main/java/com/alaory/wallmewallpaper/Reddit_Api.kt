@@ -17,13 +17,13 @@ class Reddit_Api(subredditname: String) {
         //reddit rquest token
         var api_key = "NOKEY";
         //number of posts to load
-        var PostRequestNumber = 75;
+        var PostRequestNumber = 25;
         //token time left
         var time_left = 0;
         //okhttp client
         var reddit = OkHttpClient();
         //list of all subreddits posts
-        var reddit_global_posts : MutableList<List_image> = emptyList<List_image>().toMutableList();
+        var reddit_global_posts : MutableList<Image_Info> = emptyList<Image_Info>().toMutableList();
         //list of subreddits that have been made
         var Subreddits : Array<Reddit_Api> = emptyArray();
         //global post last index list
@@ -71,7 +71,7 @@ class Reddit_Api(subredditname: String) {
 
 
         fun get_shuffle_andGive(callback_update: () -> Unit = {}){
-            var temp_array_of_posts: Array<List_image> = emptyArray();
+            var temp_array_of_posts: Array<Image_Info> = emptyArray();
 
             for (subreddit in 0 until Subreddits.size){
                 Subreddits.get(subreddit).get_subreddit_posts{ posts ->
@@ -101,7 +101,7 @@ class Reddit_Api(subredditname: String) {
 
 
 
-    fun get_subreddit_posts(callback_update: (list_data : Array<List_image>) -> Unit= {}){
+    fun get_subreddit_posts(callback_update: (list_data : Array<Image_Info>) -> Unit= {}){
 
             Log.i("Reddit_Api", api_key)
             val url: String;
@@ -148,7 +148,7 @@ class Reddit_Api(subredditname: String) {
                         val children_json = respond_json.getJSONObject("data").getJSONArray("children");
                         //----------------------
                         // temp array to add data to
-                        var temp_list: Array<List_image> = emptyArray();
+                        var temp_list: Array<Image_Info> = emptyArray();
 
                         for (i in 0 until children_json.length()) {
                             try {
@@ -176,11 +176,11 @@ class Reddit_Api(subredditname: String) {
                                 //get image name to skip it next time
                                 last_before_id = dataJson.getString("name");
 
+
+                                val lastChars = dataJson.getString("url").reversed().substring(0,5);
+
                                 //check again if its an image
-                                if (dataJson.getString("thumbnail") == "self" || dataJson.getString(
-                                        "thumbnail"
-                                    ) == "default"
-                                )
+                                if (dataJson.getString("thumbnail") == "self" || dataJson.getString("thumbnail") == "default" || !lastChars.contains('.'))
                                     continue;
 
 
@@ -198,7 +198,16 @@ class Reddit_Api(subredditname: String) {
                                                             .getString("media_id")
                                                     );
                                             Log.i("Reddit_Api", "Gallery found")
-                                            val list_image_gallery: List_image = List_image(
+
+
+                                            val ImageRatio = Image_Ratio(
+                                                current_metadata.getJSONArray("p")
+                                                .getJSONObject(previewQulaity).getInt("x"),
+                                                current_metadata.getJSONArray("p")
+                                                    .getJSONObject(previewQulaity).getInt("y"))
+
+
+                                            val imageInfo_gallery: Image_Info = Image_Info(
                                                 current_metadata.getJSONObject("s").getString("u")
                                                     .replace("amp;", ""),
                                                 current_metadata.getJSONArray("p")
@@ -207,9 +216,10 @@ class Reddit_Api(subredditname: String) {
                                                 dataJson.getString("name"),
                                                 dataJson.getString("author"),
                                                 dataJson.getString("title"),
-                                                "reddit.com${dataJson.getString("permalink")}"
+                                                "reddit.com${dataJson.getString("permalink")}",
+                                                ImageRatio
                                             );
-                                            temp_list += list_image_gallery;
+                                            temp_list += imageInfo_gallery;
                                         } catch (e: JSONException) {
                                             Log.e("Reddit_Api", "gallary error: ${e.toString()}, Url is: $url")
                                         }
@@ -218,9 +228,9 @@ class Reddit_Api(subredditname: String) {
                                     continue;
                                 }
 
-                                val one_post: List_image;
+                                val one_post: Image_Info;
                                 if (dataJson.optString("preview").isNullOrBlank()) {
-                                    one_post = List_image(
+                                    one_post = Image_Info(
                                         dataJson.getString("url"),
                                         dataJson.getString("url"),
                                         dataJson.getString("name"),
@@ -241,14 +251,30 @@ class Reddit_Api(subredditname: String) {
                                         .getJSONObject(0)
                                         .getJSONArray("resolutions").getJSONObject(previewQulaity)
                                         .getString("url").replace("amp;", "");
+
+                                    val imageRatio = Image_Ratio(
+                                        dataJson
+                                        .getJSONObject("preview").getJSONArray("images")
+                                        .getJSONObject(0)
+                                        .getJSONArray("resolutions").getJSONObject(previewQulaity)
+                                        .getInt("width"),
+
+                                        dataJson
+                                            .getJSONObject("preview").getJSONArray("images")
+                                            .getJSONObject(0)
+                                            .getJSONArray("resolutions").getJSONObject(previewQulaity)
+                                            .getInt("height")
+                                    );
+
                                     //parse json into data to use
-                                    one_post = List_image(
+                                    one_post = Image_Info(
                                         image_source_url,
                                         image_preview_url,
                                         dataJson.getString("name"),
                                         dataJson.getString("author"),
                                         dataJson.getString("title"),
-                                        "reddit.com${dataJson.getString("permalink")}"
+                                        "reddit.com${dataJson.getString("permalink")}",
+                                        imageRatio
                                     )
                                 }
 
@@ -283,7 +309,7 @@ class Reddit_Api(subredditname: String) {
     }
 
 
-    var subreddit_posts_list : Array<List_image> = emptyArray();
+    var subreddit_posts_list : Array<Image_Info> = emptyArray();
     var last_before_id = "";
     var subreddit = subredditname;
 }

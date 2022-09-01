@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Bitmap
-import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -18,21 +17,17 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.WindowInsetsController
 import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.Lifecycle
 import coil.ImageLoader
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import com.ortiz.touchview.OnTouchImageViewListener
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ortiz.touchview.TouchImageView
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -40,7 +35,7 @@ import kotlin.math.absoluteValue
 
 
 class Image_Activity(): AppCompatActivity(){
-    //ui elements
+    //image info
     private var titlePost: TextView? = null;
     private var auther_post: TextView? = null;
     private var url_post: TextView? = null;
@@ -49,10 +44,17 @@ class Image_Activity(): AppCompatActivity(){
     private var taggroup: ChipGroup? = null;
 
 
+    //buttons
     private var setWallPaperButton : ImageButton? = null;
     private var saveWallpaperButton : ImageButton? = null;
 
-     var myData : List_image? = null;
+    //bottom buttons
+    private var setwallpaper_bottom_button: Button? = null;
+    private var goback_bottom_button: FloatingActionButton? = null;
+    private var container_bottom_button : ConstraintLayout? = null;
+
+
+     var myData : Image_Info? = null;
      var thumbnail: Drawable? = null;
 
     enum class mode{
@@ -74,7 +76,7 @@ class Image_Activity(): AppCompatActivity(){
 
     companion object{
         //the clicked data by the user
-         var MYDATA : List_image? = null;
+         var MYDATA : Image_Info? = null;
          var THUMBNAIL: Drawable? = null;
         //save bitmap to file and load it as a uri
         //mode
@@ -196,8 +198,14 @@ class Image_Activity(): AppCompatActivity(){
         setContentView(R.layout.show_image_fs);
 
         //-----------------------------------------------------------------
+        //bottom buttons
+        setwallpaper_bottom_button = findViewById(R.id.bottombutton_setwallpaper);
+        goback_bottom_button = findViewById(R.id.bottombutton_goback);
+        container_bottom_button = findViewById(R.id.bottombutton_container);
+        container_bottom_button!!.animate().translationY(200f);//for animation
         //bottom sheet
         val bottomsheetfragment = findViewById<FrameLayout>(R.id.ImageInfo_BottomSheet);
+
         BottomSheetBehavior.from(bottomsheetfragment).apply {
             if(resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT or Configuration.ORIENTATION_UNDEFINED)
                 peekHeight = ((resources.displayMetrics.heightPixels / resources.displayMetrics.density)/2.5).toInt();
@@ -234,9 +242,36 @@ class Image_Activity(): AppCompatActivity(){
                     rotationXBy(180f);
                 }
             }
+            setWallPaperButton?.setOnClickListener {
 
+                this@apply.state = BottomSheetBehavior.STATE_COLLAPSED;
+                bottomsheetfragment.animate().apply {
+                    this?.duration = 100;
+                    this?.translationY(200f);
+                }
+                container_bottom_button?.animate().apply {
+                    this?.withStartAction {
+                        container_bottom_button!!.visibility = View.VISIBLE;
+                    }
+                    this?.duration = 200;
+                    this?.translationY(0f);
+                }
+            }
 
+            goback_bottom_button?.setOnClickListener {
+                bottomsheetfragment.animate().apply {
+                    this?.duration = 200;
+                    this?.translationY(0f);
+                }
+                container_bottom_button?.animate().apply {
+                    this?.duration = 100;
+                    this?.translationY(200f);
+                    this?.withEndAction {
+                        container_bottom_button?.visibility = View.INVISIBLE;
+                    }
+                }
 
+            }
 
         }
 
@@ -292,6 +327,7 @@ class Image_Activity(): AppCompatActivity(){
         ImageLoader(applicationContext).enqueue(coil.request.ImageRequest.Builder(this)
             .data(myData?.Image_url)
             .placeholder(thumbnail)
+            .fallback(com.google.android.material.R.drawable.ic_mtrl_chip_close_circle)
             .target(object : coil.target.Target{
                 override fun onError(error: Drawable?) {
                     super.onError(error)
@@ -332,13 +368,14 @@ class Image_Activity(): AppCompatActivity(){
 
         //--------------------------------------------------------------------------
         //set the wallpaper set button
-        setWallPaperButton?.setOnClickListener {
+        setwallpaper_bottom_button?.setOnClickListener {
             if (!loaded){
                 Toast.makeText(this,"Please wait for the image to load",Toast.LENGTH_LONG).show();
                 return@setOnClickListener;
             }
 
-            val alert_setwallpaper = AlertDialog.Builder(this)
+            val alert_setwallpaper = AlertDialog.Builder(this,R.style.TransparentDialog)
+
             val buttonlist = LayoutInflater.from(this).inflate(R.layout.setwallpaperalert,null) as ConstraintLayout;
             alert_setwallpaper.setView(buttonlist);
 

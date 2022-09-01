@@ -9,8 +9,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
 class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
 
@@ -37,7 +37,7 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
             Log.i("Reddit_posts","i have beeen created");
             reddit_api = emptyArray();
             Reddit_Api.Subreddits = emptyArray();
-            Reddit_Api.reddit_global_posts = emptyList<List_image>().toMutableList();
+            Reddit_Api.reddit_global_posts = emptyList<Image_Info>().toMutableList();
 
             for (i in Reddit_settings.subreddits_list_names){
                 reddit_api += Reddit_Api(i);
@@ -91,25 +91,25 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
 
 
     private fun SetRVLayoutManager(){
-        mLayoutManager = GridLayoutManager(requireContext(),MainActivity.num_post_in_Column);
+        mLayoutManager = StaggeredGridLayoutManager(MainActivity.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
         myrec!!.layoutManager = mLayoutManager;
         myrec!!.setHasFixedSize(false);
         myrec?.adapter = PostsAdabter;
-        (mLayoutManager as GridLayoutManager?)!!.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
-            override fun getSpanSize(position: Int): Int {
-                return when(PostsAdabter!!.getItemViewType(position)){
-                    0 -> 1
-                    1 -> MainActivity.num_post_in_Column
-                    else -> -1
-                }
-            }
-        }
+//        (mLayoutManager as GridLayoutManager?)!!.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
+//            override fun getSpanSize(position: Int): Int {
+//                return when(PostsAdabter!!.getItemViewType(position)){
+//                    0 -> 1
+//                    1 -> MainActivity.num_post_in_Column
+//                    else -> -1
+//                }
+//            }
+//        }
     }
 
 
 
     private fun SetRvScrollListener(){
-        scrollListener = BottonLoading.ViewLodMore(mLayoutManager as GridLayoutManager);
+        scrollListener = BottonLoading.ViewLodMore(mLayoutManager as StaggeredGridLayoutManager);
         scrollListener!!.setOnLoadMoreListener(object : BottonLoading.OnLoadMoreListener{
             override fun onLoadMore() {
                 LoadMore();

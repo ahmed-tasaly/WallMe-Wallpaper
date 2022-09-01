@@ -1,6 +1,7 @@
 package com.alaory.wallmewallpaper
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,10 +10,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.graphics.drawable.toDrawable
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import coil.ImageLoader
+import okhttp3.internal.wait
 
-class Image_list_adapter(var listPosts: MutableList<List_image>, onimageclick : OnImageClick): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : OnImageClick): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val VIEW_TYPE_LOADING = 1;
     val VIEW_TYPE_ITEM = 0;
@@ -38,11 +42,21 @@ class Image_list_adapter(var listPosts: MutableList<List_image>, onimageclick : 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if(holder.itemViewType == VIEW_TYPE_ITEM){
             val holder = holder as ItemViewHolder;
+
+            var width = 1;
+            var height = 1;
+            if(listPosts.get(position).imageRatio != null){
+                val imageRatio = listPosts.get(position).imageRatio!!;
+                val ratio = imageRatio.Width.toFloat() / imageRatio.Height.toFloat()
+                width = (30 * ratio).toInt() ;
+                height = 30;
+            }
+            val tempBitmap : Bitmap = Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888);
+
             val request = coil.request.ImageRequest.Builder(this.context!!)
                 .data(listPosts.get(position).Image_thumbnail)
                 .target(holder.image_main)
-                .placeholder(R.drawable.image_placeholder)
-                .fallback(com.google.android.material.R.drawable.ic_mtrl_chip_close_circle)
+                .placeholder(tempBitmap.toDrawable(context!!.resources))
                 .listener(
                     onSuccess = {_,_ ->
                         holder.cricle_prograssBar.visibility = View.INVISIBLE;
@@ -64,6 +78,9 @@ class Image_list_adapter(var listPosts: MutableList<List_image>, onimageclick : 
             holder.root_view.setOnClickListener {
                 imgclick.onImageClick(position,holder.image_main.drawable);
             }
+        }else if(holder.itemViewType == VIEW_TYPE_LOADING){
+            val layoutparams = holder.itemView.layoutParams as StaggeredGridLayoutManager.LayoutParams;
+            layoutparams.isFullSpan = true;
         }
 
     }
@@ -94,7 +111,7 @@ class Image_list_adapter(var listPosts: MutableList<List_image>, onimageclick : 
             removeLoadingView();
 
         listPosts.add(
-            List_image("LOADING","")
+            Image_Info("LOADING","")
         );
         LoadingIndex = listPosts.lastIndex;
         refresh_itemList(listPosts.lastIndex);

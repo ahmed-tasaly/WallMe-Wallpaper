@@ -12,6 +12,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
 class TagActivity : AppCompatActivity(),Image_list_adapter.OnImageClick {
 
@@ -61,23 +62,14 @@ class TagActivity : AppCompatActivity(),Image_list_adapter.OnImageClick {
 
 
     private fun setLayoutForRv(){
-        MlaoutManager = GridLayoutManager(this,MainActivity.num_post_in_Column);
+        MlaoutManager = StaggeredGridLayoutManager(MainActivity.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
         Tag_recyclerView!!.layoutManager = MlaoutManager;
         Tag_recyclerView!!.setHasFixedSize(false);
         Tag_recyclerView!!.adapter = TagAdab;
-        (MlaoutManager as GridLayoutManager)!!.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
-            override fun getSpanSize(position: Int): Int {
-                return when(TagAdab!!.getItemViewType(position)){
-                    0 -> 1
-                    1 -> MainActivity.num_post_in_Column
-                    else -> -1
-                }
-            }
-        }
     }
 
     private fun setScrollListenerForRv(){
-        scrolllistener = BottonLoading.ViewLodMore(MlaoutManager as GridLayoutManager);
+        scrolllistener = BottonLoading.ViewLodMore(MlaoutManager as StaggeredGridLayoutManager);
         scrolllistener!!.setOnLoadMoreListener(object : BottonLoading.OnLoadMoreListener{
             override fun onLoadMore() {
                 TagAdab!!.addLoadingView();

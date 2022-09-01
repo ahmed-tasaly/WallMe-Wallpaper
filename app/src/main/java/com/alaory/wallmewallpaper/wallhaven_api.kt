@@ -3,9 +3,6 @@ package com.alaory.wallmewallpaper
 
 
 import android.util.Log
-import androidx.core.view.children
-import androidx.core.view.iterator
-import com.google.android.material.chip.Chip
 import okhttp3.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -16,7 +13,7 @@ class wallhaven_api {
         val wallhavenRequest  = OkHttpClient();
 
 
-        var wallhaven_homepage_posts : MutableList<List_image> = emptyList<List_image>().toMutableList();
+        var wallhaven_homepage_posts : MutableList<Image_Info> = emptyList<Image_Info>().toMutableList();
         var lastindex: Int = 0;
         var currentPage: Int = 1;
 
@@ -61,11 +58,11 @@ class wallhaven_api {
 
                         Log.i("wallhaven_api",body);
 
-                        var TempList : Array<List_image> = emptyArray();
+                        var TempList : Array<Image_Info> = emptyArray();
 
                         for (i in 0 until data.length()) {
                             try {
-                                var post: List_image;
+                                var post: Image_Info;
                                 val postInfo = data.getJSONObject(i);
 
                                 var found = false;
@@ -76,13 +73,14 @@ class wallhaven_api {
                                 if (found)
                                     continue;
 
-                                post = List_image(
+                                post = Image_Info(
                                     postInfo.getString("path"),
                                     postInfo.getJSONObject("thumbs").getString("original"),
                                     postInfo.getString("id"),
                                     "",
                                     "",
-                                    postInfo.getString("url")
+                                    postInfo.getString("url"),
+                                    Image_Ratio(postInfo.getString("resolution"))
                                 );
 
                                 TempList += post;
@@ -129,10 +127,10 @@ class wallhaven_api {
                         val responseJson  = JSONObject(body);
                         val data = responseJson.getJSONArray("data");
 
-                        var tempList: Array<List_image> = emptyArray();
+                        var tempList: Array<Image_Info> = emptyArray();
 
                         for (i in 0 until data.length()) {
-                            var post: List_image;
+                            var post: Image_Info;
                             val postInfo = data.getJSONObject(i);
 
                             var found = false;
@@ -142,13 +140,14 @@ class wallhaven_api {
                             }
                             if (found)
                                 continue;
-                            post = List_image(
+                            post = Image_Info(
                                 postInfo.getString("path"),
                                 postInfo.getJSONObject("thumbs").getString("original"),
                                 postInfo.getString("id"),
                                 "",
                                 "",
-                                postInfo.getString("url")
+                                postInfo.getString("url"),
+                                Image_Ratio(postInfo.getString("resolution"))
                             );
                             tempList += post;
                         }
@@ -172,7 +171,7 @@ class wallhaven_api {
 
 
         //add image info to post
-        fun imageInfo(listimage_ref : List_image,callback: () -> Unit = {}){
+        fun imageInfo(listimage_ref : Image_Info, callback: () -> Unit = {}){
             val requestImageInfo = Request.Builder()
                 .url("https://wallhaven.cc/api/v1/w/${listimage_ref.Image_name}")
                 .build();
@@ -217,7 +216,7 @@ class wallhaven_api {
         var Name_Tag: String,
         var Page_Tag: Int=1,
         var lastindex : Int = 0,
-        var Tag_Post_list: MutableList<List_image> = emptyList<List_image>().toMutableList()
+        var Tag_Post_list: MutableList<Image_Info> = emptyList<Image_Info>().toMutableList()
     )
 
 }

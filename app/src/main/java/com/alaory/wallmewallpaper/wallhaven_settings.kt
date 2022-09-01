@@ -320,7 +320,7 @@ class wallhaven_settings : Fragment() {
             setapidata();
 
             wallhaven_api.currentPage = 1;
-            wallhaven_api.wallhaven_homepage_posts = emptyList<List_image>().toMutableList();
+            wallhaven_api.wallhaven_homepage_posts = emptyList<Image_Info>().toMutableList();
             wallhaven_posts.userhitsave = true;
             MainActivity.change_fragment(MainActivity.wallhavenPosts,true);
 

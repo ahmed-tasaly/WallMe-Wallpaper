@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
 
 class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
@@ -60,25 +61,25 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
     }
 
     private fun SetRVLayoutManager(){
-        mLayoutManager = GridLayoutManager(requireContext(),MainActivity.num_post_in_Column);
+        mLayoutManager = StaggeredGridLayoutManager(MainActivity.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL)
         wallhaven_recycle!!.layoutManager = mLayoutManager;
         wallhaven_recycle!!.setHasFixedSize(false);
         wallhaven_recycle?.adapter = wallhaven_adabter;
-        (mLayoutManager as GridLayoutManager?)!!.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
-            override fun getSpanSize(position: Int): Int {
-                return when(wallhaven_adabter!!.getItemViewType(position)){
-                    0 -> 1
-                    1 -> MainActivity.num_post_in_Column
-                    else -> -1
-                }
-            }
-        }
+//        (mLayoutManager as GridLayoutManager?)!!.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
+//            override fun getSpanSize(position: Int): Int {
+//                return when(wallhaven_adabter!!.getItemViewType(position)){
+//                    0 -> 1
+//                    1 -> MainActivity.num_post_in_Column
+//                    else -> -1
+//                }
+//            }
+//        }
     }
 
 
 
     private fun SetRvScrollListener(){
-        bottomloading = BottonLoading.ViewLodMore(mLayoutManager as GridLayoutManager);
+        bottomloading = BottonLoading.ViewLodMore(mLayoutManager as StaggeredGridLayoutManager);
         bottomloading!!.setOnLoadMoreListener(object : BottonLoading.OnLoadMoreListener{
             override fun onLoadMore() {
                 wallhaven_adabter!!.addLoadingView();
