@@ -30,7 +30,7 @@
 <strong>
 
 Wallme-wallpaper is a wallpaper app that aims to make setting wallpapers easy and without any hassle 
-and at the same time have a lot of SFW wallpaper and with a good image quality with support more than one source of wallpapers
+and at the same time have a lot of SFW wallpaper and with a good image quality with support to more than one source of wallpapers
 
 </strong>
 
