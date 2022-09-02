@@ -1,0 +1,21 @@
+Wohooo finally after an entire month of developing the app we got out of the alpha version
+what does this update brings:
+
+    -added Reddit support
+    -added Wallhaven support
+    -added the ability to set wallpapers from the app
+    -added the ability to save wallpapers
+    -added Wallhaven tags
+    -added Wallhaven list mode
+    -added Reddit list mode. Top New Hot
+
+all of the above features are added before this update
+
+update 1.0:
+
+    -changed altertdialog ui
+    -added screen where you can set the wallpaper however you like
+    -changed grid layout to staggered grid layout
+    -added image width info to Image_info
+
+I hope you enjoy the update
