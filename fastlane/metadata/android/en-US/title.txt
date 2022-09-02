@@ -1,1 +1,1 @@
- Wallme-Wallpaper: Wallpaper app
+WallmeWallpaper:Wallpaper app
