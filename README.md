@@ -4,7 +4,7 @@
 # Wallme-Wallpaper
 
 
-<img src="./Images/Wallme_Wallpaper-Logo-Large.png" width=200 style="border-radius:20%"/>
+<img src="./Images/logo_large.png" width=200 style="border-radius:20%"/>
 
 
 [<h2 align="center">Download</h2>](https://github.com/Alaory/WallMe-Wallpaper/releases)
@@ -12,6 +12,7 @@
 [<h4 align="center">Support me </h4>](https://www.patreon.com/Alaory)
 
 
+</div>
 
 ![size](https://shields.io/github/languages/code-size/Alaory/WallMe-Wallpaper?color=brightgreen)
 ![files count](https://shields.io/github/directory-file-count/Alaory/WallMe-Wallpaper?color=green)
@@ -24,7 +25,7 @@
 [![Follow me](https://img.shields.io/github/followers/Alaory)](https://github.com/Alaory)
 
 
-
+<div align="center">
 
 <strong>
 
