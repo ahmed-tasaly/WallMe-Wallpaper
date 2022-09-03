@@ -12,7 +12,6 @@
 [<h4 align="center">Support me </h4>](https://www.patreon.com/Alaory)
 
 
-</div>
 
 ![size](https://shields.io/github/languages/code-size/Alaory/WallMe-Wallpaper?color=brightgreen)
 ![files count](https://shields.io/github/directory-file-count/Alaory/WallMe-Wallpaper?color=green)
@@ -25,7 +24,7 @@
 [![Follow me](https://img.shields.io/github/followers/Alaory)](https://github.com/Alaory)
 
 
-<div align="center">
+
 
 <strong>
 

@@ -40,10 +40,9 @@
                 android:layout_height="wrap_content">
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/set_imageButton"
+                    android:id="@+id/set_bottomsheet_floatingbutton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
                     android:layout_marginTop="8dp"
                     app:backgroundTint="@color/Buttons"
                     android:src="@drawable/ic_image"
@@ -55,14 +54,26 @@
                     android:id="@+id/save_imageButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
                     android:layout_marginStart="32dp"
                     android:layout_marginTop="8dp"
                     app:backgroundTint="@color/Buttons"
                     android:src="@drawable/ic_save"
                     app:borderWidth="0dp"
-                    app:layout_constraintStart_toEndOf="@+id/set_imageButton"
+                    app:layout_constraintStart_toEndOf="@+id/set_bottomsheet_floatingbutton"
                     app:layout_constraintTop_toBottomOf="@+id/url_post" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/favorite_bottomsheet_floatingbutton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toEndOf="@+id/save_imageButton"
+                    app:layout_constraintTop_toBottomOf="@id/url_post"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="8dp"
+                    app:backgroundTint="@color/Buttons"
+                    android:src="@drawable/ic_favorite"
+                    app:borderWidth="0dp"
+                    />
 
                 <TextView
                     android:id="@+id/auther_post"

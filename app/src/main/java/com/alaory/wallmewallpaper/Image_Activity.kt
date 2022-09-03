@@ -45,8 +45,9 @@ class Image_Activity(): AppCompatActivity(){
 
 
     //buttons
-    private var setWallPaperButton : ImageButton? = null;
-    private var saveWallpaperButton : ImageButton? = null;
+    private var setWallPaperButton : FloatingActionButton? = null;
+    private var saveWallpaperButton : FloatingActionButton? = null;
+    private var setfavorite : FloatingActionButton? = null;
 
     //bottom buttons
     private var setwallpaper_bottom_button: Button? = null;
@@ -212,21 +213,21 @@ class Image_Activity(): AppCompatActivity(){
             else
                 peekHeight = ((resources.displayMetrics.widthPixels / resources.displayMetrics.density)/2.5).toInt();
 
+
             this.state = BottomSheetBehavior.STATE_COLLAPSED;
-
-
 
             val Views = LayoutInflater.from(this@Image_Activity).inflate(R.layout.bottom_sheet,null);
             bottomsheetfragment.addView(Views);
 
-            //set bottom sheet info
+            //set bottom sheet view info
             taggroup = Views.findViewById(R.id.TagGroup);
             taggroup!!.isVisible = false;
             titlePost = Views.findViewById(R.id.title_post);
             auther_post = Views.findViewById(R.id.auther_post);
             url_post = Views.findViewById(R.id.url_post);
-            setWallPaperButton = Views.findViewById(R.id.set_imageButton);
+            setWallPaperButton = Views.findViewById(R.id.set_bottomsheet_floatingbutton);
             saveWallpaperButton = Views.findViewById(R.id.save_imageButton);
+            setfavorite = Views.findViewById(R.id.favorite_bottomsheet_floatingbutton);
 
 
             //pull buttonimage
@@ -242,6 +243,16 @@ class Image_Activity(): AppCompatActivity(){
                     rotationXBy(180f);
                 }
             }
+
+            setfavorite?.setOnClickListener {
+                val tempdatabase = database(this@Image_Activity);
+                tempdatabase.add_image_info_to_database(myData!!);
+                val tempdatabase_parsed = tempdatabase.read_image_info_list_from_database();
+                for(i in tempdatabase_parsed)
+                    Log.i("tempdatabase_parsed","info: ${i.Image_name}  ${i.Image_url}  ${i.Image_title}  ${i.Image_thumbnail}");
+            }
+
+            //hide bottmsheet and show setwallpaper button
             setWallPaperButton?.setOnClickListener {
 
                 this@apply.state = BottomSheetBehavior.STATE_COLLAPSED;
@@ -257,7 +268,7 @@ class Image_Activity(): AppCompatActivity(){
                     this?.translationY(0f);
                 }
             }
-
+            //hide setwallpaper button and show bottomsheet
             goback_bottom_button?.setOnClickListener {
                 bottomsheetfragment.animate().apply {
                     this?.duration = 200;

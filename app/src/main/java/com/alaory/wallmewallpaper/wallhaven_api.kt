@@ -85,7 +85,7 @@ class wallhaven_api {
 
                                 TempList += post;
                             } catch (e: JSONException) {
-                                Log.e("wallhaven_api", e.toString());
+                                Log.e("wallhaven_api", "err: ${e.toString()} url: $body");
                             }
                         }
                         if(TempList.size > 0){
@@ -188,8 +188,11 @@ class wallhaven_api {
                         try {
                             Image_Activity.TagNameList = emptyArray();
                             val TagsJson = data.getJSONArray("tags");
-                            for(i in 0 until TagsJson.length())
-                                Image_Activity.TagNameList += TagsJson.getJSONObject(i).getString("name");
+                            for(i in 0 until TagsJson.length()){
+                                if(TagsJson.getJSONObject(i).getString("purity") == "sfw")
+                                    Image_Activity.TagNameList += TagsJson.getJSONObject(i).getString("name");
+                            }
+
 
                         }catch (e : JSONException){
                             Log.e("wallhaven_api","Tag error ${e.toString()}")
