@@ -29,12 +29,10 @@ class database(val context: Context) : SQLiteOpenHelper(context, Image_info_data
         //create sql table and add image_info coloums
         val sql_query_createtable = "CREATE TABLE IF NOT EXISTS $table_name ($name TEXT,$auther TEXT,$url TEXT,$thumbnail TEXT,$title TEXT,$post_source TEXT,$width INTEGER,$height INTEGER);"
         dp!!.execSQL(sql_query_createtable);
-        //update_image_info_list_from_database();
-        dp.close();
     }
 
     override fun onUpgrade(p0: SQLiteDatabase?, p1: Int, p2: Int) {
-        //i am a potato ;0
+
     }
 
     fun add_image_info_to_database(image_info: Image_Info){
@@ -54,7 +52,6 @@ class database(val context: Context) : SQLiteOpenHelper(context, Image_info_data
             CV.put(height, image_info.imageRatio!!.Height);
 
             val result = dp.insert(table_name, null, CV);
-            dp.close();
 
             if (result.toInt() == -1)
                 Toast.makeText(context, "Image database save failed ;(", Toast.LENGTH_LONG).show();
@@ -70,7 +67,6 @@ class database(val context: Context) : SQLiteOpenHelper(context, Image_info_data
         val query = "DELETE FROM $table_name WHERE $name = '${image_info.Image_name}' AND $auther = '${image_info.Image_auther}';";
         Log.i("database","remove query: $query");
         dp.execSQL(query);
-        dp.close();
         update_image_info_list_from_database();
     }
 
@@ -94,6 +90,11 @@ class database(val context: Context) : SQLiteOpenHelper(context, Image_info_data
             imageinfo_list += imageInfo;
         }
         curser.close();
-        dp.close();
+        closedp();
+    }
+    private fun closedp(){
+        val dp = this.readableDatabase;
+        if(dp != null && dp.isOpen)
+            dp.close();
     }
 }
