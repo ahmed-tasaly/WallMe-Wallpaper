@@ -36,7 +36,7 @@ and at the same time have a lot of SFW wallpaper and with a good image quality w
 
 </div>
 
-### current features 
+### current sources 
 
 Reddit source:
 
@@ -49,9 +49,6 @@ Wallhaven source:
     every image contains tags that you can view when you click on them 
 
 
-version 0.81a:
-    the images now can be viewed fullscreen
-    you can set the wallpaper from the app itself 
 
 
 ## images 
