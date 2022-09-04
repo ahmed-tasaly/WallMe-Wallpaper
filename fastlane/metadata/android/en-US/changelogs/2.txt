@@ -1,0 +1,7 @@
+release 1.1:
+    -added database to store images info
+    -added settings button
+    -added favorite posts menu
+    -added a favorite button to posts
+
+Thanks again for using the app ;)

@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
@@ -21,7 +22,8 @@ class MainActivity : AppCompatActivity(){
     var wallhaven_filter = wallhaven_settings();
     var reddit_filter = Reddit_settings();
 
-
+    //init database
+    val DataBase = database(this);
 
     companion object{
         var num_post_in_Column = 2;
@@ -33,6 +35,7 @@ class MainActivity : AppCompatActivity(){
         //fragmenst
          var redditPosts  = Reddit_posts();
          var wallhavenPosts = wallhaven_posts();
+         var favoriteList : favorite_list? = null;
 
         //nav
         var bottomnav : BottomNavigationView ? = null;
@@ -125,10 +128,17 @@ class MainActivity : AppCompatActivity(){
         //update settings
         Reddit_settings.loadprefs(this);
         wallhaven_settings.loadprefs(this);
+        //update database
+        DataBase.update_image_info_list_from_database();
+
 
         //set ui
         binding = ActivityMainBinding.inflate(layoutInflater);
         setContentView(binding!!.root);
+        //set favorite fragment
+        if(favoriteList == null)
+            favoriteList = favorite_list(DataBase);
+
 
         //set ui fragment
         if(LastFragmentMode!=null)
@@ -156,8 +166,21 @@ class MainActivity : AppCompatActivity(){
         //set button navitgtion actions
         bottomnav?.setOnItemSelectedListener {
            when (it.itemId){
-               R.id.Reddit_posts_List -> {change_fragment(redditPosts);true}
-               R.id.wallhaven_posts_list -> {change_fragment(wallhavenPosts);true}
+               R.id.Reddit_posts_List -> {
+                   filterbutton!!.setImageResource(R.drawable.filter_ic);
+                   change_fragment(redditPosts);
+                   true
+               }
+               R.id.wallhaven_posts_list -> {
+                   filterbutton!!.setImageResource(R.drawable.filter_ic);
+                   change_fragment(wallhavenPosts);
+                   true
+               }
+               R.id.Favorite_posts_list -> {
+                   filterbutton!!.setImageResource(R.drawable.ic_outline_settings_24);
+                   change_fragment(favoriteList!!);
+                   true
+               }
                else -> {true}
            }
         }
@@ -165,14 +188,21 @@ class MainActivity : AppCompatActivity(){
 
         //set floating button actions
         filterbutton?.setOnClickListener {
-            hidenav();
+            val button = it as FloatingActionButton;
             when(bottomnav?.selectedItemId){
                 R.id.Reddit_posts_List -> {
+                    hidenav();
                     change_fragment(reddit_filter);
-                    true
+
                 }
-                R.id.wallhaven_posts_list -> {change_fragment(wallhaven_filter);true}
-                else -> {true}
+                R.id.wallhaven_posts_list -> {
+                    hidenav();
+                    change_fragment(wallhaven_filter);
+                    }
+                R.id.Favorite_posts_list -> {
+                    Toast.makeText(this@MainActivity,"Wow you pressed settings :)",Toast.LENGTH_LONG).show();
+                }
+                else -> {}
             }
         }
 

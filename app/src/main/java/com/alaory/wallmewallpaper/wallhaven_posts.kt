@@ -65,15 +65,6 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
         wallhaven_recycle!!.layoutManager = mLayoutManager;
         wallhaven_recycle!!.setHasFixedSize(false);
         wallhaven_recycle?.adapter = wallhaven_adabter;
-//        (mLayoutManager as GridLayoutManager?)!!.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
-//            override fun getSpanSize(position: Int): Int {
-//                return when(wallhaven_adabter!!.getItemViewType(position)){
-//                    0 -> 1
-//                    1 -> MainActivity.num_post_in_Column
-//                    else -> -1
-//                }
-//            }
-//        }
     }
 
 

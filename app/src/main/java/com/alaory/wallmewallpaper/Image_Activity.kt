@@ -55,6 +55,9 @@ class Image_Activity(): AppCompatActivity(){
     private var container_bottom_button : ConstraintLayout? = null;
 
 
+     //database
+     val tempdatabase = database(this@Image_Activity);
+
      var myData : Image_Info? = null;
      var thumbnail: Drawable? = null;
 
@@ -162,7 +165,14 @@ class Image_Activity(): AppCompatActivity(){
     }
 
 
-
+    private fun isOnDatabase(): Boolean{
+        var found = false;
+        for(i in database.imageinfo_list){
+            if(i.Image_name == myData!!.Image_name)
+                found = true;
+        }
+        return found;
+    }
 
 
 
@@ -197,7 +207,8 @@ class Image_Activity(): AppCompatActivity(){
         thumbnail = THUMBNAIL!!
         //set the activit as a main screen
         setContentView(R.layout.show_image_fs);
-
+        //update database
+        tempdatabase.update_image_info_list_from_database();
         //-----------------------------------------------------------------
         //bottom buttons
         setwallpaper_bottom_button = findViewById(R.id.bottombutton_setwallpaper);
@@ -229,6 +240,8 @@ class Image_Activity(): AppCompatActivity(){
             saveWallpaperButton = Views.findViewById(R.id.save_imageButton);
             setfavorite = Views.findViewById(R.id.favorite_bottomsheet_floatingbutton);
 
+            if(isOnDatabase())
+                setfavorite!!.setImageResource(R.drawable.ic_heartfull);
 
             //pull buttonimage
             Views.findViewById<ImageButton>(R.id.pullbottom).setOnClickListener {
@@ -245,11 +258,21 @@ class Image_Activity(): AppCompatActivity(){
             }
 
             setfavorite?.setOnClickListener {
-                val tempdatabase = database(this@Image_Activity);
-                tempdatabase.add_image_info_to_database(myData!!);
-                val tempdatabase_parsed = tempdatabase.read_image_info_list_from_database();
-                for(i in tempdatabase_parsed)
-                    Log.i("tempdatabase_parsed","info: ${i.Image_name}  ${i.Image_url}  ${i.Image_title}  ${i.Image_thumbnail}");
+                val found = isOnDatabase();
+                val button = it as FloatingActionButton;
+
+                if(!found){
+                    tempdatabase.add_image_info_to_database(myData!!);
+                    button.setImageResource(R.drawable.ic_heartfull)
+                }
+                else{
+                    tempdatabase.remove_image_info_from_database(myData!!);
+                    button.setImageResource(R.drawable.ic_favorite);
+                }
+
+                for(i in database.imageinfo_list){
+                    Log.i("database","name: ${i.Image_auther}")
+                }
             }
 
             //hide bottmsheet and show setwallpaper button
@@ -294,7 +317,11 @@ class Image_Activity(): AppCompatActivity(){
         cricle_prograssBar = findViewById(R.id.cricle_prograssBar_FullImage);
 
         //set text for image info
-        titlePost!!.setText(myData?.Image_title);
+        if(myData?.Image_title!!.isNotEmpty())
+            titlePost!!.setText(myData?.Image_title);
+        else
+            titlePost!!.visibility = View.GONE;
+
         auther_post!!.setText("posted by: ${myData?.Image_auther}");
         url_post!!.setText(myData?.post_url)
 

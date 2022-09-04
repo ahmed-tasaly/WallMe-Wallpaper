@@ -33,7 +33,7 @@
         <item>Hot</item>
     </string-array>
 
-    <string-array name="wallhavenTimePriod" >
+    <string-array name="wallhavenTimePriod">
         <item>day</item>
         <item>3 days</item>
         <item>week</item>
