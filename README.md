@@ -7,7 +7,9 @@
 <img src="./Images/newlogo_512.png" width=200 style="border-radius:20%"/>
 
 
-[<h2 align="center">Download</h2>](https://github.com/Alaory/WallMe-Wallpaper/releases)
+[<h2 align="center">Download the APK</h2>](https://github.com/Alaory/WallMe-Wallpaper/releases/latest)
+
+[<h2 align="center">Download from F-Droid</h2>](https://f-droid.org/packages/com.alaory.wallmewallpaper/)
 
 [<h4 align="center">Support me </h4>](https://www.patreon.com/Alaory)
 
