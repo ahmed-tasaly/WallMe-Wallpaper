@@ -6,15 +6,10 @@
 
 <img src="./Images/newlogo_512.png" width=200 style="border-radius:20%"/>
 
-
-[<h2 align="center">Download the APK</h2>](https://github.com/Alaory/WallMe-Wallpaper/releases/latest)
-
-[<h2 align="center">Download from F-Droid</h2>](https://f-droid.org/packages/com.alaory.wallmewallpaper/)
-
 [<h4 align="center">Support me </h4>](https://www.patreon.com/Alaory)
 
 
-</div>
+
 
 ![size](https://shields.io/github/languages/code-size/Alaory/WallMe-Wallpaper?color=brightgreen)
 ![files count](https://shields.io/github/directory-file-count/Alaory/WallMe-Wallpaper?color=green)
@@ -27,7 +22,11 @@
 [![Follow me](https://img.shields.io/github/followers/Alaory)](https://github.com/Alaory)
 
 
-<div align="center">
+[<img src="./Images/fdroid_downlaod.png" width=200/>](https://f-droid.org/packages/com.alaory.wallmewallpaper/)
+
+[<img src="./Images/github_download.png" width=200/>](https://f-droid.org/packages/com.alaory.wallmewallpaper/)
+
+
 
 <strong>
 
