@@ -21,12 +21,14 @@
 ![language](https://img.shields.io/github/languages/top/alaory/wallme-wallpaper)
 [![Follow me](https://img.shields.io/github/followers/Alaory)](https://github.com/Alaory)
 
+## Download
 
 [<img src="./Images/fdroid_downlaod.png" width=200/>](https://f-droid.org/packages/com.alaory.wallmewallpaper/)
+[<img src="./Images/github_download.png" width=200/>](https://github.com/Alaory/WallMe-Wallpaper/releases/latest)
 
-[<img src="./Images/github_download.png" width=200/>](https://f-droid.org/packages/com.alaory.wallmewallpaper/)
 
-
+</br>
+</br>
 
 <strong>
 
