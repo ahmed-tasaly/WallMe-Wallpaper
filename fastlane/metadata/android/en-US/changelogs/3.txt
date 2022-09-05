@@ -1,0 +1,5 @@
+release 1.2:
+    - changed Java version to 11
+    - changed minimal SDK version from 21 to 24
+    - changed app logo again
+    - fixed some minor bugs

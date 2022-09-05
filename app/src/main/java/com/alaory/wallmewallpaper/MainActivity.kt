@@ -165,6 +165,7 @@ class MainActivity : AppCompatActivity(){
 
         //set button navitgtion actions
         bottomnav?.setOnItemSelectedListener {
+
            when (it.itemId){
                R.id.Reddit_posts_List -> {
                    filterbutton!!.setImageResource(R.drawable.filter_ic);

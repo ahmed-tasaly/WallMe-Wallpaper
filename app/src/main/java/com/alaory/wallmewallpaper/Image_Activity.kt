@@ -145,14 +145,10 @@ class Image_Activity(): AppCompatActivity(){
 
                     when(setLockScreen){
                         setmode.HomeScreen -> {
-                            wallpapermanager.setBitmap(WallPaperBitmap);
+                            wallpapermanager.setBitmap(WallPaperBitmap,null,true,WallpaperManager.FLAG_SYSTEM);
                         }
                         setmode.LockScreen -> {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                wallpapermanager.setBitmap(WallPaperBitmap,null,true,WallpaperManager.FLAG_LOCK)
-                            }else{
-                                Toast.makeText(context,"Your device version of android doesn't support lock screen wallpaper",Toast.LENGTH_LONG).show();
-                            }
+                            wallpapermanager.setBitmap(WallPaperBitmap,null,true,WallpaperManager.FLAG_LOCK)
                         }
                         else -> {}
                     }
