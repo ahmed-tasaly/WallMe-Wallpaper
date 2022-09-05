@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Bitmap
+import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -81,6 +82,7 @@ class Image_Activity(): AppCompatActivity(){
     private var loaded = false;
 
     companion object{
+        val TAG = "Image_Activity";
         //the clicked data by the user
          var MYDATA : Image_Info? = null;
          var THUMBNAIL: Drawable? = null;
@@ -132,6 +134,10 @@ class Image_Activity(): AppCompatActivity(){
                     val wallpapermanager = WallpaperManager.getInstance(context);
                     wallpapermanager.suggestDesiredDimensions(screenWidth,screenHeight);
 
+                    if(!wallpapermanager.isWallpaperSupported){
+                        Toast.makeText(context,"wallpaper is not supported. idk how",Toast.LENGTH_LONG).show();
+                        return;
+                    }
 
 
                     val WallPaperBitmap : Bitmap = Bitmap.createBitmap(
@@ -142,13 +148,17 @@ class Image_Activity(): AppCompatActivity(){
                         (wallBitmap.height * (rectF.bottom - rectF.top).absoluteValue).toInt()
                     );
 
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        wallpapermanager.clearWallpaper()
+                    };
 
                     when(setLockScreen){
                         setmode.HomeScreen -> {
+
                             wallpapermanager.setBitmap(WallPaperBitmap,null,true,WallpaperManager.FLAG_SYSTEM);
                         }
                         setmode.LockScreen -> {
-                            wallpapermanager.setBitmap(WallPaperBitmap,null,true,WallpaperManager.FLAG_LOCK)
+                           wallpapermanager.setBitmap(WallPaperBitmap,null,true,WallpaperManager.FLAG_LOCK);
                         }
                         else -> {}
                     }
@@ -181,34 +191,31 @@ class Image_Activity(): AppCompatActivity(){
 
 
 
-    private fun HideSystemBar(){
-        if(Configuration.ORIENTATION_LANDSCAPE == Resources.getSystem().configuration.orientation){
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ){
-                window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-            }
-        }
-    }
-
-
-
-
 
     override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle);
         //activity system and app bar
         this.supportActionBar!!.hide();
-        HideSystemBar();
+        MainActivity.HideSystemBar(window);
         //update screen orein
         MainActivity.checkorein();
 
         myData = MYDATA!!
         thumbnail = THUMBNAIL!!
+
+
         //set the activit as a main screen
         setContentView(R.layout.show_image_fs);
         //update database
+
+
         tempdatabase.update_image_info_list_from_database();
+
+
         //-----------------------------------------------------------------
+
+
+
         //bottom buttons
         setwallpaper_bottom_button = findViewById(R.id.bottombutton_setwallpaper);
         goback_bottom_button = findViewById(R.id.bottombutton_goback);
@@ -216,6 +223,8 @@ class Image_Activity(): AppCompatActivity(){
         container_bottom_button!!.animate().translationY(200f);//for animation
         //bottom sheet
         val bottomsheetfragment = findViewById<FrameLayout>(R.id.ImageInfo_BottomSheet);
+
+
 
         BottomSheetBehavior.from(bottomsheetfragment).apply {
             if(resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT or Configuration.ORIENTATION_UNDEFINED)

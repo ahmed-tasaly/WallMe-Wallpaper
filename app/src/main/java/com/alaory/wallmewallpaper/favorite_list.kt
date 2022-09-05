@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
 
-class favorite_list(val mydatabase : database) : Fragment(),Image_list_adapter.OnImageClick {
+class favorite_list() : Fragment(),Image_list_adapter.OnImageClick {
 
     var favoriteList_adabter: Image_list_adapter? = null;
     var favoriteList_recycler: RecyclerView? = null;
@@ -25,7 +25,6 @@ class favorite_list(val mydatabase : database) : Fragment(),Image_list_adapter.O
     val TAG = "favorite_list";
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mydatabase.update_image_info_list_from_database();
         favoriteList_adabter = Image_list_adapter(database.imageinfo_list,this);
     }
 

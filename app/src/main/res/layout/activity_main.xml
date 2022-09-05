@@ -10,12 +10,10 @@
     tools:context=".MainActivity">
 
 
-
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:id="@+id/container"
-        />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/navigation_constraint_box"
@@ -26,6 +24,7 @@
         android:paddingBottom="30dp">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:layoutDirection="inherit"
             android:id="@+id/bottom_navigation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

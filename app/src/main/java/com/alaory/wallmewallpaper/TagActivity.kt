@@ -33,12 +33,8 @@ class TagActivity : AppCompatActivity(),Image_list_adapter.OnImageClick {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tag);
 
-        if(Configuration.ORIENTATION_LANDSCAPE == Resources.getSystem().configuration.orientation){
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ){
-                window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-            }
-        }
+        MainActivity.HideSystemBar(window);
+
         this.supportActionBar!!.hide();
 
         MainActivity.checkorein();

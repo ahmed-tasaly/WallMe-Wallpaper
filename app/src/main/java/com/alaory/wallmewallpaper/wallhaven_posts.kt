@@ -36,24 +36,19 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.postlist_mainwindow, container, false)
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val layoutfragment = inflater.inflate(R.layout.postlist_mainwindow, container, false);
 
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        wallhaven_recycle = view.findViewById(R.id.fragmentrec) as RecyclerView;
+        wallhaven_recycle = layoutfragment.findViewById(R.id.fragmentrec) as RecyclerView;
         SetRVLayoutManager();
         SetRvScrollListener();
 
         if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
             LoadMore();
+
+        return layoutfragment;
     }
+
 
     override fun onDetach() {
         super.onDetach()

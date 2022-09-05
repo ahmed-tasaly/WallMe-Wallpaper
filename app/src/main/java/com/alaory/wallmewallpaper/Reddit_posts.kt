@@ -57,11 +57,15 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
     }
 
 
+    override fun onDetach() {
+        super.onDetach()
+        PostsAdabter!!.removeLoadingView();
+    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState);
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val layoutfragment = inflater.inflate(R.layout.postlist_mainwindow, container, false);
 
-        myrec = view.findViewById(R.id.fragmentrec) as RecyclerView;
+        myrec = layoutfragment.findViewById(R.id.fragmentrec) as RecyclerView;
         SetRVLayoutManager();
         SetRvScrollListener();
 
@@ -70,21 +74,7 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
         if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
             LoadMore();
 
-
-
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        PostsAdabter!!.removeLoadingView();
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.postlist_mainwindow, container, false)
+        return layoutfragment;
     }
 
 
@@ -95,15 +85,6 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
         myrec!!.layoutManager = mLayoutManager;
         myrec!!.setHasFixedSize(false);
         myrec?.adapter = PostsAdabter;
-//        (mLayoutManager as GridLayoutManager?)!!.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
-//            override fun getSpanSize(position: Int): Int {
-//                return when(PostsAdabter!!.getItemViewType(position)){
-//                    0 -> 1
-//                    1 -> MainActivity.num_post_in_Column
-//                    else -> -1
-//                }
-//            }
-//        }
     }
 
 

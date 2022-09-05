@@ -1,14 +1,17 @@
 package com.alaory.wallmewallpaper
 
+import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.ViewCompat
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -21,6 +24,7 @@ class MainActivity : AppCompatActivity(){
 
     var wallhaven_filter = wallhaven_settings();
     var reddit_filter = Reddit_settings();
+    var favoriteList = favorite_list();
 
     //init database
     val DataBase = database(this);
@@ -35,7 +39,7 @@ class MainActivity : AppCompatActivity(){
         //fragmenst
          var redditPosts  = Reddit_posts();
          var wallhavenPosts = wallhaven_posts();
-         var favoriteList : favorite_list? = null;
+
 
         //nav
         var bottomnav : BottomNavigationView ? = null;
@@ -100,11 +104,9 @@ class MainActivity : AppCompatActivity(){
                 shownav();
 
         }
-    }
 
-
-    private fun HideSystemBar(){
-        if(Configuration.ORIENTATION_LANDSCAPE == Resources.getSystem().configuration.orientation){
+        fun HideSystemBar(window: Window){
+//        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ){
                 window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
@@ -113,10 +115,13 @@ class MainActivity : AppCompatActivity(){
     }
 
 
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
 
-        HideSystemBar();
+        HideSystemBar(window);
 
         this.supportActionBar!!.hide();
 
@@ -136,8 +141,7 @@ class MainActivity : AppCompatActivity(){
         binding = ActivityMainBinding.inflate(layoutInflater);
         setContentView(binding!!.root);
         //set favorite fragment
-        if(favoriteList == null)
-            favoriteList = favorite_list(DataBase);
+
 
 
         //set ui fragment
@@ -178,8 +182,9 @@ class MainActivity : AppCompatActivity(){
                    true
                }
                R.id.Favorite_posts_list -> {
+
                    filterbutton!!.setImageResource(R.drawable.ic_outline_settings_24);
-                   change_fragment(favoriteList!!);
+                   change_fragment(favoriteList);
                    true
                }
                else -> {true}
@@ -201,7 +206,7 @@ class MainActivity : AppCompatActivity(){
                     change_fragment(wallhaven_filter);
                     }
                 R.id.Favorite_posts_list -> {
-                    Toast.makeText(this@MainActivity,"Wow you pressed settings :)",Toast.LENGTH_LONG).show();
+                    Toast.makeText(this@MainActivity,"Wow you pressed settings wink wink ;)",Toast.LENGTH_LONG).show();
                 }
                 else -> {}
             }
