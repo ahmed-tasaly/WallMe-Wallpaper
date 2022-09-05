@@ -2,6 +2,8 @@ package com.alaory.wallmewallpaper
 
 import android.app.AlertDialog
 import android.app.WallpaperManager
+import android.content.ContentProvider
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -96,7 +98,6 @@ class Image_Activity(): AppCompatActivity(){
         fun saveImage(context: Context, image: Bitmap,Name : String): String {
             val imageByteStream = ByteArrayOutputStream();
             image.compress(Bitmap.CompressFormat.PNG,100,imageByteStream);
-
             val path = MediaStore.Images.Media.insertImage(context.contentResolver,image,Name,null);
             return path;
         }
@@ -115,13 +116,15 @@ class Image_Activity(): AppCompatActivity(){
             var imagesaved = File(imagepath.absolutePath + "/temp.png");
             imagesaved.writeBytes(bytes.toByteArray());
 
-            return Uri.parse(imagesaved.path);
+
+            return Uri.fromFile(imagepath);
         }
 
 
 
         fun setWallpaper(context: Context,wallBitmap: Bitmap ,rectF: RectF,setLockScreen: setmode){
             //set the wallpaper
+
                 try{
                     val screenWidth = context.resources.displayMetrics.widthPixels;
                     val screenHeight = context.resources.displayMetrics.heightPixels;

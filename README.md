@@ -4,7 +4,7 @@
 # Wallme-Wallpaper
 
 
-<img src="./Images/logo_large.png" width=200 style="border-radius:20%"/>
+<img src="./Images/newlogo_512.png" width=200 style="border-radius:20%"/>
 
 
 [<h2 align="center">Download</h2>](https://github.com/Alaory/WallMe-Wallpaper/releases)
