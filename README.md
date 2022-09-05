@@ -23,6 +23,8 @@
 
 ## Download
 
+note the fdroid version might be outdated since i update the app frequently
+
 [<img src="./Images/fdroid_downlaod.png" width=200/>](https://f-droid.org/packages/com.alaory.wallmewallpaper/)
 [<img src="./Images/github_download.png" width=200/>](https://github.com/Alaory/WallMe-Wallpaper/releases/latest)
 
@@ -78,10 +80,10 @@ since the app is still in development the ui may change :)
 - [x] add Reddit filter settings
 - [x] add Wallhaven support
 - [x] add Wallhaven filter settings 
+- [x] add favorite page
 - [ ] add Wallhaven user's posts page
-- [ ] add landscape and portrait mode
+- [x] add landscape and portrait mode //currently only for wallhaven ;(
 - [ ] add auto wallpaper changer with the user configuration 
-- [ ] add favorite page
 - [ ] add the ability to add images from the device to the favorite page
 - [ ] add progress bar when downloading an image
 - [ ] add more UI I SAID MORE
