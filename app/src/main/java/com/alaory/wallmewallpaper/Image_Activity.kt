@@ -11,6 +11,8 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Rect
 import android.graphics.RectF
+import android.graphics.drawable.Animatable2
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
@@ -31,6 +33,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.ortiz.touchview.OnTouchImageViewListener
 import com.ortiz.touchview.TouchImageView
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -77,7 +80,7 @@ class Image_Activity(): AppCompatActivity(){
 
 
 
-    private  var cricle_prograssBar : ProgressBar? = null;
+    private  var cricle_prograssBar : ImageView? = null;
     //to check if the image is loaded
     private var loaded = false;
 
@@ -148,13 +151,9 @@ class Image_Activity(): AppCompatActivity(){
                         (wallBitmap.height * (rectF.bottom - rectF.top).absoluteValue).toInt()
                     );
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        wallpapermanager.clearWallpaper()
-                    };
 
                     when(setLockScreen){
                         setmode.HomeScreen -> {
-
                             wallpapermanager.setBitmap(WallPaperBitmap,null,true,WallpaperManager.FLAG_SYSTEM);
                         }
                         setmode.LockScreen -> {
@@ -223,15 +222,24 @@ class Image_Activity(): AppCompatActivity(){
         container_bottom_button!!.animate().translationY(200f);//for animation
         //bottom sheet
         val bottomsheetfragment = findViewById<FrameLayout>(R.id.ImageInfo_BottomSheet);
+        //set the ui elements
+        Full_image = findViewById(R.id.full_image);
+        cricle_prograssBar = findViewById(R.id.cricle_prograssBar_FullImage);
+        MainActivity.setImageView_asLoading(cricle_prograssBar);
+
+
 
 
 
         BottomSheetBehavior.from(bottomsheetfragment).apply {
-            if(resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT or Configuration.ORIENTATION_UNDEFINED)
-                peekHeight = ((resources.displayMetrics.heightPixels / resources.displayMetrics.density)/2.5).toInt();
-            else
-                peekHeight = ((resources.displayMetrics.widthPixels / resources.displayMetrics.density)/2.5).toInt();
 
+            var peekheight = 0;
+            if(resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT or Configuration.ORIENTATION_UNDEFINED)
+                peekheight = ((resources.displayMetrics.heightPixels / resources.displayMetrics.density)/2.5).toInt();
+            else
+                peekheight = ((resources.displayMetrics.widthPixels / resources.displayMetrics.density)/2.5).toInt();
+
+            peekHeight = peekheight;
 
             this.state = BottomSheetBehavior.STATE_COLLAPSED;
 
@@ -314,15 +322,20 @@ class Image_Activity(): AppCompatActivity(){
                 }
 
             }
-
+            Full_image!!.setOnTouchImageViewListener ( object : OnTouchImageViewListener{
+                override fun onMove() {
+                    if(Full_image!!.isZoomed){
+                        peekHeight = 0;
+                        Log.i("Full_image","${Full_image!!.zoomedRect.top}")
+                    }else{
+                        peekHeight = peekheight;
+                    }
+                }
+            });
         }
 
         //----------------------------------------------------
 
-
-        //set the ui elements
-        Full_image = findViewById(R.id.full_image);
-        cricle_prograssBar = findViewById(R.id.cricle_prograssBar_FullImage);
 
         //set text for image info
         if(myData?.Image_title!!.isNotEmpty())
@@ -332,6 +345,7 @@ class Image_Activity(): AppCompatActivity(){
 
         auther_post!!.setText("posted by: ${myData?.Image_auther}");
         url_post!!.setText(myData?.post_url)
+
 
 
 
@@ -369,6 +383,11 @@ class Image_Activity(): AppCompatActivity(){
 
         //------------------------------------------------------------------
 
+        //set loading
+
+
+
+
         //load local bitmap and ui imageview data and do it in a callback
         ImageLoader(applicationContext).enqueue(coil.request.ImageRequest.Builder(this)
             .data(myData?.Image_url)
@@ -396,13 +415,13 @@ class Image_Activity(): AppCompatActivity(){
             })
             .listener(
                 onSuccess = {_,_ ->
-                    cricle_prograssBar?.visibility = View.INVISIBLE;
+                    cricle_prograssBar?.visibility = View.GONE;
                 },
                 onCancel = {
-                    cricle_prograssBar?.visibility = View.INVISIBLE;
+                    cricle_prograssBar?.visibility = View.GONE;
                 },
                 onError = {_,_ ->
-                    cricle_prograssBar?.visibility = View.INVISIBLE;
+                    cricle_prograssBar?.visibility = View.GONE;
                 },
                 onStart = {
                     cricle_prograssBar?.visibility = View.VISIBLE;

@@ -2,6 +2,8 @@ package com.alaory.wallmewallpaper
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.drawable.Animatable2
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,10 +11,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.ViewAnimator
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.drawable.toDrawable
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.vectordrawable.graphics.drawable.Animatable2Compat
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import coil.ImageLoader
 import okhttp3.internal.wait
 
@@ -26,6 +31,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     var imgclick = onimageclick;
     var context: Context? = null;
 
+    val TAG = "Image_list_adapter";
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         this.context = parent.context;
@@ -53,19 +59,23 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             }
             val tempBitmap : Bitmap = Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888);
 
+            MainActivity.setImageView_asLoading(holder.cricle_prograssBar);
+
+
+
             val request = coil.request.ImageRequest.Builder(this.context!!)
                 .data(listPosts.get(position).Image_thumbnail)
                 .target(holder.image_main)
                 .placeholder(tempBitmap.toDrawable(context!!.resources))
                 .listener(
                     onSuccess = {_,_ ->
-                        holder.cricle_prograssBar.visibility = View.INVISIBLE;
+                        holder.cricle_prograssBar.visibility = View.GONE;
                     },
                     onCancel = {
-                        holder.cricle_prograssBar.visibility = View.INVISIBLE;
+                        holder.cricle_prograssBar.visibility = View.GONE;
                     },
                     onError = {_,_ ->
-                        holder.cricle_prograssBar.visibility = View.INVISIBLE;
+                        holder.cricle_prograssBar.visibility = View.GONE;
                     },
                     onStart = {
                         holder.cricle_prograssBar.visibility = View.VISIBLE;
@@ -79,7 +89,9 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                 imgclick.onImageClick(position,holder.image_main.drawable);
             }
         }else if(holder.itemViewType == VIEW_TYPE_LOADING){
+            val holder = holder as LoadingViewHolder;
             val layoutparams = holder.itemView.layoutParams as StaggeredGridLayoutManager.LayoutParams;
+            MainActivity.setImageView_asLoading(holder.cricle_prograssBar);
             layoutparams.isFullSpan = true;
         }
 
@@ -100,10 +112,12 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     class ItemViewHolder(view : View) : RecyclerView.ViewHolder(view) {
         var root_view = itemView.findViewById(R.id.root_imageView) as ConstraintLayout;
         var image_main = itemView.findViewById(R.id.image_main) as ImageView;
-        var cricle_prograssBar = itemView.findViewById(R.id.cricle_prograssBar) as ProgressBar;
+        var cricle_prograssBar = itemView.findViewById(R.id.cricle_prograssBar) as ImageView;
     }
 
-    class LoadingViewHolder(view: View): RecyclerView.ViewHolder(view)
+    class LoadingViewHolder(view: View): RecyclerView.ViewHolder(view){
+        var cricle_prograssBar = itemView.findViewById(R.id.bottomloading_prograssCricle) as ImageView;
+    }
 
 
     fun addLoadingView(){

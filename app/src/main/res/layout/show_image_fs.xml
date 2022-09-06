@@ -31,7 +31,7 @@
                 tools:srcCompat="@tools:sample/avatars"
                 />
 
-            <ProgressBar
+            <ImageView
                 android:id="@+id/cricle_prograssBar_FullImage"
                 style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"

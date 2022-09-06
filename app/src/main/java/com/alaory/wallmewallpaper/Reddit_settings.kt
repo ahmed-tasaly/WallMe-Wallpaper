@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.addCallback
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import com.google.android.material.chip.Chip
@@ -82,20 +83,17 @@ class Reddit_settings : Fragment() {
 
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_reddit_settings, container, false)
-    }
+        val view = inflater.inflate(R.layout.fragment_reddit_settings, container, false);
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            MainActivity.change_fragment(MainActivity.redditPosts,true);
+        }
 
         //image preview quality spinner
-        var image_preview_quality = view.findViewById(R.id.image_quality_spinner) as Spinner;
+        val image_preview_quality = view.findViewById(R.id.image_quality_spinner) as Spinner;
 
         ArrayAdapter.createFromResource(requireContext(),R.array.preview_quality,android.R.layout.simple_spinner_item).also { arrayAdapter ->
             arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -184,5 +182,9 @@ class Reddit_settings : Fragment() {
             MainActivity.change_fragment(MainActivity.redditPosts,true);
         }
 
+
+
+        return view;
     }
+
 }

@@ -3,15 +3,18 @@ package com.alaory.wallmewallpaper
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.drawable.Animatable2
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.ViewCompat
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -93,8 +96,6 @@ class MainActivity : AppCompatActivity(){
         }
 
         fun change_fragment(fragment: Fragment,shownav : Boolean = false){
-
-
             LastFragmentMode = fragment;
             val fragman = mainactivity?.supportFragmentManager?.beginTransaction();
             fragman?.replace(R.id.container,fragment);
@@ -106,16 +107,25 @@ class MainActivity : AppCompatActivity(){
         }
 
         fun HideSystemBar(window: Window){
-//        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ){
                 window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
             }
         }
+
+        fun setImageView_asLoading(imageView: ImageView?){
+
+            imageView!!.setImageResource(R.drawable.loading_anim);
+            val animati : AnimatedVectorDrawable =  imageView.drawable as AnimatedVectorDrawable;
+            animati.registerAnimationCallback(object  : Animatable2.AnimationCallback(){
+                override fun onAnimationEnd(drawable: Drawable?) {
+                    super.onAnimationEnd(drawable)
+                    (drawable as AnimatedVectorDrawable).start();
+                }
+            })
+            animati.start();
+        }
     }
-
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

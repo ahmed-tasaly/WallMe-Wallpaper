@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.addCallback
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
@@ -171,15 +172,13 @@ class wallhaven_settings : Fragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_wallhaven_settings, container, false)
-    }
 
+        val view =  inflater.inflate(R.layout.fragment_wallhaven_settings, container, false);
 
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            MainActivity.change_fragment(MainActivity.wallhavenPosts,true);
+        }
 
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         TagBoxWhiteList = view.findViewById(R.id.TagChipGroup_box_whitelist);
         TagBoxBlackList = view.findViewById(R.id.TagChipGroup_box_blacklist);
@@ -332,9 +331,9 @@ class wallhaven_settings : Fragment() {
         }
 
 
+
+        return view;
     }
-
-
 
 
 

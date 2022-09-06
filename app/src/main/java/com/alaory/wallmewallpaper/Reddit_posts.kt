@@ -2,6 +2,8 @@ package com.alaory.wallmewallpaper
 
 import android.content.Intent
 import android.content.res.Resources
+import android.graphics.drawable.Animatable2
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +11,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
@@ -69,6 +72,7 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
         SetRVLayoutManager();
         SetRvScrollListener();
 
+        MainActivity.setImageView_asLoading(layoutfragment.findViewById<ImageView>(R.id.loading_recyclye));
 
         //for screen rotaion
         if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
