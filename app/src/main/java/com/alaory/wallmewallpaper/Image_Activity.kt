@@ -239,6 +239,7 @@ class Image_Activity(): AppCompatActivity(){
             else
                 peekheight = ((resources.displayMetrics.widthPixels / resources.displayMetrics.density)/2.5).toInt();
 
+
             peekHeight = peekheight;
 
             this.state = BottomSheetBehavior.STATE_COLLAPSED;

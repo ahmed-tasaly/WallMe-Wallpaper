@@ -75,9 +75,6 @@ class Reddit_settings : Fragment() {
                 "";
             }
         }
-
-
-
     }
 
 

@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -33,6 +34,9 @@ class MainActivity : AppCompatActivity(){
     val DataBase = database(this);
 
     companion object{
+        //bottom changable loction
+
+
         var num_post_in_Column = 2;
         var last_orein = Configuration.ORIENTATION_PORTRAIT;
         var LastFragmentMode: Fragment?  = null;
@@ -48,6 +52,7 @@ class MainActivity : AppCompatActivity(){
         var bottomnav : BottomNavigationView ? = null;
         var filterbutton : FloatingActionButton ? = null;
         var navbox : ConstraintLayout ?  = null;
+
 
 
         fun checkorein(){
@@ -78,20 +83,21 @@ class MainActivity : AppCompatActivity(){
 
         fun hidenav(){
             enableBottomButtons(false)
+            navbox!!.clearAnimation();
             navbox?.animate().apply {
-                this!!.startDelay = 200;
                 this!!.duration = 300;
-                this!!.translationY(500f);
+                this!!.translationY(1000f);
+                BottonLoading.loctionbottom = 1000;
             }
         }
 
         fun shownav(){
             enableBottomButtons(true)
+            navbox!!.clearAnimation();
             navbox?.animate().apply {
-                this!!.startDelay = 200;
                 this!!.duration = 300;
                 this!!.translationY(0f);
-
+                BottonLoading.loctionbottom = 0;
             }
         }
 
@@ -177,9 +183,9 @@ class MainActivity : AppCompatActivity(){
         bottomnav = findViewById<BottomNavigationView>(R.id.bottom_navigation);
         bottomnav?.selectedItemId = R.id.Reddit_posts_List;
 
+
         //set button navitgtion actions
         bottomnav?.setOnItemSelectedListener {
-
            when (it.itemId){
                R.id.Reddit_posts_List -> {
                    filterbutton!!.setImageResource(R.drawable.filter_ic);
@@ -225,9 +231,5 @@ class MainActivity : AppCompatActivity(){
 
 
     }
-
-
-
-
 
 }

@@ -3,16 +3,16 @@
 
     <item android:id="@+id/Favorite_posts_list"
         android:icon="@drawable/ic_favorite"
-        android:title="favorite" />
+        android:title="" />
 
     <item android:id="@+id/wallhaven_posts_list"
         android:icon="@drawable/ic_wallhaven_2"
-        android:title="Wallhaven"/>
+        android:title=""/>
 
     <item android:id="@+id/Reddit_posts_List"
         android:icon="@drawable/reddit_ic"
         android:checked="true"
-        android:title="Reddit"
+        android:title=""
         />
 
 </menu>

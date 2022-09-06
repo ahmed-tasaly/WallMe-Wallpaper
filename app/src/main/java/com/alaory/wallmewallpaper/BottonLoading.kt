@@ -1,11 +1,28 @@
 package com.alaory.wallmewallpaper
 
 import android.util.Log
+import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
 class BottonLoading {
+    companion object{
+        var loctionbottom = 0;
+        fun updatebottom_navtigation(dy: Int){
+            MainActivity.navbox!!.animate().apply {
+                loctionbottom += if(dy < 0) dy * 2 else dy;
+                duration = 0;
+                if(loctionbottom > 1000){
+                    loctionbottom = 1000;
+                }else if(loctionbottom < 0){
+                    loctionbottom = 0;
+                }
+                this.translationY(loctionbottom.toFloat());
+            }
+        }
+    }
+
     class ViewLodMore() : RecyclerView.OnScrollListener() {
         private var visableThreshold = 5;
         private lateinit var onloadmore : OnLoadMoreListener;
@@ -33,8 +50,11 @@ class BottonLoading {
         }
 
 
+
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
+            updatebottom_navtigation(dy);
+
             if(dy <= 0) return;
 
             totalItemCount = MlayoutManager.itemCount;
@@ -51,6 +71,7 @@ class BottonLoading {
                 isLoading = true;
             }
         }
+
         private fun getLastVisibleItem(lastVisibleItemPositions: IntArray): Int {
             var maxSize = 0
 
@@ -63,6 +84,6 @@ class BottonLoading {
         }
     }
     interface OnLoadMoreListener {
-        fun onLoadMore()
+        fun onLoadMore();
     }
 }

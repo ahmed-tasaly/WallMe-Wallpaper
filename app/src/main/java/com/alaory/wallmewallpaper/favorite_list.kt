@@ -29,6 +29,8 @@ class favorite_list() : Fragment(),Image_list_adapter.OnImageClick {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         favoriteList_adabter = Image_list_adapter(database.imageinfo_list,this);
+        BottonLoading.loctionbottom = 0;
+        BottonLoading.updatebottom_navtigation(0);
     }
 
     override fun onResume() {

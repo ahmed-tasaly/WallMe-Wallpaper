@@ -36,6 +36,8 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
 
+
+
         if(firsttime || userHitSave){
             Log.i("Reddit_posts","i have beeen created");
             reddit_api = emptyArray();
