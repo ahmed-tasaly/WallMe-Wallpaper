@@ -1,0 +1,6 @@
+version 1.3:
+    -added a new loading icon
+    -now the bottom navigation can be hidden by scrolling
+    -bottom sheet also can be hidden when the user zoom
+    -some minor bug fixes
+    -the app now can be full screen 
