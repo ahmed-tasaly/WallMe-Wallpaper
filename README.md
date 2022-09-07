@@ -81,11 +81,11 @@ since the app is still in development the ui may change :)
 - [x] add Wallhaven support
 - [x] add Wallhaven filter settings 
 - [x] add favorite page
+- [x] add progress bar when downloading an image
 - [ ] add Wallhaven user's posts page
 - [x] add landscape and portrait mode //currently only for wallhaven ;(
 - [ ] add auto wallpaper changer with the user configuration 
 - [ ] add the ability to add images from the device to the favorite page
-- [ ] add progress bar when downloading an image
 - [ ] add more UI I SAID MORE
 - [ ] more plans coming
 - [ ] go to sleep
