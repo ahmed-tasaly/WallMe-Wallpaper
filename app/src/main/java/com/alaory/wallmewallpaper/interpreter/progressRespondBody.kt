@@ -3,12 +3,12 @@ package com.alaory.wallmewallpaper.interpreter
 import android.util.Log
 import okhttp3.MediaType
 import okhttp3.ResponseBody
-import okio.BufferedSource
-import okio.Okio
+import okio.*
 
-class progressRespondBody(val responseBody: ResponseBody) : ResponseBody() {
+class progressRespondBody(val responseBody: ResponseBody,progressListener: progressListener) : ResponseBody() {
     val TAG = "progressRespondBody";
     var buffersource : BufferedSource? = null;
+    val progresslistener = progressListener;
     override fun contentLength(): Long {
         Log.i(TAG,"yeet ${responseBody.contentLength()}")
         return responseBody.contentLength();
@@ -21,11 +21,24 @@ class progressRespondBody(val responseBody: ResponseBody) : ResponseBody() {
 
     override fun source(): BufferedSource {
         if(buffersource == null){
-            buffersource = responseBody.source();
+            buffersource = source(responseBody.source()).buffer();
         }
-        Log.i(TAG,"yeet ${responseBody.contentLength().toFloat()/1000}kb")
         return buffersource!!;
     }
+
+    fun source(source: Source): Source{
+        return object : ForwardingSource(source){
+            var totalbyteread: Long = 0;
+            override fun read(sink: Buffer, byteCount: Long): Long {
+                var byteread = super.read(sink, byteCount);
+                totalbyteread += if(byteread != (-1).toLong()) byteread else 0;
+                progresslistener.Update(totalbyteread,responseBody.contentLength(),byteread == (-1).toLong());
+                return byteread;
+            }
+        }
+    }
+
+
     interface progressListener{
         fun Update(byteread: Long,contentLength : Long,done: Boolean)
     }

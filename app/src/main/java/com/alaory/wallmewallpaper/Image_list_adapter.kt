@@ -47,10 +47,11 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     val TAG = "Image_list_adapter";
 
     var adab_ImageLoader : ImageLoader? = null;
-
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         this.context = recyclerView.context;
+
+
         adab_ImageLoader = ImageLoader.Builder(recyclerView.context!!)
             .memoryCache {
                 MemoryCache.Builder(recyclerView.context!!)
@@ -62,20 +63,6 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                     .directory( "${recyclerView.context!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!}/Preview_Image".toPath())
                     .maxSizePercent(0.2)
                     .build();
-            }
-            .okHttpClient {
-                OkHttpClient().newBuilder()
-                    .addInterceptor(object : Interceptor{
-                        override fun intercept(chain: Interceptor.Chain): Response {
-
-                            val orginalres = chain.proceed(chain.request());
-                            Log.i("OkHttpClient",orginalres.body!!.contentLength().toString());
-                            return orginalres.newBuilder()
-                                .body(progressRespondBody(orginalres.body!!))
-                                .build()
-                        }
-                    })
-                    .build()
             }
             .build();
 

@@ -29,12 +29,19 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import coil.ImageLoader
+import coil.disk.DiskCache
+import coil.memory.MemoryCache
+import com.alaory.wallmewallpaper.interpreter.progressRespondBody
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ortiz.touchview.OnTouchImageViewListener
 import com.ortiz.touchview.TouchImageView
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Response
+import okio.Path.Companion.toPath
 import java.io.ByteArrayOutputStream
 import java.io.File
 import kotlin.math.absoluteValue
@@ -46,6 +53,7 @@ class Image_Activity(): AppCompatActivity(){
     private var auther_post: TextView? = null;
     private var url_post: TextView? = null;
     private var Full_image: TouchImageView? = null;
+    private var counter_image: TextView? = null;
     private var mybitmap: Bitmap? = null;
     private var taggroup: ChipGroup? = null;
 
@@ -83,6 +91,10 @@ class Image_Activity(): AppCompatActivity(){
     private  var cricle_prograssBar : ImageView? = null;
     //to check if the image is loaded
     private var loaded = false;
+
+
+    //image loader
+    var imageloader: ImageLoader? =null;
 
     companion object{
         val TAG = "Image_Activity";
@@ -224,6 +236,7 @@ class Image_Activity(): AppCompatActivity(){
         val bottomsheetfragment = findViewById<FrameLayout>(R.id.ImageInfo_BottomSheet);
         //set the ui elements
         Full_image = findViewById(R.id.full_image);
+        counter_image = findViewById(R.id.counter_prograssBar_FullImage);
         cricle_prograssBar = findViewById(R.id.cricle_prograssBar_FullImage);
         MainActivity.setImageView_asLoading(cricle_prograssBar);
 
@@ -346,7 +359,7 @@ class Image_Activity(): AppCompatActivity(){
 
         auther_post!!.setText("posted by: ${myData?.Image_auther}");
         url_post!!.setText(myData?.post_url)
-
+        counter_image!!.isVisible = false;
 
 
 
@@ -392,52 +405,82 @@ class Image_Activity(): AppCompatActivity(){
         //------------------------------------------------------------------
 
         //set loading
+        val loaderlistener = object : progressRespondBody.progressListener{
+            override fun Update(byteread: Long, contentLength: Long, done: Boolean) {
+                runOnUiThread {
+                    counter_image!!.setText("${100*byteread/contentLength}%");
+                    counter_image!!.isVisible =
+                        !(100*byteread/contentLength == (100).toLong());
+                }
+
+                Log.i("progressListener_image","done: ${100*byteread / contentLength}");
+            }
+        }
 
 
+        imageloader = ImageLoader.Builder(this)
+            .okHttpClient {
+                OkHttpClient().newBuilder()
+                    .addInterceptor(object : Interceptor{
+                        override fun intercept(chain: Interceptor.Chain): Response {
+                            val orginalres = chain.proceed(chain.request());
+                            return orginalres.newBuilder()
+                                .body(progressRespondBody(orginalres.body!!,loaderlistener))
+                                .build()
+                        }
+                    })
+                    .build()
+            }
+            .build()
 
 
         //load local bitmap and ui imageview data and do it in a callback
-        ImageLoader(applicationContext).enqueue(coil.request.ImageRequest.Builder(this)
-            .data(myData?.Image_url)
-            .placeholder(thumbnail)
-            .fallback(com.google.android.material.R.drawable.ic_mtrl_chip_close_circle)
-            .target(object : coil.target.Target{
-                override fun onError(error: Drawable?) {
-                    super.onError(error)
-                    mybitmap = error!!.toBitmap();
-                    Full_image!!.setImageBitmap(mybitmap);
-                }
+        imageloader?.let {
+            it.enqueue(coil.request.ImageRequest.Builder(this)
+                .data(myData?.Image_url)
+                .placeholder(thumbnail)
+                .fallback(com.google.android.material.R.drawable.ic_mtrl_chip_close_circle)
+                .target(object : coil.target.Target {
+                    override fun onError(error: Drawable?) {
+                        super.onError(error)
+                        mybitmap = error!!.toBitmap();
+                        Full_image!!.setImageBitmap(mybitmap);
+                    }
 
-                override fun onStart(placeholder: Drawable?) {
-                    super.onStart(placeholder)
-                    mybitmap = placeholder!!.toBitmap();
-                    Full_image!!.setImageBitmap(mybitmap);
-                }
+                    override fun onStart(placeholder: Drawable?) {
+                        super.onStart(placeholder)
+                        mybitmap = placeholder!!.toBitmap();
+                        Full_image!!.setImageBitmap(mybitmap);
+                    }
 
-                override fun onSuccess(result: Drawable) {
-                    super.onSuccess(result)
-                    loaded = true;
-                    mybitmap = result.toBitmap();
-                    Full_image!!.setImageBitmap(mybitmap);
-                }
-            })
-            .listener(
-                onSuccess = {_,_ ->
-                    cricle_prograssBar?.visibility = View.GONE;
-                },
-                onCancel = {
-                    cricle_prograssBar?.visibility = View.GONE;
-                },
-                onError = {_,_ ->
-                    cricle_prograssBar?.visibility = View.GONE;
-                },
-                onStart = {
-                    cricle_prograssBar?.visibility = View.VISIBLE;
-                }
+                    override fun onSuccess(result: Drawable) {
+                        super.onSuccess(result)
+                        loaded = true;
+                        mybitmap = result.toBitmap();
+                        Full_image!!.setImageBitmap(mybitmap);
+                    }
+                })
+                .listener(
+                    onSuccess = { _, _ ->
+                        cricle_prograssBar?.visibility = View.GONE;
+                    },
+                    onCancel = {
+                        cricle_prograssBar?.visibility = View.GONE;
+                        Log.i("cricle_prograssBar", "cancled");
+                    },
+                    onError = { _, _ ->
+                        cricle_prograssBar?.visibility = View.GONE;
+                        Log.i("cricle_prograssBar", "error");
+                    },
+                    onStart = {
+                        cricle_prograssBar?.visibility = View.VISIBLE;
+                        Log.i("cricle_prograssBar", "starting");
+                    }
 
-            )
-            .build()
-        );
+                )
+                .build()
+            );
+        }
 
         //--------------------------------------------------------------------------
         //set the wallpaper set button
