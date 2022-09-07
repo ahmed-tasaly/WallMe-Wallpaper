@@ -39,7 +39,7 @@
             app:layout_constraintDimensionRatio="4:1"
             app:layout_constraintEnd_toStartOf="@+id/filterbutton"
             app:layout_constraintStart_toStartOf="parent"
-            app:labelVisibilityMode="selected"
+            app:labelVisibilityMode="unlabeled"
             app:menu="@menu/navigation_menu" />
 
 

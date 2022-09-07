@@ -22,6 +22,7 @@ import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import coil.ImageLoader
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
+import coil.request.ImageRequest
 import com.alaory.wallmewallpaper.interpreter.progressRespondBody
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -55,13 +56,14 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
         adab_ImageLoader = ImageLoader.Builder(recyclerView.context!!)
             .memoryCache {
                 MemoryCache.Builder(recyclerView.context!!)
-                    .maxSizePercent(0.2)
+                    .maxSizePercent(0.15)
+                    .weakReferencesEnabled(true)
                     .build()
             }
             .diskCache {
                 DiskCache.Builder()
                     .directory( recyclerView.context!!.cacheDir)
-                    .maxSizePercent(0.2)
+                    .maxSizePercent(0.15)
                     .build();
             }
             .build();
@@ -79,47 +81,56 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     }
 
 
+
+    private fun getImagerequest(holder: ItemViewHolder): ImageRequest{
+        val tempBitmap : Bitmap = Bitmap.createBitmap(holder.imageRatio.Width,holder.imageRatio.Height,Bitmap.Config.ARGB_8888);
+        val tempDrawable = tempBitmap.toDrawable(context!!.resources);
+
+        tempBitmap.recycle();
+        val request = coil.request.ImageRequest.Builder(this.context!!)
+            .data(listPosts.get(holder.pos).Image_thumbnail)
+            .placeholder(tempDrawable)
+            .target(holder.image_main)
+            .listener(
+                onSuccess = {_,_ ->
+                    holder.cricle_prograssBar.visibility = View.GONE;
+                },
+                onCancel = {
+                    holder.cricle_prograssBar.visibility = View.GONE;
+                },
+                onError = {_,_ ->
+                    holder.cricle_prograssBar.visibility = View.GONE;
+                },
+                onStart = {
+                    holder.cricle_prograssBar.visibility = View.VISIBLE;
+                }
+            )
+            .build()
+        return request;
+    }
+
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if(holder.itemViewType == VIEW_TYPE_ITEM){
             val holder = holder as ItemViewHolder;
 
+
+
             var width = 1;
             var height = 1;
-            if(listPosts.get(position).imageRatio != null){
-                val imageRatio = listPosts.get(position).imageRatio!!;
+            listPosts.get(position).imageRatio?.let {
+                val imageRatio = it;
                 val ratio = imageRatio.Width.toFloat() / imageRatio.Height.toFloat()
                 width = (50 * ratio).toInt() ;
                 height = 50;
             }
-            val tempBitmap : Bitmap = Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888);
 
             MainActivity.setImageView_asLoading(holder.cricle_prograssBar);
-
-
-
-            val request = coil.request.ImageRequest.Builder(this.context!!)
-                .data(listPosts.get(position).Image_thumbnail)
-                .target(holder.image_main)
-                .placeholder(tempBitmap.toDrawable(context!!.resources))
-                .listener(
-                    onSuccess = {_,_ ->
-                        holder.cricle_prograssBar.visibility = View.GONE;
-                        tempBitmap.recycle();
-                    },
-                    onCancel = {
-                        holder.cricle_prograssBar.visibility = View.GONE;
-                    },
-                    onError = {_,_ ->
-                        holder.cricle_prograssBar.visibility = View.GONE;
-                    },
-                    onStart = {
-                        holder.cricle_prograssBar.visibility = View.VISIBLE;
-                    }
-                )
-                .build()
+            holder.pos = position;
+            holder.imageRatio = Image_Ratio(width,height);
 
             adab_ImageLoader.let {
-                it?.enqueue(request);
+                it?.enqueue(getImagerequest(holder));
             }
 
 
@@ -148,6 +159,8 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
 
     class ItemViewHolder(view : View) : RecyclerView.ViewHolder(view) {
+        var pos = 0;
+        var imageRatio = Image_Ratio(1,1);
         var root_view = itemView.findViewById(R.id.root_imageView) as ConstraintLayout;
         var image_main = itemView.findViewById(R.id.image_main) as ImageView;
         var cricle_prograssBar = itemView.findViewById(R.id.cricle_prograssBar) as ImageView;

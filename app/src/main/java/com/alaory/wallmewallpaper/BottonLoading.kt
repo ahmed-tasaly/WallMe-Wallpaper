@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 class BottonLoading {
     companion object{
         var loctionbottom = 0;
+        val TAG = "BottonLoading_log";
         fun updatebottom_navtigation(dy: Int){
             MainActivity.navbox!!.animate().apply {
                 loctionbottom += if(dy < 0) dy * 2 else dy;
@@ -22,6 +23,7 @@ class BottonLoading {
             }
         }
     }
+
 
     class ViewLodMore() : RecyclerView.OnScrollListener() {
         private var visableThreshold = 5;

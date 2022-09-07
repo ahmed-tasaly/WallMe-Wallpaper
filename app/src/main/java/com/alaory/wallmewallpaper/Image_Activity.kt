@@ -246,14 +246,6 @@ class Image_Activity(): AppCompatActivity(){
 
         BottomSheetBehavior.from(bottomsheetfragment).apply {
 
-            var peekheight = 0;
-            if(resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT or Configuration.ORIENTATION_UNDEFINED)
-                peekheight = ((resources.displayMetrics.heightPixels / resources.displayMetrics.density)/2.5).toInt();
-            else
-                peekheight = ((resources.displayMetrics.widthPixels / resources.displayMetrics.density)/2.5).toInt();
-
-
-            peekHeight = peekheight;
 
             this.state = BottomSheetBehavior.STATE_COLLAPSED;
 
@@ -339,10 +331,9 @@ class Image_Activity(): AppCompatActivity(){
             Full_image!!.setOnTouchImageViewListener ( object : OnTouchImageViewListener{
                 override fun onMove() {
                     if(Full_image!!.isZoomed){
-                        peekHeight = 0;
-                        Log.i("Full_image","${Full_image!!.zoomedRect.top}")
+                        bottomsheetfragment.isVisible = false;
                     }else{
-                        peekHeight = peekheight;
+                        bottomsheetfragment.isVisible = true;
                     }
                 }
             });
@@ -373,10 +364,12 @@ class Image_Activity(): AppCompatActivity(){
                     runOnUiThread {
                         taggroup!!.isVisible = true;
                         auther_post!!.setText("posted by: ${myData?.Image_auther}");
-                        for (i in TagNameList) {
+                        for (i in 0 until TagNameList.size) {
+                            if(i > 15)
+                                break; //max number of tags on the bottom sheet
                             val TagChip = LayoutInflater.from(this)
                                 .inflate(R.layout.tagchip, taggroup, false) as Chip;
-                            TagChip.text = i;
+                            TagChip.text = TagNameList[i];
 
                             TagChip.setOnClickListener {
 
