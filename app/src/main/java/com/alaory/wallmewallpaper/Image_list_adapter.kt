@@ -60,7 +60,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             }
             .diskCache {
                 DiskCache.Builder()
-                    .directory( "${recyclerView.context!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!}/Preview_Image".toPath())
+                    .directory( recyclerView.context!!.cacheDir)
                     .maxSizePercent(0.2)
                     .build();
             }
