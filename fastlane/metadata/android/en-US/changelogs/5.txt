@@ -1,0 +1,4 @@
+release 1.4:
+    -fixed bottom loading
+    -added download progress to image_acitivty
+    -minor bug fixes
