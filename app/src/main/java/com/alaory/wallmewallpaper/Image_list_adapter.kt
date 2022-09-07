@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Animatable2
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +20,19 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import coil.ImageLoader
+import coil.disk.DiskCache
+import coil.memory.MemoryCache
+import com.alaory.wallmewallpaper.interpreter.progressRespondBody
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.Runnable
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Response
 import okhttp3.internal.wait
+import okio.Path.Companion.toPath
+import kotlin.coroutines.CoroutineContext
 
 class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : OnImageClick): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -33,8 +46,42 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
     val TAG = "Image_list_adapter";
 
+    var adab_ImageLoader : ImageLoader? = null;
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        this.context = recyclerView.context;
+        adab_ImageLoader = ImageLoader.Builder(recyclerView.context!!)
+            .memoryCache {
+                MemoryCache.Builder(recyclerView.context!!)
+                    .maxSizePercent(0.2)
+                    .build()
+            }
+            .diskCache {
+                DiskCache.Builder()
+                    .directory( "${recyclerView.context!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!}/Preview_Image".toPath())
+                    .maxSizePercent(0.2)
+                    .build();
+            }
+            .okHttpClient {
+                OkHttpClient().newBuilder()
+                    .addInterceptor(object : Interceptor{
+                        override fun intercept(chain: Interceptor.Chain): Response {
+
+                            val orginalres = chain.proceed(chain.request());
+                            Log.i("OkHttpClient",orginalres.body!!.contentLength().toString());
+                            return orginalres.newBuilder()
+                                .body(progressRespondBody(orginalres.body!!))
+                                .build()
+                        }
+                    })
+                    .build()
+            }
+            .build();
+
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        this.context = parent.context;
         if(viewType == VIEW_TYPE_ITEM){
             val itemtoView = LayoutInflater.from(parent.context).inflate(R.layout.image_scrolable,parent,false);
             return ItemViewHolder(itemtoView);
@@ -54,8 +101,8 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             if(listPosts.get(position).imageRatio != null){
                 val imageRatio = listPosts.get(position).imageRatio!!;
                 val ratio = imageRatio.Width.toFloat() / imageRatio.Height.toFloat()
-                width = (30 * ratio).toInt() ;
-                height = 30;
+                width = (50 * ratio).toInt() ;
+                height = 50;
             }
             val tempBitmap : Bitmap = Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888);
 
@@ -70,6 +117,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                 .listener(
                     onSuccess = {_,_ ->
                         holder.cricle_prograssBar.visibility = View.GONE;
+                        tempBitmap.recycle();
                     },
                     onCancel = {
                         holder.cricle_prograssBar.visibility = View.GONE;
@@ -83,7 +131,10 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                 )
                 .build()
 
-            ImageLoader(this.context!!).enqueue(request);
+            adab_ImageLoader.let {
+                it?.enqueue(request);
+            }
+
 
             holder.root_view.setOnClickListener {
                 imgclick.onImageClick(position,holder.image_main.drawable);
@@ -134,6 +185,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     fun removeLoadingView(){
         if(LoadingIndex != -1){
             listPosts.removeAt(LoadingIndex);
+            notifyItemRemoved(LoadingIndex);
             LoadingIndex = -1;
         }
     }

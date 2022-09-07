@@ -80,6 +80,13 @@ class TagActivity : AppCompatActivity(),Image_list_adapter.OnImageClick {
 
     fun LoadMore(){
         wallhaven_api.TagPosts(tag_post_list!!) {
+            if(it == 400){
+                runOnUiThread {
+                    TagAdab?.removeLoadingView();
+                    scrolllistener?.setLoaded();
+                }
+                return@TagPosts;
+            }
             runOnUiThread {
                 TagAdab?.removeLoadingView();
                 scrolllistener?.setLoaded();

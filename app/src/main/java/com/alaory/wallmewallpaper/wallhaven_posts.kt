@@ -63,7 +63,7 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
     private fun SetRVLayoutManager(){
         mLayoutManager = StaggeredGridLayoutManager(MainActivity.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL)
         wallhaven_recycle!!.layoutManager = mLayoutManager;
-        wallhaven_recycle!!.setHasFixedSize(false);
+        wallhaven_recycle!!.setHasFixedSize(true);
         wallhaven_recycle?.adapter = wallhaven_adabter;
     }
 
@@ -82,8 +82,16 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
 
     fun LoadMore(){
-        wallhaven_api.GethomePagePosts {
+        wallhaven_api.GethomePagePosts {status ->
+
             if(isAdded){
+                if(status == 400){
+                    requireActivity().runOnUiThread {
+                        wallhaven_adabter?.removeLoadingView();
+                        bottomloading?.setLoaded();
+                    }
+                    return@GethomePagePosts;
+                }
                 requireActivity().runOnUiThread {
                     wallhaven_adabter?.removeLoadingView();
                     bottomloading?.setLoaded();

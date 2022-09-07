@@ -355,31 +355,38 @@ class Image_Activity(): AppCompatActivity(){
 
         //set wallhaven post info with tag functionality
         if(postmode == mode.wallhaven){
-            wallhaven_api.imageInfo(myData!!) {
-                runOnUiThread {
-                    taggroup!!.isVisible = true;
-                    auther_post!!.setText("posted by: ${myData?.Image_auther}");
-                    for (i in TagNameList){
-                        val TagChip = LayoutInflater.from(this).inflate(R.layout.tagchip,taggroup,false) as Chip;
-                        TagChip.text = i;
+            wallhaven_api.imageInfo(myData!!) { statusCode ->
+                if (statusCode == 200) {
+                    runOnUiThread {
+                        taggroup!!.isVisible = true;
+                        auther_post!!.setText("posted by: ${myData?.Image_auther}");
+                        for (i in TagNameList) {
+                            val TagChip = LayoutInflater.from(this)
+                                .inflate(R.layout.tagchip, taggroup, false) as Chip;
+                            TagChip.text = i;
 
-                        TagChip.setOnClickListener {
+                            TagChip.setOnClickListener {
 
-                            try {
-                                val tempTag = wallhaven_api.Tag("&q=+$i");
-                                val intent = Intent(this, TagActivity::class.java);
-                                intent.flags = (Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                TagActivity.Tag_Assing = tempTag;
-                                startActivity(intent);
-                            }catch (e: Exception){
-                                Log.e("Reddit_posts","error while trying to set image activity")
+                                try {
+                                    val tempTag = wallhaven_api.Tag("&q=+$i");
+                                    val intent = Intent(this, TagActivity::class.java);
+                                    intent.flags =
+                                        (Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                    TagActivity.Tag_Assing = tempTag;
+                                    startActivity(intent);
+                                } catch (e: Exception) {
+                                    Log.e(
+                                        "Reddit_posts",
+                                        "error while trying to set image activity"
+                                    )
+                                }
                             }
+                            taggroup!!.addView(TagChip)
                         }
-                        taggroup!!.addView(TagChip)
                     }
                 }
+                titlePost!!.isVisible = false;
             }
-            titlePost!!.isVisible = false;
         }
 
         //------------------------------------------------------------------

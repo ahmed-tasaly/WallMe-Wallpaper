@@ -24,7 +24,7 @@ class wallhaven_api {
         var timeperiod: String = "";
 
 
-        fun GethomePagePosts(callback: () -> Unit = {}){
+        fun GethomePagePosts(callback: (Status: Int) -> Unit = {}){
             var Tags_String = "&q=";
             try{
                 for(i in wallhaven_settings.TagsSequnce){
@@ -47,6 +47,7 @@ class wallhaven_api {
 
                 override fun onFailure(call: Call, e: IOException) {
                     Log.e("wallhaven_api",e.toString());
+                    callback(400);
                 }
 
                 override fun onResponse(call: Call, response: Response) {
@@ -93,11 +94,14 @@ class wallhaven_api {
                             currentPage++;
                             lastindex = wallhaven_homepage_posts.size;
                             wallhaven_homepage_posts += TempList;
-                            callback();
+                            callback(200);
+                        }else{
+                            callback(400)
                         }
 
                     }
                     catch (e: Exception){
+                        callback(400);
                         Log.e("wallhaven_api",e.toString());
                     }
                 }
@@ -107,17 +111,20 @@ class wallhaven_api {
 
 
         //request tag page
-        fun TagPosts(tag: Tag,sorting: String = "&sorting=views",ordering:String = "&order=desc" ,callback: () -> Unit = {}){
+        fun TagPosts(tag: Tag,sorting: String = "&sorting=views",ordering:String = "&order=desc" ,callback: (Status : Int) -> Unit = {}){
             var url = "https://wallhaven.cc/api/v1/search?page=${tag.Page_Tag}${tag.Name_Tag}${sorting}${ordering}";
             url = url.replace(" ","%20")
             var tagPosts_request = Request.Builder()
                 .url(url)
                 .build();
+
+
             Log.i("wallhaven_api","TagPosts URL: $url")
             wallhavenRequest.newCall(tagPosts_request).enqueue(object : Callback{
 
                 override fun onFailure(call: Call, e: IOException) {
-                    Log.e("wallhaven_api","Tag request failed: $e")
+                    Log.e("wallhaven_api","Tag request failed: $e");
+                    callback(400);
                 }
 
                 override fun onResponse(call: Call, response: Response) {
@@ -155,9 +162,12 @@ class wallhaven_api {
                             tag.Page_Tag++;
                             tag.lastindex = tag.Tag_Post_list.size;
                             tag.Tag_Post_list += tempList;
-                            callback();
+                            callback(200);
+                        }else{
+                            callback(400)
                         }
                     }catch (e:JSONException){
+                        callback(400);
                         Log.e("wallhaven_api","Tag error: $e");
                     }
                 }
@@ -171,13 +181,14 @@ class wallhaven_api {
 
 
         //add image info to post
-        fun imageInfo(listimage_ref : Image_Info, callback: () -> Unit = {}){
+        fun imageInfo(listimage_ref : Image_Info, callback: (Status: Int) -> Unit = {}){
             val requestImageInfo = Request.Builder()
                 .url("https://wallhaven.cc/api/v1/w/${listimage_ref.Image_name}")
                 .build();
             wallhavenRequest.newCall(requestImageInfo).enqueue(object : Callback{
                 override fun onFailure(call: Call, e: IOException) {
                     Log.e("wallhaven_api",e.toString());
+                    callback(400);
                 }
 
                 override fun onResponse(call: Call, response: Response) {
@@ -198,9 +209,10 @@ class wallhaven_api {
                             Log.e("wallhaven_api","Tag error ${e.toString()}")
                         }
 
-                        callback();
+                        callback(200);
                     }catch (e: JSONException){
                         Log.e("wallhaven_api",e.toString());
+                        callback(400);
                     }
 
 

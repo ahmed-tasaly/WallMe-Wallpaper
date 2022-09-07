@@ -89,7 +89,7 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
     private fun SetRVLayoutManager(){
         mLayoutManager = StaggeredGridLayoutManager(MainActivity.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
         myrec!!.layoutManager = mLayoutManager;
-        myrec!!.setHasFixedSize(false);
+        myrec!!.setHasFixedSize(true);
         myrec?.adapter = PostsAdabter;
     }
 
@@ -109,8 +109,16 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
 
 
     fun LoadMore(){
-            Reddit_Api.get_shuffle_andGive {
+            Reddit_Api.get_shuffle_andGive { Status ->
+
                 if(isAdded) {
+                    if(Status == 400){
+                        requireActivity().runOnUiThread {
+                            PostsAdabter!!.removeLoadingView();
+                            scrollListener?.setLoaded();
+                        }
+                        return@get_shuffle_andGive;
+                    }
                     requireActivity().runOnUiThread {
                         PostsAdabter?.removeLoadingView();
                         scrollListener?.setLoaded();

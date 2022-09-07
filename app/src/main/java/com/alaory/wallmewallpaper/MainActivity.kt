@@ -102,14 +102,20 @@ class MainActivity : AppCompatActivity(){
         }
 
         fun change_fragment(fragment: Fragment,shownav : Boolean = false){
-            LastFragmentMode = fragment;
+
             val fragman = mainactivity?.supportFragmentManager?.beginTransaction();
+            LastFragmentMode?.let {
+                fragman?.remove(it)!!;
+            }
             fragman?.replace(R.id.container,fragment);
-            fragman?.commit();
+            fragman?.commitAllowingStateLoss();
+
+
 
             if(shownav)
                 shownav();
 
+            LastFragmentMode = fragment;
         }
 
         fun HideSystemBar(window: Window){
@@ -133,6 +139,12 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
+
+    override fun onResume() {
+        super.onResume();
+        BottonLoading.loctionbottom = 0;
+        BottonLoading.updatebottom_navtigation(0);
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);

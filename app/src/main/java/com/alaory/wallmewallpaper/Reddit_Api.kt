@@ -55,6 +55,8 @@ class Reddit_Api(subredditname: String) {
                 .addHeader("content-type", "application/x-www-form-urlencoded")
                 .build()
 
+            
+
             reddit.newCall(Myrequest).enqueue(object : Callback{
                 override fun onFailure(call: Call, e: IOException) {
                     Log.i("Reddit_Api","error $e");
@@ -70,17 +72,15 @@ class Reddit_Api(subredditname: String) {
         }
 
 
-        fun get_shuffle_andGive(callback_update: () -> Unit = {}){
+        fun get_shuffle_andGive(callback_update: (Status: Int) -> Unit = {}){
             var temp_array_of_posts: Array<Image_Info> = emptyArray();
 
             for (subreddit in 0 until Subreddits.size){
-                Subreddits.get(subreddit).get_subreddit_posts{ posts ->
+                Subreddits.get(subreddit).get_subreddit_posts{ posts, Status ->
 
                     temp_array_of_posts += posts;
 
                     if(subreddit == Subreddits.lastIndex){
-
-
                         Log.i("Reddit_Api","temp_array_of_posts size is ${temp_array_of_posts.size}")
                         temp_array_of_posts.shuffle();
 
@@ -89,7 +89,7 @@ class Reddit_Api(subredditname: String) {
 
 
                         reddit_global_posts += temp_array_of_posts;
-                        callback_update();
+                        callback_update(Status);
                     }
                 }
             }
@@ -101,7 +101,7 @@ class Reddit_Api(subredditname: String) {
 
 
 
-    fun get_subreddit_posts(callback_update: (list_data : Array<Image_Info>) -> Unit= {}){
+    fun get_subreddit_posts(callback_update: (list_data : Array<Image_Info>,Status : Int) -> Unit= {_,_->}){
 
             Log.i("Reddit_Api", api_key)
             val url: String;
@@ -134,6 +134,7 @@ class Reddit_Api(subredditname: String) {
                 lateinit var respond_json: JSONObject;
                 override fun onFailure(call: Call, e: IOException) {
                     Log.i("Reddit_Api","error $e");
+                    callback_update(emptyArray(),400);
                 }
 
                 override fun onResponse(call: Call, response: Response) {
@@ -291,11 +292,13 @@ class Reddit_Api(subredditname: String) {
 
                         if(temp_list.isNotEmpty()){
                             subreddit_posts_list += temp_list;
-
-                            callback_update(temp_list);
+                            callback_update(temp_list,200);
+                        }else{
+                            callback_update(emptyArray(),400);
                         }
                     }
                     catch (e : JSONException){
+                        callback_update(emptyArray(),400);
                         Log.e("Reddit_Api", e.toString());
                     }
 
