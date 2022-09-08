@@ -177,6 +177,7 @@ class wallhaven_settings : Fragment() {
         val view =  inflater.inflate(R.layout.fragment_wallhaven_settings, container, false);
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
+            loadprefs(requireContext());
             MainActivity.change_fragment(MainActivity.wallhavenPosts,true);
         }
 

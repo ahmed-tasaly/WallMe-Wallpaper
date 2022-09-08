@@ -88,6 +88,9 @@ class MainActivity : AppCompatActivity(){
                 this!!.duration = 300;
                 this!!.translationY(1000f);
                 BottonLoading.loctionbottom = 1000;
+                this.withEndAction {
+                    navbox!!.visibility = View.GONE;
+                }
             }
         }
 
@@ -98,6 +101,9 @@ class MainActivity : AppCompatActivity(){
                 this!!.duration = 300;
                 this!!.translationY(0f);
                 BottonLoading.loctionbottom = 0;
+                this.withStartAction {
+                    navbox!!.visibility = View.VISIBLE;
+                }
             }
         }
 
@@ -182,9 +188,9 @@ class MainActivity : AppCompatActivity(){
         checkorein();
 
         //pull posts from apis
+        wallhavenPosts.LoadMore();
         Reddit_Api.Update_Api_key{
             redditPosts.LoadMore();
-            wallhavenPosts.LoadMore();
         }//init wallhaven & reddit api to get the key and set data to array
 
 

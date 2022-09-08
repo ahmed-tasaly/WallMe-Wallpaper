@@ -55,6 +55,7 @@
                     android:text="Find subreddits"
                     android:textSize="11sp"
                     app:chipBackgroundColor="@color/Selected"
+                    android:textColor="@color/Background"
                     app:chipIcon="@drawable/search_ic"
                     />
 

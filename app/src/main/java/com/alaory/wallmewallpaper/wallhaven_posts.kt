@@ -81,7 +81,6 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
     fun LoadMore(){
         wallhaven_api.GethomePagePosts {status ->
-
             if(isAdded){
                 if(status == 400){
                     requireActivity().runOnUiThread {

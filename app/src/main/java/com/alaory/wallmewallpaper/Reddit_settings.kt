@@ -90,6 +90,7 @@ class Reddit_settings : Fragment() {
 
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
+            loadprefs(requireContext());
             MainActivity.change_fragment(MainActivity.redditPosts,true);
         }
 
@@ -126,24 +127,32 @@ class Reddit_settings : Fragment() {
         val inputtext = view.findViewById(R.id.inputText) as TextInputEditText;
         inputtext.setText(subredditsNames);
 
+
         chipsearch.setOnClickListener {
 
             val dialogBuilder = AlertDialog.Builder(requireContext());
             val layout = LayoutInflater.from(requireContext()).inflate(R.layout.search_list_box,null);
             val subredditList: MutableList<String> = emptyList<String>().toMutableList();
 
+
             val adapter = list_item_adabter(subredditList,object : list_item_adabter.Onclick{
                 override fun onclick(name: String) {
+                    subredditsNames = inputtext.text!!.toString();
+                    parse_subreddits(subredditsNames);
+                    var found = false;
                     for (i in subreddits_list_names){
-                        if(i == name.lowercase())
-                            return;
+                        if(i.lowercase().trim() == name.lowercase().trim())
+                            found = true;
                     }
+                    if(found)
+                        return;
+                    Log.i("subreddits_list_names",name);
                     if(subredditsNames.isNotEmpty())
-                        subredditsNames+= "+$name"
+                        subredditsNames+= "+${name.lowercase()}"
                     else
-                        subredditsNames+= name;
+                        subredditsNames+= name.lowercase();
 
-                    subredditList += name.lowercase();
+                    subreddits_list_names += name;
                     inputtext.setText(subredditsNames);
                     Toast.makeText(requireContext(),"subreddit has been added",Toast.LENGTH_SHORT).show();
                 }
