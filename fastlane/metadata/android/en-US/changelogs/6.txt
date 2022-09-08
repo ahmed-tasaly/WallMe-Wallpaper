@@ -1,0 +1,4 @@
+release 1.6:
+    -Added a search subreddit button for Reddit source
+    -fixed main menu loading
+    -minor fixes
