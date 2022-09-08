@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/Background"
+    >
+
+    <TextView
+        android:id="@+id/search_list_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="Search"
+        android:textColor="@color/white"
+        android:textSize="20sp" />
+
+    <SearchView
+        android:id="@+id/search_list_textInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/search_list_title"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/textinput"
+        android:iconifiedByDefault="false"
+        android:layoutDirection="locale"
+
+        android:queryBackground="@drawable/textinput"
+
+
+        android:queryHint="Search"
+        android:submitBackground="@color/Background"
+
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_list_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/search_list_textInputLayout"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="20dp"
+        />
+
+
+
+</RelativeLayout>

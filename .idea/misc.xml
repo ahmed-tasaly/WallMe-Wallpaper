@@ -48,8 +48,10 @@
         <entry key="app/src/main/res/layout/fragment_wallhaven_settings.xml" value="0.2728921124206709" />
         <entry key="app/src/main/res/layout/image_info.xml" value="0.29585292860196666" />
         <entry key="app/src/main/res/layout/image_scrolable.xml" value="0.29585292860196666" />
+        <entry key="app/src/main/res/layout/list_item_add_source.xml" value="0.2728921124206709" />
         <entry key="app/src/main/res/layout/mygridlayout.xml" value="0.18385416666666668" />
         <entry key="app/src/main/res/layout/postlist_mainwindow.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/search_list_box.xml" value="0.271985494106981" />
         <entry key="app/src/main/res/layout/setwallpaperalert.xml" value="0.2728921124206709" />
         <entry key="app/src/main/res/layout/show_image_fs.xml" value="0.25" />
         <entry key="app/src/main/res/layout/tagchip.xml" value="0.2949978623343309" />

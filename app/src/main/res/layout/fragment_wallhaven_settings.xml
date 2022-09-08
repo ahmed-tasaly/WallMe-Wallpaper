@@ -34,6 +34,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
+
         <TextView
             android:id="@+id/WhiteListName"
             android:layout_width="match_parent"

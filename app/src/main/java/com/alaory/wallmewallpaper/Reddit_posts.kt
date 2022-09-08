@@ -2,8 +2,6 @@ package com.alaory.wallmewallpaper
 
 import android.content.Intent
 import android.content.res.Resources
-import android.graphics.drawable.Animatable2
-import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -14,8 +12,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.alaory.wallmewallpaper.adabter.Image_list_adapter
 
-class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
+class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
 
     private var myrec: RecyclerView? = null;
     private var PostsAdabter: Image_list_adapter? = null;
@@ -39,6 +38,7 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
 
 
         if(firsttime || userHitSave){
+            Reddit_Api.reddit.dispatcher.cancelAll();
             Log.i("Reddit_posts","i have beeen created");
             reddit_api = emptyArray();
             Reddit_Api.Subreddits = emptyArray();
@@ -110,7 +110,6 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
 
     fun LoadMore(){
             Reddit_Api.get_shuffle_andGive { Status ->
-
                 if(isAdded) {
                     if(Status == 400){
                         requireActivity().runOnUiThread {
@@ -122,11 +121,10 @@ class Reddit_posts : Fragment(),Image_list_adapter.OnImageClick {
                     requireActivity().runOnUiThread {
                         PostsAdabter?.removeLoadingView();
                         scrollListener?.setLoaded();
-                        PostsAdabter?.refresh_itemList(Reddit_Api.last_index);
+                        PostsAdabter?.refresh_itemList(Reddit_Api.reddit_global_posts.lastIndex);
                     }
                 }
             }
-
     }
 
 

@@ -1,20 +1,15 @@
 package com.alaory.wallmewallpaper
 
 import android.content.Intent
-import android.content.res.Configuration
-import android.content.res.Resources
 import android.graphics.drawable.Drawable
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.view.WindowManager
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.alaory.wallmewallpaper.adabter.Image_list_adapter
 
-class TagActivity : AppCompatActivity(),Image_list_adapter.OnImageClick {
+class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
 
     private var MlaoutManager : RecyclerView.LayoutManager? = null;
     private var scrolllistener : BottonLoading.ViewLodMore? = null;

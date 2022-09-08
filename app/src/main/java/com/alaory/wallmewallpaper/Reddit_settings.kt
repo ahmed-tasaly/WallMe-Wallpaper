@@ -1,5 +1,6 @@
 package com.alaory.wallmewallpaper
 
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
@@ -13,10 +14,13 @@ import android.widget.*
 import androidx.activity.addCallback
 import androidx.core.view.children
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import com.alaory.wallmewallpaper.R
+import com.alaory.wallmewallpaper.adabter.list_item_adabter
 
 
 class Reddit_settings : Fragment() {
@@ -116,6 +120,61 @@ class Reddit_settings : Fragment() {
         //list mode with time period for top listing
         val listmode = view.findViewById(R.id.timePeriod_chipGroup) as ChipGroup;
         val timepriote = view.findViewById(R.id.TopTimePeriod) as Spinner;
+        val chipsearch : Chip = view.findViewById(R.id.reddit_subreddit_search);
+
+        //subreddit input box and the save button
+        val inputtext = view.findViewById(R.id.inputText) as TextInputEditText;
+        inputtext.setText(subredditsNames);
+
+        chipsearch.setOnClickListener {
+
+            val dialogBuilder = AlertDialog.Builder(requireContext());
+            val layout = LayoutInflater.from(requireContext()).inflate(R.layout.search_list_box,null);
+            val subredditList: MutableList<String> = emptyList<String>().toMutableList();
+
+            val adapter = list_item_adabter(subredditList,object : list_item_adabter.Onclick{
+                override fun onclick(name: String) {
+                    for (i in subreddits_list_names){
+                        if(i == name.lowercase())
+                            return;
+                    }
+                    if(subredditsNames.isNotEmpty())
+                        subredditsNames+= "+$name"
+                    else
+                        subredditsNames+= name;
+
+                    subredditList += name.lowercase();
+                    inputtext.setText(subredditsNames);
+                    Toast.makeText(requireContext(),"subreddit has been added",Toast.LENGTH_SHORT).show();
+                }
+            });
+
+
+            val recyclerView = layout.findViewById<RecyclerView>(R.id.search_list_recyclerView);
+            recyclerView.layoutManager = GridLayoutManager(requireContext(),1,GridLayoutManager.VERTICAL,false);
+            recyclerView.adapter = adapter;
+
+            layout.findViewById<SearchView>(R.id.search_list_textInputLayout).setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+                override fun onQueryTextSubmit(text: String?): Boolean {
+                    return true;
+                }
+
+                override fun onQueryTextChange(text: String?): Boolean {
+                    Reddit_Api.search_subreddits(text!!){
+                        subredditList.clear()
+                        subredditList += it;
+                        requireActivity().runOnUiThread {
+                            adapter.notifyDataSetChanged();
+                        }
+
+                        Log.i("onQueryTextSubmit",subredditList.toString());
+                    }
+                    return true;
+                }
+            })
+            dialogBuilder.setView(layout);
+            dialogBuilder.show();
+        }
 
         //on start check for user selection in shredprefrences
         for(child in listmode.children){
@@ -154,9 +213,7 @@ class Reddit_settings : Fragment() {
 
 
 
-        //subreddit input box and the save button
-        val inputtext = view.findViewById(R.id.inputText) as TextInputEditText;
-        inputtext.setText(subredditsNames);
+
 
         //when user clicks save
         view.findViewById<Button>(R.id.save_button_reddit_settings).setOnClickListener {

@@ -1,39 +1,25 @@
-package com.alaory.wallmewallpaper
+package com.alaory.wallmewallpaper.adabter
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.drawable.Animatable2
-import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
-import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.ViewAnimator
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.drawable.toDrawable
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import androidx.vectordrawable.graphics.drawable.Animatable2Compat
-import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import coil.ImageLoader
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import coil.request.ImageRequest
-import com.alaory.wallmewallpaper.interpreter.progressRespondBody
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.Runnable
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Response
-import okhttp3.internal.wait
-import okio.Path.Companion.toPath
-import kotlin.coroutines.CoroutineContext
+import com.alaory.wallmewallpaper.Image_Info
+import com.alaory.wallmewallpaper.Image_Ratio
+import com.alaory.wallmewallpaper.MainActivity
+import com.alaory.wallmewallpaper.R
 
 class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : OnImageClick): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -85,8 +71,6 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     private fun getImagerequest(holder: ItemViewHolder): ImageRequest{
         val tempBitmap : Bitmap = Bitmap.createBitmap(holder.imageRatio.Width,holder.imageRatio.Height,Bitmap.Config.ARGB_8888);
         val tempDrawable = tempBitmap.toDrawable(context!!.resources);
-
-        tempBitmap.recycle();
         val request = coil.request.ImageRequest.Builder(this.context!!)
             .data(listPosts.get(holder.pos).Image_thumbnail)
             .placeholder(tempDrawable)

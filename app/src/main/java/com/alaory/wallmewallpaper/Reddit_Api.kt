@@ -22,6 +22,7 @@ class Reddit_Api(subredditname: String) {
         var time_left = 0;
         //okhttp client
         var reddit = OkHttpClient();
+        var reddit_search = OkHttpClient();
         //list of all subreddits posts
         var reddit_global_posts : MutableList<Image_Info> = emptyList<Image_Info>().toMutableList();
         //list of subreddits that have been made
@@ -35,7 +36,7 @@ class Reddit_Api(subredditname: String) {
         //time period
         var timeperiod = "&t=year";
 
-
+        val TAG = "Reddit_Api";
         fun Update_Api_key(callback_update: () -> Unit = {}) {
             Log.i("Reddit_Api", "Function called");
             try{
@@ -69,30 +70,64 @@ class Reddit_Api(subredditname: String) {
                     callback_update();
                 }
             });
+
+
         }
 
 
         fun get_shuffle_andGive(callback_update: (Status: Int) -> Unit = {}){
-            var temp_array_of_posts: Array<Image_Info> = emptyArray();
-
+            var temp_array_of_posts: MutableList<Image_Info> = emptyList<Image_Info>().toMutableList();
             for (subreddit in 0 until Subreddits.size){
                 Subreddits.get(subreddit).get_subreddit_posts{ posts, Status ->
 
                     temp_array_of_posts += posts;
 
-                    if(subreddit == Subreddits.lastIndex){
                         Log.i("Reddit_Api","temp_array_of_posts size is ${temp_array_of_posts.size}")
                         temp_array_of_posts.shuffle();
 
                         //LAST INDEX
                         last_index = reddit_global_posts.size;
-
-
                         reddit_global_posts += temp_array_of_posts;
+                        temp_array_of_posts.clear();
                         callback_update(Status);
-                    }
+
                 }
             }
+        }
+
+        fun search_subreddits(query : String,callback: (listnames: Array<String>) -> Unit){
+            var baseurl = "https://www.reddit.com/search.json?q=$query&type=sr";
+
+            var searchRequest: Request = Request.Builder()
+                .url(baseurl)
+                .build();
+
+
+
+            reddit_search.dispatcher.cancelAll();
+
+
+            reddit_search.newCall(searchRequest).enqueue(object : Callback{
+                override fun onFailure(call: Call, e: IOException) {
+                    Log.e(TAG,e.toString());
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    var subredditsNames : Array<String> = emptyArray();
+                    try{
+                        val subredditlist = JSONObject(response.body!!.string()).getJSONObject("data").getJSONArray("children");
+                        for(i in 0 until  subredditlist.length()){
+                            if(subredditlist.getJSONObject(i).getJSONObject("data").getString("display_name").lowercase().contains("nsfw") || subredditlist.getJSONObject(i).getJSONObject("data").getString("display_name").lowercase().contains("adult"))
+                                continue;
+                            subredditsNames += subredditlist.getJSONObject(i).getJSONObject("data").getString("display_name");
+                        }
+
+                        callback(subredditsNames);
+                    }catch (e :Exception){
+                        Log.e(TAG,e.toString());
+                    }
+                }
+            })
         }
 
     }

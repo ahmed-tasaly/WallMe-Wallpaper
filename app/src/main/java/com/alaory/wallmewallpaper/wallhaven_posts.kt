@@ -2,8 +2,6 @@ package com.alaory.wallmewallpaper
 
 import android.content.Intent
 import android.content.res.Resources
-import android.graphics.drawable.Animatable2
-import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -12,9 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.alaory.wallmewallpaper.adabter.Image_list_adapter
 
 
 class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{

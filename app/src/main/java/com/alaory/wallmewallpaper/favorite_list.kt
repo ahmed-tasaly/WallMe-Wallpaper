@@ -1,8 +1,6 @@
 package com.alaory.wallmewallpaper
 
 import android.content.Intent
-import android.graphics.drawable.Animatable2
-import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -11,14 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.alaory.wallmewallpaper.adabter.Image_list_adapter
 
 
-class favorite_list() : Fragment(),Image_list_adapter.OnImageClick {
+class favorite_list() : Fragment(), Image_list_adapter.OnImageClick {
 
     var favoriteList_adabter: Image_list_adapter? = null;
     var favoriteList_recycler: RecyclerView? = null;

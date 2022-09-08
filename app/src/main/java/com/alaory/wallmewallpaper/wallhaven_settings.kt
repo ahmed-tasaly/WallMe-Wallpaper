@@ -37,6 +37,7 @@ class wallhaven_settings : Fragment() {
     var listmode_wallhaven: Spinner? = null;
     var listmode_timepriod: Spinner? = null;
 
+
     var tempTagSequence : Array<String> = emptyArray();
 
     companion object{
@@ -190,6 +191,7 @@ class wallhaven_settings : Fragment() {
         listmode_wallhaven = view.findViewById(R.id.listmode_wallhaven);
         listmode_timepriod = view.findViewById(R.id.listmode_timePeriod_wallhaven);
 
+
         tempTagSequence = emptyArray();
         setUidata();
 
@@ -309,6 +311,8 @@ class wallhaven_settings : Fragment() {
             }
             override fun onNothingSelected(p0: AdapterView<*>?) {}
         }
+
+
 
 
         view.findViewById<Button>(R.id.save_button_wallhaven_settings).setOnClickListener {
