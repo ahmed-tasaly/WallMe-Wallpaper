@@ -99,13 +99,20 @@ class Reddit_Api(subredditname: String) {
             var baseurl = "https://www.reddit.com/search.json?q=$query&type=sr";
 
             var searchRequest: Request = Request.Builder()
+                .tag("SubredditsList")
                 .url(baseurl)
                 .build();
 
 
 
-            reddit_search.dispatcher.cancelAll();
-
+            for(call in reddit_search.dispatcher.runningCalls()){
+                call.request().tag()?.let {
+                    if(it.equals("SubredditsList")){
+                        call.cancel();
+                        Log.e("SubredditsList","cancles")
+                    }
+                }
+            }
 
             reddit_search.newCall(searchRequest).enqueue(object : Callback{
                 override fun onFailure(call: Call, e: IOException) {

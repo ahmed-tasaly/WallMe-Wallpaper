@@ -47,6 +47,7 @@ class wallhaven_api {
 
                 override fun onFailure(call: Call, e: IOException) {
                     Log.e("wallhaven_api",e.toString());
+
                     callback(400);
                 }
 

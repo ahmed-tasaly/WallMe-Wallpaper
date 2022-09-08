@@ -9,7 +9,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.alaory.wallmewallpaper.adabter.Image_list_adapter
@@ -21,10 +23,14 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
     private var mLayoutManager : RecyclerView.LayoutManager? = null;
     var scrollListener : BottonLoading.ViewLodMore? = null;
 
+    var imageloading: ImageView? =null;
+    var textloading: TextView? = null;
+    var buttonLoading: Button? =null;
+
     companion object{
          var firsttime = true;
          var userHitSave = false;
-
+        var appfirstneedLoading = true;
     }
 
 
@@ -70,11 +76,28 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val layoutfragment = inflater.inflate(R.layout.postlist_mainwindow, container, false);
 
+
         myrec = layoutfragment.findViewById(R.id.fragmentrec) as RecyclerView;
         SetRVLayoutManager();
         SetRvScrollListener();
 
-        MainActivity.setImageView_asLoading(layoutfragment.findViewById<ImageView>(R.id.loading_recyclye));
+
+        imageloading =layoutfragment.findViewById(R.id.loading_recyclye);
+        textloading = layoutfragment.findViewById(R.id.loading_text);
+        buttonLoading = layoutfragment.findViewById(R.id.load_failer_button);
+
+        buttonLoading!!.setOnClickListener {
+            LoadMore();
+            buttonLoading!!.visibility = View.GONE;
+            imageloading!!.visibility = View.VISIBLE;
+            textloading!!.visibility = View.VISIBLE;
+        }
+        if (appfirstneedLoading){
+            buttonLoading!!.visibility = View.VISIBLE;
+            imageloading!!.visibility = View.GONE
+            textloading!!.visibility = View.GONE
+        }
+        MainActivity.setImageView_asLoading(imageloading);
 
         //for screen rotaion
         if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
@@ -113,6 +136,11 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
                 if(isAdded) {
                     if(Status == 400){
                         requireActivity().runOnUiThread {
+                            if(appfirstneedLoading){
+                                buttonLoading!!.visibility = View.VISIBLE;
+                                imageloading!!.visibility = View.GONE
+                                textloading!!.visibility = View.GONE
+                            }
                             PostsAdabter!!.removeLoadingView();
                             scrollListener?.setLoaded();
                         }

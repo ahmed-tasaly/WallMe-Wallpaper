@@ -9,7 +9,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.alaory.wallmewallpaper.adabter.Image_list_adapter
@@ -22,8 +24,13 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
      var mLayoutManager : RecyclerView.LayoutManager? =null;
      var bottomloading : BottonLoading.ViewLodMore? = null;
 
+    var imageloading: ImageView? =null;
+    var textloading: TextView? = null;
+    var buttonLoading: Button? =null;
+
     companion object{
         var userhitsave : Boolean = false;
+        var appfirstneedLoading = true;
     }
 
 
@@ -44,7 +51,22 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
         SetRVLayoutManager();
         SetRvScrollListener();
 
-        MainActivity.setImageView_asLoading(layoutfragment.findViewById<ImageView>(R.id.loading_recyclye));
+        imageloading =layoutfragment.findViewById(R.id.loading_recyclye);
+        textloading = layoutfragment.findViewById(R.id.loading_text);
+        buttonLoading = layoutfragment.findViewById(R.id.load_failer_button);
+
+        buttonLoading!!.setOnClickListener {
+            LoadMore();
+            buttonLoading!!.visibility = View.GONE;
+            imageloading!!.visibility = View.VISIBLE;
+            textloading!!.visibility = View.VISIBLE;
+        }
+        if (appfirstneedLoading){
+            buttonLoading!!.visibility = View.VISIBLE;
+            imageloading!!.visibility = View.GONE
+            textloading!!.visibility = View.GONE
+        }
+        MainActivity.setImageView_asLoading(imageloading!!);
 
         if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
             LoadMore();
@@ -83,12 +105,19 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
         wallhaven_api.GethomePagePosts {status ->
             if(isAdded){
                 if(status == 400){
+
                     requireActivity().runOnUiThread {
+                        if(appfirstneedLoading){
+                            buttonLoading!!.visibility = View.VISIBLE;
+                            imageloading!!.visibility = View.GONE
+                            textloading!!.visibility = View.GONE
+                        }
                         wallhaven_adabter?.removeLoadingView();
                         bottomloading?.setLoaded();
                     }
                     return@GethomePagePosts;
                 }
+                appfirstneedLoading = false;
                 requireActivity().runOnUiThread {
                     wallhaven_adabter?.removeLoadingView();
                     bottomloading?.setLoaded();
