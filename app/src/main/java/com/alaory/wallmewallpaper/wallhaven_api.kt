@@ -24,7 +24,7 @@ class wallhaven_api {
         var timeperiod: String = "";
 
 
-        fun GethomePagePosts(callback: (Status: Int) -> Unit = {}){
+        fun GethomePagePosts(callback: () -> Unit = {},onfailercallback: () -> Unit = {}){
             var Tags_String = "&q=";
             try{
                 for(i in wallhaven_settings.TagsSequnce){
@@ -33,7 +33,6 @@ class wallhaven_api {
             }catch (e:Exception){
                 Log.e("wallhaven_api",e.toString())
             }
-
 
 
             val url_homepage = "https://wallhaven.cc/api/v1/search?page=$currentPage${sorting}${ratio}${ordering}$timeperiod${categories}${if(Tags_String != "&q=")Tags_String else ""}";
@@ -47,8 +46,7 @@ class wallhaven_api {
 
                 override fun onFailure(call: Call, e: IOException) {
                     Log.e("wallhaven_api",e.toString());
-
-                    callback(400);
+                    onfailercallback();
                 }
 
                 override fun onResponse(call: Call, response: Response) {
@@ -91,18 +89,17 @@ class wallhaven_api {
                             }
                         }
                         if(TempList.size > 0){
-
                             currentPage++;
                             lastindex = wallhaven_homepage_posts.size;
                             wallhaven_homepage_posts += TempList;
-                            callback(200);
+                            callback();
                         }else{
-                            callback(400)
+                            onfailercallback();
                         }
 
                     }
                     catch (e: Exception){
-                        callback(400);
+                        onfailercallback();
                         Log.e("wallhaven_api",e.toString());
                     }
                 }

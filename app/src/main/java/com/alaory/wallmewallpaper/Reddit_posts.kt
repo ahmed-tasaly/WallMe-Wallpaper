@@ -30,7 +30,7 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
     companion object{
          var firsttime = true;
          var userHitSave = false;
-        var appfirstneedLoading = true;
+        var appfirstneedLoading = false;
     }
 
 
@@ -92,11 +92,13 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
             imageloading!!.visibility = View.VISIBLE;
             textloading!!.visibility = View.VISIBLE;
         }
-        if (appfirstneedLoading){
+
+        if(appfirstneedLoading){
             buttonLoading!!.visibility = View.VISIBLE;
             imageloading!!.visibility = View.GONE
             textloading!!.visibility = View.GONE
         }
+
         MainActivity.setImageView_asLoading(imageloading);
 
         //for screen rotaion
@@ -133,6 +135,9 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
 
     fun LoadMore(){
             Reddit_Api.get_shuffle_andGive { Status ->
+                if(Status == 400)
+                    appfirstneedLoading = true;
+
                 if(isAdded) {
                     if(Status == 400){
                         requireActivity().runOnUiThread {

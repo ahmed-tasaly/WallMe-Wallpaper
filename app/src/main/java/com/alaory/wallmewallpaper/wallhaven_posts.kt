@@ -30,7 +30,7 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
     companion object{
         var userhitsave : Boolean = false;
-        var appfirstneedLoading = true;
+        var appfirstneedLoading = false;
     }
 
 
@@ -44,6 +44,18 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
         }
     }
 
+    fun showloading(){
+        buttonLoading!!.visibility = View.GONE;
+        imageloading!!.visibility = View.VISIBLE;
+        textloading!!.visibility = View.VISIBLE;
+    }
+    fun hideloading(){
+        buttonLoading!!.visibility = View.VISIBLE;
+        imageloading!!.visibility = View.GONE
+        textloading!!.visibility = View.GONE
+    }
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val layoutfragment = inflater.inflate(R.layout.postlist_mainwindow, container, false);
 
@@ -55,17 +67,18 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
         textloading = layoutfragment.findViewById(R.id.loading_text);
         buttonLoading = layoutfragment.findViewById(R.id.load_failer_button);
 
+
         buttonLoading!!.setOnClickListener {
             LoadMore();
-            buttonLoading!!.visibility = View.GONE;
-            imageloading!!.visibility = View.VISIBLE;
-            textloading!!.visibility = View.VISIBLE;
+            showloading();
         }
-        if (appfirstneedLoading){
-            buttonLoading!!.visibility = View.VISIBLE;
-            imageloading!!.visibility = View.GONE
-            textloading!!.visibility = View.GONE
+
+        if(appfirstneedLoading){
+
+            hideloading();
+
         }
+
         MainActivity.setImageView_asLoading(imageloading!!);
 
         if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
@@ -102,22 +115,9 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
 
     fun LoadMore(){
-        wallhaven_api.GethomePagePosts {status ->
+        wallhaven_api.GethomePagePosts ({
+            appfirstneedLoading = false;
             if(isAdded){
-                if(status == 400){
-
-                    requireActivity().runOnUiThread {
-                        if(appfirstneedLoading){
-                            buttonLoading!!.visibility = View.VISIBLE;
-                            imageloading!!.visibility = View.GONE
-                            textloading!!.visibility = View.GONE
-                        }
-                        wallhaven_adabter?.removeLoadingView();
-                        bottomloading?.setLoaded();
-                    }
-                    return@GethomePagePosts;
-                }
-                appfirstneedLoading = false;
                 requireActivity().runOnUiThread {
                     wallhaven_adabter?.removeLoadingView();
                     bottomloading?.setLoaded();
@@ -126,7 +126,21 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
                     }
                 }
             }
-        }
+        },
+            {
+                //onfailer
+                appfirstneedLoading = true;
+                if(isAdded){
+                requireActivity().runOnUiThread {
+                    if (appfirstneedLoading) {
+                        hideloading();
+                    }
+                    wallhaven_adabter?.removeLoadingView();
+                    bottomloading?.setLoaded();
+                    }
+                }
+            }
+        )
     }
 
 
