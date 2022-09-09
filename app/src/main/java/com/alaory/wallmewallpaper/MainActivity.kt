@@ -1,6 +1,7 @@
 package com.alaory.wallmewallpaper
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.drawable.Animatable2
@@ -15,6 +16,7 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
@@ -30,8 +32,10 @@ class MainActivity : AppCompatActivity(){
     var reddit_filter = Reddit_settings();
     var favoriteList = favorite_list();
 
+
     //init database
     val DataBase = database(this);
+    var firstTimeOPen = true;
 
     companion object{
         //bottom changable loction
@@ -152,6 +156,21 @@ class MainActivity : AppCompatActivity(){
         BottonLoading.updatebottom_navtigation(0);
     }
 
+    fun showstartdialog(){
+        AlertDialog.Builder(this,R.style.Dialog_first)
+            .setTitle("WAIT")
+            .setMessage("I am not in control of the app content you may see some disturbing or harmful content so please be careful. Also thanks for using the app :)")
+            .setNeutralButton("alright i'll be safe take care",object :DialogInterface.OnClickListener{
+                override fun onClick(p0: DialogInterface?, p1: Int) {
+                    firstTimeOPen = false;
+                    getSharedPreferences("main", MODE_PRIVATE).edit().putBoolean("firstTimeOPen",firstTimeOPen).apply();
+                }
+            })
+            .create()
+            .show()
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
 
@@ -174,9 +193,9 @@ class MainActivity : AppCompatActivity(){
         //set ui
         binding = ActivityMainBinding.inflate(layoutInflater);
         setContentView(binding!!.root);
-        //set favorite fragment
 
-
+        //check prefs
+        firstTimeOPen = getSharedPreferences("main", MODE_PRIVATE).getBoolean("firstTimeOPen",true);
 
         //set ui fragment
         if(LastFragmentMode!=null)
@@ -193,6 +212,9 @@ class MainActivity : AppCompatActivity(){
             redditPosts.LoadMore();
         }//init wallhaven & reddit api to get the key and set data to array
 
+        if(firstTimeOPen){
+            showstartdialog();
+        }
 
 
         //set buttom navigtion

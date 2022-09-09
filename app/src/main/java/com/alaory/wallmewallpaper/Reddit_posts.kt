@@ -27,10 +27,11 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
     var textloading: TextView? = null;
     var buttonLoading: Button? =null;
 
+    var appfirstneedLoading = false;
+
     companion object{
          var firsttime = true;
          var userHitSave = false;
-        var appfirstneedLoading = false;
     }
 
 
@@ -91,6 +92,7 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
             buttonLoading!!.visibility = View.GONE;
             imageloading!!.visibility = View.VISIBLE;
             textloading!!.visibility = View.VISIBLE;
+            appfirstneedLoading = false;
         }
 
         if(appfirstneedLoading){

@@ -124,7 +124,8 @@ class Reddit_Api(subredditname: String) {
                     try{
                         val subredditlist = JSONObject(response.body!!.string()).getJSONObject("data").getJSONArray("children");
                         for(i in 0 until  subredditlist.length()){
-                            if(subredditlist.getJSONObject(i).getJSONObject("data").getString("display_name").lowercase().contains("nsfw") || subredditlist.getJSONObject(i).getJSONObject("data").getString("display_name").lowercase().contains("adult"))
+                            val displayname = subredditlist.getJSONObject(i).getJSONObject("data").getString("display_name").lowercase();
+                            if(displayname.contains("nsfw") || displayname.contains("adult") || displayname.contains("gay") || displayname.contains("lgbt") || displayname.contains("lgb"))
                                 continue;
                             subredditsNames += subredditlist.getJSONObject(i).getJSONObject("data").getString("display_name");
                         }

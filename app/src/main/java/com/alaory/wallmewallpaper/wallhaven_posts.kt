@@ -28,9 +28,10 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
     var textloading: TextView? = null;
     var buttonLoading: Button? =null;
 
+    var appfirstneedLoading = false;
+
     companion object{
         var userhitsave : Boolean = false;
-        var appfirstneedLoading = false;
     }
 
 
@@ -71,12 +72,11 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
         buttonLoading!!.setOnClickListener {
             LoadMore();
             showloading();
+            appfirstneedLoading = false;
         }
 
         if(appfirstneedLoading){
-
             hideloading();
-
         }
 
         MainActivity.setImageView_asLoading(imageloading!!);
@@ -98,6 +98,7 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
         wallhaven_recycle!!.layoutManager = mLayoutManager;
         wallhaven_recycle!!.setHasFixedSize(true);
         wallhaven_recycle?.adapter = wallhaven_adabter;
+
     }
 
 
@@ -128,7 +129,7 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
             }
         },
             {
-                //onfailer
+                //on failer
                 appfirstneedLoading = true;
                 if(isAdded){
                 requireActivity().runOnUiThread {

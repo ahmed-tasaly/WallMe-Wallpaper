@@ -6,6 +6,7 @@
     android:background="@color/Background"
     tools:context=".Reddit_posts">
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fragmentrec"
         android:layoutDirection="ltr"

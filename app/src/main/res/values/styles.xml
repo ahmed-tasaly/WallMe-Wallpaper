@@ -9,5 +9,12 @@
         <item name="android:backgroundDimEnabled">true</item>
         <item name="android:background">@android:color/transparent</item>
     </style>
+    <style name="Dialog_first" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <item name="android:layoutDirection">ltr</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorPrimary">@color/Selected</item>
+        <item name="android:colorAccent">@color/white</item>
+        <item name="backgroundTint">@color/Background</item>
+    </style>
 
 </resources>
