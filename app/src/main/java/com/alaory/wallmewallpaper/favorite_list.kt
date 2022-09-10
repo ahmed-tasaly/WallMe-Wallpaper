@@ -1,5 +1,6 @@
 package com.alaory.wallmewallpaper
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -10,6 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.addCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.alaory.wallmewallpaper.adabter.Image_list_adapter
@@ -40,6 +43,20 @@ class favorite_list() : Fragment(), Image_list_adapter.OnImageClick {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            AlertDialog.Builder(requireContext(),R.style.Dialog_first)
+                .setTitle("Do you want to leave the app")
+                .setPositiveButton("Yes",object : DialogInterface.OnClickListener{
+                    override fun onClick(p0: DialogInterface?, p1: Int) {
+                        requireActivity().finish()
+                        System.exit(0);
+                    }
+                })
+                .setNegativeButton("No",null)
+                .show()
+        }
+
         val mainview = inflater.inflate(R.layout.postlist_mainwindow, container, false);
         favoriteList_recycler = mainview.findViewById(R.id.fragmentrec);
         mainview.findViewById<ImageView>(R.id.loading_recyclye).visibility = View.INVISIBLE;

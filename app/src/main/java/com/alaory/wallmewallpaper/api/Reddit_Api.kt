@@ -25,7 +25,6 @@ class Reddit_Api(subredditname: String) {
         var time_left = 0;
         //okhttp client
         var reddit = OkHttpClient();
-        var reddit_search = OkHttpClient();
         //list of all subreddits posts
         var reddit_global_posts : MutableList<Image_Info> = emptyList<Image_Info>().toMutableList();
         //list of subreddits that have been made
@@ -37,15 +36,15 @@ class Reddit_Api(subredditname: String) {
         //list mode
         var listMode = "Top";
         //time period
-        var timeperiod = "&t=year";
+        var timeperiod = "&t=all";
 
         val TAG = "Reddit_Api";
         fun Update_Api_key(callback_update: () -> Unit = {}) {
             Log.i("Reddit_Api", "Function called");
             try{
-                if(BuildConfig.API_KEY_Base.toString().trim() == ""){
+                if(BuildConfig.API_KEY_Base.trim() == ""){
                     callback_update();
-                    return
+                    return;
                 }
             }catch (e : Exception){
                 callback_update();
@@ -59,18 +58,22 @@ class Reddit_Api(subredditname: String) {
                 .addHeader("content-type", "application/x-www-form-urlencoded")
                 .build()
 
-            
-
             reddit.newCall(Myrequest).enqueue(object : Callback{
                 override fun onFailure(call: Call, e: IOException) {
-                    Log.i("Reddit_Api","error $e");
+                    Log.i("Reddit_Api","TOKEN error $e");
                 }
                 override fun onResponse(call: Call, response: Response) {
-                    var respond_json = JSONTokener(response.body!!.string()).nextValue() as JSONObject;
-                    api_key = respond_json.getString("access_token");
-                    time_left = respond_json.getInt("expires_in");
-                    Log.i("Reddit_Api","you got $api_key with time $time_left");
-                    callback_update();
+                    try {
+                        val respond_json = JSONTokener(response.body!!.string()).nextValue() as JSONObject;
+                        api_key = respond_json.getString("access_token");
+                        time_left = respond_json.getInt("expires_in");
+                        Log.i("Reddit_Api", "you got $api_key with time $time_left");
+                        callback_update();
+                    }catch (e: Exception){
+                        Log.e(TAG,"TOKEN FAILED: ${e.toString()}");
+                        callback_update();
+                    }
+
                 }
             });
 
@@ -115,7 +118,7 @@ class Reddit_Api(subredditname: String) {
 
 
 
-            for(call in reddit_search.dispatcher.runningCalls()){
+            for(call in reddit.dispatcher.runningCalls()){
                 call.request().tag()?.let {
                     if(it.equals("SubredditsList")){
                         call.cancel();
@@ -124,7 +127,7 @@ class Reddit_Api(subredditname: String) {
                 }
             }
 
-            reddit_search.newCall(searchRequest).enqueue(object : Callback{
+            reddit.newCall(searchRequest).enqueue(object : Callback{
                 override fun onFailure(call: Call, e: IOException) {
                     Log.e(TAG,e.toString());
                 }
@@ -160,15 +163,9 @@ class Reddit_Api(subredditname: String) {
             val url: String;
 
             if(api_key == "NOKEY"){
-                if(subreddit_posts_list.isNotEmpty())
-                    url = "https://reddit.com/r/$subreddit/${listMode.lowercase()}.json?limit=$PostRequestNumber&after=${last_before_id}${timeperiod.lowercase()}";
-                else
-                    url = "https://reddit.com/r/$subreddit/${listMode.lowercase()}.json?limit=$PostRequestNumber${timeperiod.lowercase()}";
+                url = "https://reddit.com/r/$subreddit/${listMode.lowercase()}.json?limit=$PostRequestNumber${ if(subreddit_posts_list.isNotEmpty()) "&after=${last_before_id}" else ""}${timeperiod.lowercase()}";
             }else{
-                if(subreddit_posts_list.isNotEmpty())
-                    url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?limit=$PostRequestNumber&after=${last_before_id}${timeperiod.lowercase()}";
-                else
-                    url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?limit=$PostRequestNumber${timeperiod.lowercase()}";
+                url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?limit=$PostRequestNumber${ if(subreddit_posts_list.isNotEmpty()) "&after=${last_before_id}" else ""}${timeperiod.lowercase()}";
             }
 
             Log.i("Reddit_Api",url);

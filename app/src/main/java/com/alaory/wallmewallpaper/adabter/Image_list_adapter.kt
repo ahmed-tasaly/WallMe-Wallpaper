@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.drawable.toDrawable
@@ -99,7 +100,6 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             val holder = holder as ItemViewHolder;
 
 
-
             var width = 1;
             var height = 1;
             listPosts.get(position).imageRatio?.let {
@@ -121,6 +121,9 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             holder.root_view.setOnClickListener {
                 imgclick.onImageClick(position,holder.image_main.drawable);
             }
+
+            holder.root_view.startAnimation(AnimationUtils.loadAnimation(holder.itemView.context,R.anim.item_scroll_animation))
+
         }else if(holder.itemViewType == VIEW_TYPE_LOADING){
             val holder = holder as LoadingViewHolder;
             val layoutparams = holder.itemView.layoutParams as StaggeredGridLayoutManager.LayoutParams;

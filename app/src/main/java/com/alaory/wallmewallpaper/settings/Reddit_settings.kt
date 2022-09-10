@@ -55,9 +55,9 @@ class Reddit_settings : Fragment() {
 
         fun loadprefs(context: Context){
             val sharedprefs = PreferenceManager.getDefaultSharedPreferences(context);
-            val subtemp : String? = sharedprefs.getString("subreddits", subredditsNames);
+            val subtemp : String? = sharedprefs.getString("subreddits", "iwallpaper+iphonewallpapers+imaginarylandscapes");
             val templistmode = sharedprefs.getString("listmode","Top");
-            val temptimeperiod = sharedprefs.getString("timePeriodString","");
+            val temptimeperiod = sharedprefs.getString("timePeriodString","&t=all");
 
             //set local settings
             subredditsNames = subtemp!!;
@@ -94,7 +94,7 @@ class Reddit_settings : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             loadprefs(requireContext());
-            MainActivity.change_fragment(MainActivity.redditPosts, true);
+            MainActivity.change_fragment(MainActivity.LastFragmentMode!!, true);
         }
 
         //image preview quality spinner
@@ -229,6 +229,7 @@ class Reddit_settings : Fragment() {
 
         //when user clicks save
         view.findViewById<Button>(R.id.save_button_reddit_settings).setOnClickListener {
+
             parse_subreddits(inputtext.text!!.toString().lowercase());
             subredditsNames = inputtext.text!!.toString().lowercase();
 
@@ -239,13 +240,13 @@ class Reddit_settings : Fragment() {
             Reddit_Api.timeperiod = timePreValue();// week day month etc
 
             savepref(requireContext());
-
-            MainActivity.change_fragment(MainActivity.redditPosts, true);
+            Reddit_Api.reddit.dispatcher.cancelAll();
+            MainActivity.change_fragment(MainActivity.LastFragmentMode!!, true);
         }
 
         view.findViewById<Button>(R.id.cancel_button_reddit_settings).setOnClickListener {
             loadprefs(requireContext());
-            MainActivity.change_fragment(MainActivity.redditPosts, true);
+            MainActivity.change_fragment(MainActivity.LastFragmentMode!!, true);
         }
 
 

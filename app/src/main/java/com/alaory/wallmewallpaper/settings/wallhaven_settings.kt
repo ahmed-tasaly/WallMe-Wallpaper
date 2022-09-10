@@ -180,7 +180,7 @@ class wallhaven_settings : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             loadprefs(requireContext());
-            MainActivity.change_fragment(MainActivity.wallhavenPosts, true);
+            MainActivity.change_fragment(MainActivity.LastFragmentMode!!, true);
         }
 
 
@@ -328,13 +328,13 @@ class wallhaven_settings : Fragment() {
             wallhaven_api.currentPage = 1;
             wallhaven_api.wallhaven_homepage_posts = emptyList<Image_Info>().toMutableList();
             wallhaven_posts.userhitsave = true;
-            MainActivity.change_fragment(MainActivity.wallhavenPosts, true);
+            MainActivity.change_fragment(MainActivity.LastFragmentMode!!, true);
 
         }
 
         view.findViewById<Button>(R.id.cancel_button_wallhaven_settings).setOnClickListener {
             loadprefs(requireContext());
-            MainActivity.change_fragment(MainActivity.wallhavenPosts, true);
+            MainActivity.change_fragment(MainActivity.LastFragmentMode!!, true);
         }
 
 

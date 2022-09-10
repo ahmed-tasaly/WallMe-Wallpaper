@@ -24,7 +24,7 @@ class settings : Fragment() {
         val layout = inflater.inflate(R.layout.fragment_settings, container, false);
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
-            MainActivity.change_fragment(MainActivity.favoriteList, true);
+            MainActivity.change_fragment(MainActivity.LastFragmentMode!!, true);
         }
 
         clearCache = layout.findViewById(R.id.clear_cache_settings);

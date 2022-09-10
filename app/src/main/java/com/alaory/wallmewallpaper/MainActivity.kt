@@ -29,30 +29,31 @@ class MainActivity : AppCompatActivity(){
 
     private var binding: ActivityMainBinding? = null;
 
+    //fragmenst
     var wallhaven_filter = wallhaven_settings();
     var reddit_filter = Reddit_settings();
 
     var settings = com.alaory.wallmewallpaper.settings.settings();
 
 
+    var redditPosts  = Reddit_posts();
+    var wallhavenPosts = wallhaven_posts();
+    var favoriteList = favorite_list();
+
     //init database
     val DataBase = database(this);
     var firstTimeOPen = true;
 
     companion object{
-        //bottom changable loction
-
+        //fragment check
+        var fragmentcheck = true;
 
         var num_post_in_Column = 2;
         var last_orein = Configuration.ORIENTATION_PORTRAIT;
         var LastFragmentMode: Fragment?  = null;
-
         var mainactivity : MainActivity? = null;
 
-        //fragmenst
-         var redditPosts  = Reddit_posts();
-         var wallhavenPosts = wallhaven_posts();
-         var favoriteList = favorite_list();
+
 
 
         //nav
@@ -116,6 +117,8 @@ class MainActivity : AppCompatActivity(){
 
         fun change_fragment(fragment: Fragment,shownav : Boolean = false){
 
+            LastFragmentMode = mainactivity?.supportFragmentManager?.fragments!!.lastOrNull();
+
             val fragman = mainactivity?.supportFragmentManager?.beginTransaction();
             LastFragmentMode?.let {
                 fragman?.remove(it)!!;
@@ -127,8 +130,6 @@ class MainActivity : AppCompatActivity(){
 
             if(shownav)
                 shownav();
-
-            LastFragmentMode = fragment;
         }
 
         fun HideSystemBar(window: Window){
@@ -139,7 +140,6 @@ class MainActivity : AppCompatActivity(){
         }
 
         fun setImageView_asLoading(imageView: ImageView?){
-
             imageView!!.setImageResource(R.drawable.loading_anim);
             val animati : AnimatedVectorDrawable =  imageView.drawable as AnimatedVectorDrawable;
             animati.registerAnimationCallback(object  : Animatable2.AnimationCallback(){
@@ -173,6 +173,7 @@ class MainActivity : AppCompatActivity(){
             .show()
 
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -209,10 +210,11 @@ class MainActivity : AppCompatActivity(){
         //update screen orientation data
         checkorein();
 
+
         //pull posts from apis
-        wallhavenPosts.LoadMore();
         Reddit_Api.Update_Api_key{
             redditPosts.LoadMore();
+            wallhavenPosts.LoadMore();
         }//init wallhaven & reddit api to get the key and set data to array
 
         if(firstTimeOPen){

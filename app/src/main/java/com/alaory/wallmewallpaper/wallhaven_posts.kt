@@ -1,5 +1,6 @@
 package com.alaory.wallmewallpaper
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
@@ -12,6 +13,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.addCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.alaory.wallmewallpaper.adabter.Image_list_adapter
@@ -29,7 +32,7 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
     var textloading: TextView? = null;
     var buttonLoading: Button? =null;
 
-    var appfirstneedLoading = false;
+    var failedFirstLoading = false;
 
     companion object{
         var userhitsave : Boolean = false;
@@ -47,18 +50,39 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
     }
 
     fun showloading(){
-        buttonLoading!!.visibility = View.GONE;
-        imageloading!!.visibility = View.VISIBLE;
-        textloading!!.visibility = View.VISIBLE;
+        buttonLoading?.let{it.visibility = View.GONE;}
+        imageloading?.let{it.visibility = View.VISIBLE;}
+        textloading?.let{it.visibility = View.VISIBLE;}
     }
     fun hideloading(){
-        buttonLoading!!.visibility = View.VISIBLE;
-        imageloading!!.visibility = View.GONE
-        textloading!!.visibility = View.GONE
+        buttonLoading?.let{it.visibility = View.VISIBLE;}
+        imageloading?.let{it.visibility = View.GONE;}
+        textloading?.let{it.visibility = View.GONE}
+    }
+    fun disableloading(){
+        buttonLoading?.let{it.visibility = View.GONE;}
+        imageloading?.let{it.visibility = View.GONE;}
+        textloading?.let{it.visibility = View.GONE;}
+        failedFirstLoading = false;
     }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            AlertDialog.Builder(requireContext(),R.style.Dialog_first)
+                .setTitle("Do you want to leave the app")
+                .setPositiveButton("Yes",object : DialogInterface.OnClickListener{
+                    override fun onClick(p0: DialogInterface?, p1: Int) {
+                        requireActivity().finish()
+                        System.exit(0);
+                    }
+                })
+                .setNegativeButton("No",null)
+                .show()
+        }
+
+
         val layoutfragment = inflater.inflate(R.layout.postlist_mainwindow, container, false);
 
         wallhaven_recycle = layoutfragment.findViewById(R.id.fragmentrec) as RecyclerView;
@@ -72,11 +96,9 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
         buttonLoading!!.setOnClickListener {
             LoadMore();
-            showloading();
-            appfirstneedLoading = false;
         }
 
-        if(appfirstneedLoading){
+        if(failedFirstLoading){
             hideloading();
         }
 
@@ -117,8 +139,14 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
 
     fun LoadMore(){
+        if(isAdded){
+            requireActivity().runOnUiThread {
+                showloading();
+            }
+        }
+
         wallhaven_api.GethomePagePosts ({
-            appfirstneedLoading = false;
+            failedFirstLoading = false;
             if(isAdded){
                 requireActivity().runOnUiThread {
                     wallhaven_adabter?.removeLoadingView();
@@ -126,19 +154,20 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
                     wallhaven_recycle!!.post {
                         wallhaven_adabter?.refresh_itemList(wallhaven_api.lastindex);
                     }
+                    disableloading();
                 }
             }
         },
-            {
-                //on failer
-                appfirstneedLoading = true;
+            {// on failer callback
+
+                failedFirstLoading = true;
                 if(isAdded){
                 requireActivity().runOnUiThread {
-                    if (appfirstneedLoading) {
-                        hideloading();
-                    }
                     wallhaven_adabter?.removeLoadingView();
                     bottomloading?.setLoaded();
+                    if (failedFirstLoading) {
+                        hideloading();
+                    }
                     }
                 }
             }
