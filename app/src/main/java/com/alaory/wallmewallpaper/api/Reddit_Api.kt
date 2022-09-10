@@ -138,7 +138,7 @@ class Reddit_Api(subredditname: String) {
                         val subredditlist = JSONObject(response.body!!.string()).getJSONObject("data").getJSONArray("children");
                         for(i in 0 until  subredditlist.length()){
                             val displayname = subredditlist.getJSONObject(i).getJSONObject("data").getString("display_name").lowercase();
-                            if(filter_words(displayname))
+                            if(filter_words(displayname) || subredditlist.getJSONObject(i).getJSONObject("data").optBoolean("over18",true))
                                 continue;
                             subredditsNames += subredditlist.getJSONObject(i).getJSONObject("data").getString("display_name");
                         }

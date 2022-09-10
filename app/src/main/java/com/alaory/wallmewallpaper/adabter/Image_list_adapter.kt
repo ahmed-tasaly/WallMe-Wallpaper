@@ -2,6 +2,7 @@ package com.alaory.wallmewallpaper.adabter
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import coil.ImageLoader
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
+import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.alaory.wallmewallpaper.Image_Info
 import com.alaory.wallmewallpaper.Image_Ratio
@@ -38,15 +40,17 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         this.context = recyclerView.context;
-
-
         adab_ImageLoader = ImageLoader.Builder(recyclerView.context!!)
             .memoryCache {
                 MemoryCache.Builder(recyclerView.context!!)
                     .maxSizePercent(0.15)
-                    .weakReferencesEnabled(true)
+                    .weakReferencesEnabled(false)
+                    .strongReferencesEnabled(false)
                     .build()
             }
+            .allowHardware(true)
+            .allowRgb565(true)
+            .memoryCachePolicy(CachePolicy.DISABLED)
             .diskCache {
                 DiskCache.Builder()
                     .directory( recyclerView.context!!.cacheDir.resolve("imagePreview"))
@@ -56,6 +60,8 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             .build();
 
     }
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if(viewType == VIEW_TYPE_ITEM){
@@ -76,6 +82,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             .data(listPosts.get(holder.pos).Image_thumbnail)
             .placeholder(tempDrawable)
             .target(holder.image_main)
+            .memoryCachePolicy(CachePolicy.DISABLED)
             .listener(
                 onSuccess = {_,_ ->
                     holder.cricle_prograssBar.visibility = View.GONE;
@@ -113,8 +120,8 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             holder.pos = position;
             holder.imageRatio = Image_Ratio(width,height);
 
-            adab_ImageLoader.let {
-                it?.enqueue(getImagerequest(holder));
+            adab_ImageLoader?.let {
+                it.enqueue(getImagerequest(holder));
             }
 
 
@@ -172,7 +179,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     fun removeLoadingView(){
         if(LoadingIndex != -1){
             listPosts.removeAt(LoadingIndex);
-            notifyItemRemoved(LoadingIndex);
+            notifyItemRemoved(LoadingIndex+1);
             LoadingIndex = -1;
         }
     }

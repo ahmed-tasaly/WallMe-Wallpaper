@@ -39,7 +39,7 @@ class wallhaven_api {
             }
 
 
-            val url_homepage = "https://wallhaven.cc/api/v1/search?page=$currentPage$sorting$ratio$ordering$timeperiod$categories${if(Tags_String != "&q=")Tags_String else ""}";
+            val url_homepage = "https://wallhaven.cc/api/v1/search?page=${currentPage}&purity=100$sorting$ratio$ordering$timeperiod$categories${if(Tags_String != "&q=")Tags_String else ""}";
 
             val homepagereq = Request.Builder()
                 .url(url_homepage)

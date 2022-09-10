@@ -235,21 +235,17 @@ class MainActivity : AppCompatActivity(){
                R.id.Reddit_posts_List -> {
                    filterbutton!!.setImageResource(R.drawable.filter_ic);
                    change_fragment(redditPosts);
-                   true
                }
                R.id.wallhaven_posts_list -> {
                    filterbutton!!.setImageResource(R.drawable.filter_ic);
                    change_fragment(wallhavenPosts);
-                   true
                }
                R.id.Favorite_posts_list -> {
-
                    filterbutton!!.setImageResource(R.drawable.ic_outline_settings_24);
                    change_fragment(favoriteList);
-                   true
                }
-               else -> {true}
            }
+            return@setOnItemSelectedListener true;
         }
 
 

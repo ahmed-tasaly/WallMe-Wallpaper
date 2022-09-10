@@ -24,9 +24,9 @@ import com.alaory.wallmewallpaper.settings.wallhaven_settings
 
 class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
 
-    private var myrec: RecyclerView? = null;
-    private var PostsAdabter: Image_list_adapter? = null;
-    private var mLayoutManager : RecyclerView.LayoutManager? = null;
+     var myrec: RecyclerView? = null;
+     var PostsAdabter: Image_list_adapter? = null;
+     var mLayoutManager : RecyclerView.LayoutManager? = null;
     var scrollListener : BottonLoading.ViewLodMore? = null;
 
     var imageloading: ImageView? =null;
