@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.alaory.wallmewallpaper.adabter.Image_list_adapter
+import com.alaory.wallmewallpaper.api.wallhaven_api
 
 class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
 

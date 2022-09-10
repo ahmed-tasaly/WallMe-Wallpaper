@@ -15,6 +15,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.alaory.wallmewallpaper.adabter.Image_list_adapter
+import com.alaory.wallmewallpaper.api.Reddit_Api
+import com.alaory.wallmewallpaper.settings.Reddit_settings
 
 class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
 

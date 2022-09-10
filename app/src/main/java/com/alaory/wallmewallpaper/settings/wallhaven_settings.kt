@@ -1,4 +1,4 @@
-package com.alaory.wallmewallpaper
+package com.alaory.wallmewallpaper.settings
 
 import android.app.AlertDialog
 import android.content.Context
@@ -15,6 +15,8 @@ import androidx.activity.addCallback
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
+import com.alaory.wallmewallpaper.*
+import com.alaory.wallmewallpaper.api.wallhaven_api
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 
@@ -91,13 +93,13 @@ class wallhaven_settings : Fragment() {
 
         val wallhavenPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         wallhavenPrefs.edit().putString("tags",tags).apply();
-        wallhavenPrefs.edit().putString("sorting",sorting).apply();
-        wallhavenPrefs.edit().putString("ordering",ordering).apply();
-        wallhavenPrefs.edit().putString("ratio",ratio).apply();
-        wallhavenPrefs.edit().putString("categories",categories).apply();
-        wallhavenPrefs.edit().putString("timeperiod",timeperiod).apply();
-        wallhavenPrefs.edit().putInt("defualtTimePeriod",defualtTimePeriod).apply();
-        wallhavenPrefs.edit().putInt("sortingint",sortingint).apply();
+        wallhavenPrefs.edit().putString("sorting", sorting).apply();
+        wallhavenPrefs.edit().putString("ordering", ordering).apply();
+        wallhavenPrefs.edit().putString("ratio", ratio).apply();
+        wallhavenPrefs.edit().putString("categories", categories).apply();
+        wallhavenPrefs.edit().putString("timeperiod", timeperiod).apply();
+        wallhavenPrefs.edit().putInt("defualtTimePeriod", defualtTimePeriod).apply();
+        wallhavenPrefs.edit().putInt("sortingint", sortingint).apply();
     }
 
 
@@ -121,7 +123,7 @@ class wallhaven_settings : Fragment() {
 
         if(name != ""){
             tagchipTemp.text = name.drop(1);
-            tagchipTemp.chipIcon = ResourcesCompat.getDrawable(resources,R.drawable.remove_ic,null);
+            tagchipTemp.chipIcon = ResourcesCompat.getDrawable(resources, R.drawable.remove_ic,null);
 
             tagchipTemp.setOnClickListener {
                 if(name[0] == '+')
@@ -143,7 +145,7 @@ class wallhaven_settings : Fragment() {
 
 
     private fun setUidata(){
-        Log.i("categories_TagGroup",categories);
+        Log.i("categories_TagGroup", categories);
         for ( child in categories_TagGroup?.children!!){
             if((child as Chip).text.toString().lowercase() == "general" )
                 child.isChecked = categories[0] == '1';
@@ -178,7 +180,7 @@ class wallhaven_settings : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             loadprefs(requireContext());
-            MainActivity.change_fragment(MainActivity.wallhavenPosts,true);
+            MainActivity.change_fragment(MainActivity.wallhavenPosts, true);
         }
 
 
@@ -326,13 +328,13 @@ class wallhaven_settings : Fragment() {
             wallhaven_api.currentPage = 1;
             wallhaven_api.wallhaven_homepage_posts = emptyList<Image_Info>().toMutableList();
             wallhaven_posts.userhitsave = true;
-            MainActivity.change_fragment(MainActivity.wallhavenPosts,true);
+            MainActivity.change_fragment(MainActivity.wallhavenPosts, true);
 
         }
 
         view.findViewById<Button>(R.id.cancel_button_wallhaven_settings).setOnClickListener {
             loadprefs(requireContext());
-            MainActivity.change_fragment(MainActivity.wallhavenPosts,true);
+            MainActivity.change_fragment(MainActivity.wallhavenPosts, true);
         }
 
 

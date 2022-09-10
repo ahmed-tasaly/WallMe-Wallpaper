@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.alaory.wallmewallpaper.adabter.Image_list_adapter
+import com.alaory.wallmewallpaper.api.wallhaven_api
 
 
 class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{

@@ -1,6 +1,5 @@
 package com.alaory.wallmewallpaper
 
-import android.content.Context
 import android.content.DialogInterface
 import android.content.res.Configuration
 import android.content.res.Resources
@@ -10,7 +9,6 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -20,8 +18,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
+import com.alaory.wallmewallpaper.api.Reddit_Api
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.alaory.wallmewallpaper.databinding.ActivityMainBinding
+import com.alaory.wallmewallpaper.settings.Reddit_settings
+import com.alaory.wallmewallpaper.settings.wallhaven_settings
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity(){
@@ -30,7 +31,8 @@ class MainActivity : AppCompatActivity(){
 
     var wallhaven_filter = wallhaven_settings();
     var reddit_filter = Reddit_settings();
-    var favoriteList = favorite_list();
+
+    var settings = com.alaory.wallmewallpaper.settings.settings();
 
 
     //init database
@@ -50,6 +52,7 @@ class MainActivity : AppCompatActivity(){
         //fragmenst
          var redditPosts  = Reddit_posts();
          var wallhavenPosts = wallhaven_posts();
+         var favoriteList = favorite_list();
 
 
         //nav
@@ -158,8 +161,8 @@ class MainActivity : AppCompatActivity(){
 
     fun showstartdialog(){
         AlertDialog.Builder(this,R.style.Dialog_first)
-            .setTitle("WAIT")
-            .setMessage("I am not in control of the app content you may see some disturbing or harmful content so please be careful. Also thanks for using the app :)")
+            .setTitle("WAIT CAUTION")
+            .setMessage("I am NOT in control nor affiliated of the app content you may see some disturbing or harmful content so please be careful.")
             .setNeutralButton("alright i'll be safe take care",object :DialogInterface.OnClickListener{
                 override fun onClick(p0: DialogInterface?, p1: Int) {
                     firstTimeOPen = false;
@@ -255,14 +258,14 @@ class MainActivity : AppCompatActivity(){
                 R.id.Reddit_posts_List -> {
                     hidenav();
                     change_fragment(reddit_filter);
-
                 }
                 R.id.wallhaven_posts_list -> {
                     hidenav();
                     change_fragment(wallhaven_filter);
-                    }
+                }
                 R.id.Favorite_posts_list -> {
-                    Toast.makeText(this@MainActivity,"Wow you pressed settings wink wink ;)",Toast.LENGTH_LONG).show();
+                    hidenav()
+                    change_fragment(settings);
                 }
                 else -> {}
             }

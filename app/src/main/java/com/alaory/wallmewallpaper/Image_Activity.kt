@@ -2,27 +2,18 @@ package com.alaory.wallmewallpaper
 
 import android.app.AlertDialog
 import android.app.WallpaperManager
-import android.content.ContentProvider
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
-import android.content.res.Resources
 import android.graphics.Bitmap
-import android.graphics.Rect
 import android.graphics.RectF
-import android.graphics.drawable.Animatable2
-import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -30,7 +21,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import coil.ImageLoader
 import coil.disk.DiskCache
-import coil.memory.MemoryCache
+import com.alaory.wallmewallpaper.api.wallhaven_api
 import com.alaory.wallmewallpaper.interpreter.progressRespondBody
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
@@ -41,7 +32,6 @@ import com.ortiz.touchview.TouchImageView
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
-import okio.Path.Companion.toPath
 import java.io.ByteArrayOutputStream
 import java.io.File
 import kotlin.math.absoluteValue
@@ -330,11 +320,7 @@ class Image_Activity(): AppCompatActivity(){
             }
             Full_image!!.setOnTouchImageViewListener ( object : OnTouchImageViewListener{
                 override fun onMove() {
-                    if(Full_image!!.isZoomed){
-                        bottomsheetfragment.isVisible = false;
-                    }else{
-                        bottomsheetfragment.isVisible = true;
-                    }
+                    bottomsheetfragment.isVisible = !Full_image!!.isZoomed
                 }
             });
         }
@@ -412,6 +398,11 @@ class Image_Activity(): AppCompatActivity(){
 
 
         imageloader = ImageLoader.Builder(this)
+            .diskCache {
+                DiskCache.Builder()
+                    .directory(this.cacheDir.resolve("imagesaved"))
+                    .build()
+            }
             .okHttpClient {
                 OkHttpClient().newBuilder()
                     .addInterceptor(object : Interceptor{

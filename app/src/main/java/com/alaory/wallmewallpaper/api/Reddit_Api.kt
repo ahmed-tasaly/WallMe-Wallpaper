@@ -1,6 +1,9 @@
-package com.alaory.wallmewallpaper
+package com.alaory.wallmewallpaper.api
 
 import android.util.Log
+import com.alaory.wallmewallpaper.BuildConfig
+import com.alaory.wallmewallpaper.Image_Info
+import com.alaory.wallmewallpaper.Image_Ratio
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONException
@@ -32,7 +35,7 @@ class Reddit_Api(subredditname: String) {
         //image preview quality
         var previewQulaity: Int = 1 // from 0 to 5
         //list mode
-        var listMode = "Hot";
+        var listMode = "Top";
         //time period
         var timeperiod = "&t=year";
 
@@ -40,7 +43,7 @@ class Reddit_Api(subredditname: String) {
         fun Update_Api_key(callback_update: () -> Unit = {}) {
             Log.i("Reddit_Api", "Function called");
             try{
-                if(com.alaory.wallmewallpaper.BuildConfig.API_KEY_Base.toString().trim() == ""){
+                if(BuildConfig.API_KEY_Base.toString().trim() == ""){
                     callback_update();
                     return
                 }
@@ -52,7 +55,7 @@ class Reddit_Api(subredditname: String) {
             val Myrequest = Request.Builder()
                 .url("https://www.reddit.com/api/v1/access_token?grant_type=https%3A%2F%2Foauth.reddit.com%2Fgrants%2Finstalled_client&device_id=DO_NOT_TRACK_THIS_DEVICE")
                 .post(RequestBody.create("application/x-www-form-urlencoded".toMediaTypeOrNull(),"="))
-                .addHeader("Authorization", "Basic ${com.alaory.wallmewallpaper.BuildConfig.API_KEY_Base}")
+                .addHeader("Authorization", "Basic ${BuildConfig.API_KEY_Base}")
                 .addHeader("content-type", "application/x-www-form-urlencoded")
                 .build()
 
@@ -66,7 +69,7 @@ class Reddit_Api(subredditname: String) {
                     var respond_json = JSONTokener(response.body!!.string()).nextValue() as JSONObject;
                     api_key = respond_json.getString("access_token");
                     time_left = respond_json.getInt("expires_in");
-                    Log.i("Reddit_Api","you got ${api_key} with time $time_left");
+                    Log.i("Reddit_Api","you got $api_key with time $time_left");
                     callback_update();
                 }
             });
@@ -94,6 +97,13 @@ class Reddit_Api(subredditname: String) {
                 }
             }
         }
+
+        fun filter_words(word : String): Boolean{
+            if(word.contains("nsfw") || word.contains("adult") || word.contains("gay") || word.contains("lgbt") || word.contains("lgb") || word.contains("sex"))
+                return true;
+            return false;
+        }
+
 
         fun search_subreddits(query : String,callback: (listnames: Array<String>) -> Unit){
             var baseurl = "https://www.reddit.com/search.json?q=$query&type=sr";
@@ -125,7 +135,7 @@ class Reddit_Api(subredditname: String) {
                         val subredditlist = JSONObject(response.body!!.string()).getJSONObject("data").getJSONArray("children");
                         for(i in 0 until  subredditlist.length()){
                             val displayname = subredditlist.getJSONObject(i).getJSONObject("data").getString("display_name").lowercase();
-                            if(displayname.contains("nsfw") || displayname.contains("adult") || displayname.contains("gay") || displayname.contains("lgbt") || displayname.contains("lgb"))
+                            if(filter_words(displayname))
                                 continue;
                             subredditsNames += subredditlist.getJSONObject(i).getJSONObject("data").getString("display_name");
                         }
@@ -144,7 +154,7 @@ class Reddit_Api(subredditname: String) {
 
 
 
-    fun get_subreddit_posts(callback_update: (list_data : Array<Image_Info>,Status : Int) -> Unit= {_,_->}){
+    fun get_subreddit_posts(callback_update: (list_data : Array<Image_Info>, Status : Int) -> Unit= { _, _->}){
 
             Log.i("Reddit_Api", api_key)
             val url: String;
@@ -224,7 +234,7 @@ class Reddit_Api(subredditname: String) {
                                 val lastChars = dataJson.getString("url").reversed().substring(0,5);
 
                                 //check again if its an image
-                                if (dataJson.getString("thumbnail") == "self" || dataJson.getString("thumbnail") == "default" || !lastChars.contains('.'))
+                                if (filter_words(dataJson.getString("title")) || dataJson.getString("thumbnail") == "self" || dataJson.getString("thumbnail") == "default" || !lastChars.contains('.'))
                                     continue;
 
 
@@ -306,7 +316,9 @@ class Reddit_Api(subredditname: String) {
                                         dataJson
                                             .getJSONObject("preview").getJSONArray("images")
                                             .getJSONObject(0)
-                                            .getJSONArray("resolutions").getJSONObject(previewQulaity)
+                                            .getJSONArray("resolutions").getJSONObject(
+                                                previewQulaity
+                                            )
                                             .getInt("height")
                                     );
 

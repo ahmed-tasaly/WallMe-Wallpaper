@@ -48,8 +48,8 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             }
             .diskCache {
                 DiskCache.Builder()
-                    .directory( recyclerView.context!!.cacheDir)
-                    .maxSizePercent(0.15)
+                    .directory( recyclerView.context!!.cacheDir.resolve("imagePreview"))
+                    .maxSizePercent(0.20)
                     .build();
             }
             .build();

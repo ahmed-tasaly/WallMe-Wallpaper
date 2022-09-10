@@ -1,4 +1,4 @@
-package com.alaory.wallmewallpaper
+package com.alaory.wallmewallpaper.settings
 
 import android.app.AlertDialog
 import android.content.Context
@@ -16,10 +16,13 @@ import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.alaory.wallmewallpaper.MainActivity
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import com.alaory.wallmewallpaper.R
+import com.alaory.wallmewallpaper.api.Reddit_Api
+import com.alaory.wallmewallpaper.Reddit_posts
 import com.alaory.wallmewallpaper.adabter.list_item_adabter
 
 
@@ -29,31 +32,31 @@ class Reddit_settings : Fragment() {
     companion object{
         var subreddits_list_names : List<String> = listOf("amoledbackgrounds","wallpaper");
         var subredditsNames = "amoledbackgrounds+wallpaper";
-        var CheckedChipListMode : String = "Hot";
+        var CheckedChipListMode : String = "Top";
         var TimePeriod = "";
         var TimePeridLastInt = 4;
         var image_preview_qualiy_int = 2;
 
         fun parse_subreddits(SUBREDDITS : String){
             subredditsNames = SUBREDDITS.filter { !it.isWhitespace() };
-            Log.i("subreddits",subredditsNames.toString());
+            Log.i("subreddits", subredditsNames.toString());
             subredditsNames.replace("\\s".toRegex(), "");
             subreddits_list_names = subredditsNames.split("+");
         }
 
         private fun savepref(context: Context){
             val redditSettings = PreferenceManager.getDefaultSharedPreferences(context);
-            redditSettings.edit().putString("subreddits",subredditsNames).apply();
-            redditSettings.edit().putInt("image_preview",image_preview_qualiy_int).apply();
-            redditSettings.edit().putInt("timePeriod",TimePeridLastInt).apply();
-            redditSettings.edit().putString("listmode",CheckedChipListMode).apply();
-            redditSettings.edit().putString("timePeriodString",TimePeriod).apply();
+            redditSettings.edit().putString("subreddits", subredditsNames).apply();
+            redditSettings.edit().putInt("image_preview", image_preview_qualiy_int).apply();
+            redditSettings.edit().putInt("timePeriod", TimePeridLastInt).apply();
+            redditSettings.edit().putString("listmode", CheckedChipListMode).apply();
+            redditSettings.edit().putString("timePeriodString", TimePeriod).apply();
         }
 
         fun loadprefs(context: Context){
             val sharedprefs = PreferenceManager.getDefaultSharedPreferences(context);
             val subtemp : String? = sharedprefs.getString("subreddits", subredditsNames);
-            val templistmode = sharedprefs.getString("listmode","Hot");
+            val templistmode = sharedprefs.getString("listmode","Top");
             val temptimeperiod = sharedprefs.getString("timePeriodString","");
 
             //set local settings
@@ -91,7 +94,7 @@ class Reddit_settings : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             loadprefs(requireContext());
-            MainActivity.change_fragment(MainActivity.redditPosts,true);
+            MainActivity.change_fragment(MainActivity.redditPosts, true);
         }
 
         //image preview quality spinner
@@ -148,9 +151,9 @@ class Reddit_settings : Fragment() {
                         return;
                     Log.i("subreddits_list_names",name);
                     if(subredditsNames.isNotEmpty())
-                        subredditsNames+= "+${name.lowercase()}"
+                        subredditsNames += "+${name.lowercase()}"
                     else
-                        subredditsNames+= name.lowercase();
+                        subredditsNames += name.lowercase();
 
                     subreddits_list_names += name;
                     inputtext.setText(subredditsNames);
@@ -169,14 +172,14 @@ class Reddit_settings : Fragment() {
                 }
 
                 override fun onQueryTextChange(text: String?): Boolean {
-                    Reddit_Api.search_subreddits(text!!){
+                    Reddit_Api.search_subreddits(text!!) {
                         subredditList.clear()
                         subredditList += it;
                         requireActivity().runOnUiThread {
                             adapter.notifyDataSetChanged();
                         }
 
-                        Log.i("onQueryTextSubmit",subredditList.toString());
+                        Log.i("onQueryTextSubmit", subredditList.toString());
                     }
                     return true;
                 }
@@ -237,12 +240,12 @@ class Reddit_settings : Fragment() {
 
             savepref(requireContext());
 
-            MainActivity.change_fragment(MainActivity.redditPosts,true);
+            MainActivity.change_fragment(MainActivity.redditPosts, true);
         }
 
         view.findViewById<Button>(R.id.cancel_button_reddit_settings).setOnClickListener {
             loadprefs(requireContext());
-            MainActivity.change_fragment(MainActivity.redditPosts,true);
+            MainActivity.change_fragment(MainActivity.redditPosts, true);
         }
 
 

@@ -1,8 +1,12 @@
-package com.alaory.wallmewallpaper
+package com.alaory.wallmewallpaper.api
 
 
 
 import android.util.Log
+import com.alaory.wallmewallpaper.Image_Activity
+import com.alaory.wallmewallpaper.Image_Info
+import com.alaory.wallmewallpaper.Image_Ratio
+import com.alaory.wallmewallpaper.settings.wallhaven_settings
 import okhttp3.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -35,7 +39,7 @@ class wallhaven_api {
             }
 
 
-            val url_homepage = "https://wallhaven.cc/api/v1/search?page=$currentPage${sorting}${ratio}${ordering}$timeperiod${categories}${if(Tags_String != "&q=")Tags_String else ""}";
+            val url_homepage = "https://wallhaven.cc/api/v1/search?page=$currentPage$sorting$ratio$ordering$timeperiod$categories${if(Tags_String != "&q=")Tags_String else ""}";
 
             val homepagereq = Request.Builder()
                 .url(url_homepage)
@@ -109,7 +113,7 @@ class wallhaven_api {
 
 
         //request tag page
-        fun TagPosts(tag: Tag,sorting: String = "&sorting=views",ordering:String = "&order=desc" ,callback: (Status : Int) -> Unit = {}){
+        fun TagPosts(tag: Tag, sorting: String = "&sorting=views", ordering:String = "&order=desc", callback: (Status : Int) -> Unit = {}){
             var url = "https://wallhaven.cc/api/v1/search?page=${tag.Page_Tag}${tag.Name_Tag}${sorting}${ordering}";
             url = url.replace(" ","%20")
             var tagPosts_request = Request.Builder()
