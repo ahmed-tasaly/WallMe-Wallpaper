@@ -40,7 +40,7 @@ note the fdroid version might be outdated since i update the app frequently
 <strong>
 
 Wallme-wallpaper is a wallpaper app that aims to make setting wallpapers easy and without any hassle 
-and at the same time have a lot of SFW wallpaper and with a good image quality with support to more than one source of wallpapers. if you have any quetions check the  [Discussions](https://github.com/Alaory/WallMe-Wallpaper/discussions) tab
+and at the same time have a lot of SFW wallpaper and with a good image quality with support to more than one source of wallpapers. if you have any questions check the  [Discussions](https://github.com/Alaory/WallMe-Wallpaper/discussions) tab
 
 
 </strong>
