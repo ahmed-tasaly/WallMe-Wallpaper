@@ -91,6 +91,8 @@ since the app is still in development the ui may change :)
 - [x] add landscape and portrait mode //currently only for wallhaven ;(
 - [ ] add auto wallpaper changer with the user configuration 
 - [ ] add the ability to add images from the device to the favorite page
+- [ ] add support for gif wallpapers
+- [ ] add support for video wallpapers
 - [ ] add more UI I SAID MORE
 - [ ] more plans coming
 - [ ] go to sleep
