@@ -48,18 +48,6 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
 
-        requireActivity().onBackPressedDispatcher.addCallback(this) {
-            AlertDialog.Builder(requireContext(),R.style.Dialog_first)
-                .setTitle("Do you want to leave the app")
-                .setPositiveButton("Yes",object : DialogInterface.OnClickListener{
-                    override fun onClick(p0: DialogInterface?, p1: Int) {
-                        requireActivity().finish()
-                        System.exit(0);
-                    }
-                })
-                .setNegativeButton("No",null)
-                .show()
-        }
 
         if(firsttime || userHitSave){
             Log.i("Reddit_posts","i have beeen created");
@@ -110,6 +98,20 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            AlertDialog.Builder(requireContext(),R.style.Dialog_first)
+                .setTitle("Do you want to leave the app")
+                .setPositiveButton("Yes",object : DialogInterface.OnClickListener{
+                    override fun onClick(p0: DialogInterface?, p1: Int) {
+                        requireActivity().finish()
+                        System.exit(0);
+                    }
+                })
+                .setNegativeButton("No",null)
+                .show()
+        }
+
         val layoutfragment = inflater.inflate(R.layout.postlist_mainwindow, container, false);
 
 
@@ -155,8 +157,10 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
         scrollListener = BottonLoading.ViewLodMore(mLayoutManager as StaggeredGridLayoutManager);
         scrollListener!!.setOnLoadMoreListener(object : BottonLoading.OnLoadMoreListener{
             override fun onLoadMore() {
-                LoadMore();
-                PostsAdabter!!.addLoadingView();
+                myrec?.post {
+                    LoadMore();
+                    PostsAdabter!!.addLoadingView();
+                }
             }
         })
         myrec!!.addOnScrollListener(scrollListener!!);

@@ -208,6 +208,7 @@ class Reddit_Api(subredditname: String) {
 
                                 // check if worth adding
                                 var found: Boolean = false;
+                                last_before_id = dataJson.getString("name");
 
                                 for (j in 0 until subreddit_posts_list.size) {
                                     if (dataJson.getString("name") == subreddit_posts_list.get(j).Image_name)
@@ -225,7 +226,7 @@ class Reddit_Api(subredditname: String) {
 
                                 //add the image
                                 //get image name to skip it next time
-                                last_before_id = dataJson.getString("name");
+
 
 
                                 val lastChars = dataJson.getString("url").reversed().substring(0,5);

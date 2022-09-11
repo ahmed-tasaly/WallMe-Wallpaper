@@ -19,6 +19,7 @@ import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import coil.request.ImageRequest
+import coil.size.Precision
 import com.alaory.wallmewallpaper.Image_Info
 import com.alaory.wallmewallpaper.Image_Ratio
 import com.alaory.wallmewallpaper.MainActivity
@@ -31,6 +32,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
     var LoadingIndex = -1;
 
+
     var imgclick = onimageclick;
     var context: Context? = null;
 
@@ -41,6 +43,9 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
         super.onAttachedToRecyclerView(recyclerView)
         this.context = recyclerView.context;
         adab_ImageLoader = ImageLoader.Builder(recyclerView.context!!)
+            .allowRgb565(true)
+            .bitmapConfig(Bitmap.Config.RGB_565)
+            .precision(Precision.INEXACT)
             .memoryCache {
                 MemoryCache.Builder(recyclerView.context!!)
                     .maxSizePercent(0.15)
@@ -48,8 +53,6 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                     .strongReferencesEnabled(false)
                     .build()
             }
-            .allowHardware(true)
-            .allowRgb565(true)
             .memoryCachePolicy(CachePolicy.DISABLED)
             .diskCache {
                 DiskCache.Builder()

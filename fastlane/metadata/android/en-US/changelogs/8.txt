@@ -1,0 +1,7 @@
+release 1.7:
+    -added image scrolling animation
+    -fixed API bugs
+    -fixed Adapter bugs
+    -slightly improved memory usage
+    -made the app safer 
+    

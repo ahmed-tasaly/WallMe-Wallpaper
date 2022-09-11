@@ -55,7 +55,7 @@ class Reddit_settings : Fragment() {
 
         fun loadprefs(context: Context){
             val sharedprefs = PreferenceManager.getDefaultSharedPreferences(context);
-            val subtemp : String? = sharedprefs.getString("subreddits", "iwallpaper+iphonewallpapers+imaginarylandscapes");
+            val subtemp : String? = sharedprefs.getString("subreddits", "iphonexwallpapers+iphonewallpapers");
             val templistmode = sharedprefs.getString("listmode","Top");
             val temptimeperiod = sharedprefs.getString("timePeriodString","&t=all");
 
