@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity(){
     val DataBase = database(this);
     var firstTimeOPen = true;
 
+
     companion object{
         //fragment check
         var fragmentcheck = true;
@@ -57,6 +58,7 @@ class MainActivity : AppCompatActivity(){
 
 
         //nav
+        var lastfloatingiconIcon : Int = 0;
         var bottomnav : BottomNavigationView ? = null;
         var filterbutton : FloatingActionButton ? = null;
         var navbox : ConstraintLayout ?  = null;
@@ -202,8 +204,8 @@ class MainActivity : AppCompatActivity(){
         firstTimeOPen = getSharedPreferences("main", MODE_PRIVATE).getBoolean("firstTimeOPen",true);
 
         //set ui fragment
-        if(LastFragmentMode!=null)
-            change_fragment(LastFragmentMode!!);
+        if(mainactivity?.supportFragmentManager?.fragments!!.lastOrNull() != null)
+            change_fragment(mainactivity?.supportFragmentManager?.fragments!!.lastOrNull()!!);
         else
             change_fragment(redditPosts);
 
@@ -228,23 +230,24 @@ class MainActivity : AppCompatActivity(){
         bottomnav = findViewById<BottomNavigationView>(R.id.bottom_navigation);
         bottomnav?.selectedItemId = R.id.Reddit_posts_List;
 
+        if(lastfloatingiconIcon != 0)
+            setfloatingIcon(lastfloatingiconIcon);
 
         //set button navitgtion actions
         bottomnav?.setOnItemSelectedListener {
            when (it.itemId){
                R.id.Reddit_posts_List -> {
-                   filterbutton!!.setImageResource(R.drawable.filter_ic);
                    change_fragment(redditPosts);
                }
                R.id.wallhaven_posts_list -> {
-                   filterbutton!!.setImageResource(R.drawable.filter_ic);
                    change_fragment(wallhavenPosts);
                }
                R.id.Favorite_posts_list -> {
-                   filterbutton!!.setImageResource(R.drawable.ic_outline_settings_24);
                    change_fragment(favoriteList);
                }
            }
+            lastfloatingiconIcon = it.itemId;
+            setfloatingIcon(it.itemId);
             return@setOnItemSelectedListener true;
         }
 
@@ -269,8 +272,21 @@ class MainActivity : AppCompatActivity(){
             }
         }
 
-
-
     }
+
+    fun setfloatingIcon(id : Int){
+        when(id){
+            R.id.Reddit_posts_List -> {
+                filterbutton!!.setImageResource(R.drawable.filter_ic);
+            }
+            R.id.wallhaven_posts_list -> {
+                filterbutton!!.setImageResource(R.drawable.filter_ic);
+            }
+            R.id.Favorite_posts_list -> {
+                filterbutton!!.setImageResource(R.drawable.ic_outline_settings_24);
+            }
+        }
+    }
+
 
 }
