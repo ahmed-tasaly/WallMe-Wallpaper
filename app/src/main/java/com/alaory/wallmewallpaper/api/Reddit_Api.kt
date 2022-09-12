@@ -102,7 +102,8 @@ class Reddit_Api(subredditname: String) {
         }
 
         fun filter_words(word : String): Boolean{
-            if(word.contains("nsfw") || word.contains("adult") || word.contains("gay") || word.contains("lgbt") || word.contains("lgb") || word.contains("sex"))
+            val word = word.lowercase();
+            if(word.contains("nsfw") || word.contains("adult") || word.contains("gay") || word.contains("lgbt") || word.contains("lgb") || word.contains("sex")|| word.contains("rainbow"))
                 return true;
             return false;
         }
