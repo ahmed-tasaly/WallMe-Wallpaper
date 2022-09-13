@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layoutDirection="rtl"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".settings.settings"
-    android:background="@color/Background" >
+    android:background="@color/Background">
 
 
     <RelativeLayout
@@ -49,19 +50,36 @@
                 android:padding="10dp"
                 />
 
-            <TextView
-                android:id="@+id/wallpaper_changer_settings_button"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/wallpaper_changer_title"
-                android:layout_marginBottom="2dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:padding="10dp"
-                android:text="Start wallpaper changer"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:layout_below="@id/wallpaper_changer_title">
+                <TextView
+                    android:id="@+id/wallpaper_changer_settings_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:padding="10dp"
+                    android:text="Start wallpaper changer"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/wallpaper_changer_settings_button"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:textColor="@color/white"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="30dp"
+                    android:text="@string/wallpaper_changer_des"
+                    />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 

@@ -14,6 +14,8 @@ import coil.disk.DiskCache
 import coil.request.ImageRequest
 import coil.target.Target
 import okhttp3.Request
+import kotlin.math.floor
+import kotlin.math.min
 import kotlin.random.Random
 
 class wallpaper_changer_service : JobService() {
@@ -40,22 +42,37 @@ class wallpaper_changer_service : JobService() {
             .data(imageInfo.Image_url)
             .target(
                 object : Target{
-                    override fun onError(error: Drawable?) {
-                        super.onError(error)
-                    }
-
-                    override fun onStart(placeholder: Drawable?) {
-                        super.onStart(placeholder);
-                    }
-
                     override fun onSuccess(result: Drawable) {
                         super.onSuccess(result);
                         try{
                             val wallpapermanager = WallpaperManager.getInstance(this@wallpaper_changer_service);
                             val screenWidth = resources.displayMetrics.widthPixels;
                             val screenHeight = resources.displayMetrics.heightPixels;
+                            val Image = result.toBitmap();
                             wallpapermanager.suggestDesiredDimensions(screenWidth,screenHeight);
-                            wallpapermanager.setBitmap(result.toBitmap());
+                            val scaleRatiowidth = screenWidth.toFloat()/Image.width.toFloat();
+                            val scaleRatioheight =  screenHeight.toFloat()/Image.height.toFloat();//FIND RATIO BETWEEN the two rectangles
+
+                            val imagescreenWidth = Image.width*scaleRatiowidth;
+                            val imagescreenHeight = Image.height*scaleRatioheight;
+
+                            var leftStart = (Image.width/2)-(imagescreenWidth/2);
+                            var topStart = (Image.height/2)-(imagescreenHeight/2);
+
+                            if(leftStart < 0)
+                                leftStart = 0f;
+                            if(topStart < 0)
+                                topStart = 0f;
+
+
+                            val rectImage = Rect(
+                                leftStart.toInt(),
+                                topStart.toInt(),
+                                imagescreenWidth.toInt(),
+                                imagescreenHeight.toInt()
+                            );
+                            Log.i(wallpaper_changer_service::class.java.simpleName,"top ${rectImage.top} bottom ${rectImage.bottom} left ${rectImage.left} right ${rectImage.right}");
+                            wallpapermanager.setBitmap(Image,rectImage,true,WallpaperManager.FLAG_SYSTEM);
                         }catch (e : Exception){
                             Log.e(WallpaperManager::class.java.simpleName,e.toString());
                         }
@@ -75,8 +92,8 @@ class wallpaper_changer_service : JobService() {
     }
 
     override fun onStartJob(param: JobParameters?): Boolean {
-        Toast.makeText(this,"wallpaper background service $resused",Toast.LENGTH_SHORT).show();
-        Log.i("Jobmeout","called $resused");
+//        Toast.makeText(this,"wallpaper background service $resused",Toast.LENGTH_SHORT).show();
+//        Log.i("Jobmeout","called $resused");
         change_Wallpaper();
         return true;
     }

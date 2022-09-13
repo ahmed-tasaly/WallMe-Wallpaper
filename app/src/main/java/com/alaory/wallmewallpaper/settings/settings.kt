@@ -66,9 +66,10 @@ class settings : Fragment() {
                             "com.alaory.wallmewallpaper.wallpaper_changer_service"
                         )
                     );
+                    val timeperiodTochangewallpaper: Long = 30*60*1000;//min is 15m
                     val job = jobinfo
                         .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                        .setPeriodic(JobInfo.getMinPeriodMillis())
+                        .setPeriodic(timeperiodTochangewallpaper)
                         .build();
                     jobsc.schedule(job);
                     wallpaper_changer?.setText("Stop wallpaper changer");
