@@ -48,12 +48,13 @@
                 android:textSize="20sp"
                 android:padding="10dp"
                 />
+
             <TextView
                 android:id="@+id/wallpaper_changer_settings_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
                 android:layout_below="@id/wallpaper_changer_title"
+                android:layout_marginBottom="2dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"

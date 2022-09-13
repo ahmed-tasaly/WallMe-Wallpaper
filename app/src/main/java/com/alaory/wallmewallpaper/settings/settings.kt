@@ -26,12 +26,16 @@ class settings : Fragment() {
     var github : TextView? = null;
     var supportMe : TextView? = null;
 
+
+    val JOBID = 212;
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val layout = inflater.inflate(R.layout.fragment_settings, container, false);
+        val jobsc = requireContext().getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler;
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             MainActivity.change_fragment(MainActivity.LastFragmentMode!!, true);
         }
+
 
         wallpaper_changer = layout.findViewById(R.id.wallpaper_changer_settings_button);
         clearCache = layout.findViewById(R.id.clear_cache_settings);
@@ -39,14 +43,39 @@ class settings : Fragment() {
         github = layout.findViewById(R.id.github_settings);
         supportMe = layout.findViewById(R.id.support_settings);
 
+        for(i in jobsc.allPendingJobs){
+            if(i.id == JOBID){
+                wallpaper_changer?.setText("Stop wallpaper changer")
+            }
+        }
 
         wallpaper_changer?.let {
             it.setOnClickListener {
-                val jobsc = requireContext().getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler;
-                val jobinfo = JobInfo.Builder(123, ComponentName("com.alaory.wallmewallpaper","com.alaory.wallmewallpaper.wallpaper_changer_service"));
-                val job = jobinfo.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                    .setOverrideDeadline(60*1000).build();
-                jobsc.schedule(job);
+                var isrunning = false;
+                for(i in jobsc.allPendingJobs){
+                    if(i.id == JOBID){
+                        isrunning = true;
+                    }
+                }
+
+                if(!isrunning) {
+                    val jobinfo = JobInfo.Builder(
+                        JOBID,
+                        ComponentName(
+                            "com.alaory.wallmewallpaper",
+                            "com.alaory.wallmewallpaper.wallpaper_changer_service"
+                        )
+                    );
+                    val job = jobinfo
+                        .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                        .setPeriodic(JobInfo.getMinPeriodMillis())
+                        .build();
+                    jobsc.schedule(job);
+                    wallpaper_changer?.setText("Stop wallpaper changer");
+                }else{
+                    wallpaper_changer?.setText("Start wallpaper changer")
+                    jobsc.cancel(JOBID);
+                }
             }
         }
         clearCache?.let {
