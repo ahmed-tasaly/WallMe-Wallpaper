@@ -96,14 +96,13 @@ class Reddit_Api(subredditname: String) {
                         reddit_global_posts += temp_array_of_posts;
                         temp_array_of_posts.clear();
                         callback_update(Status);
-
                 }
             }
         }
 
         fun filter_words(word : String): Boolean{
             val word = word.lowercase();
-            if(word.contains("nsfw") || word.contains("adult") || word.contains("gay") || word.contains("lgbt") || word.contains("lgb") || word.contains("sex")|| word.contains("rainbow"))
+            if(word.contains("nsfw") || word.contains("adult") || word.contains("gay") || word.contains("lgbt") || word.contains("lgb") || word.contains("sex")|| word.contains("rainbow") || word.contains("pride") || word.contains("furry"))
                 return true;
             return false;
         }

@@ -9,7 +9,7 @@
     android:background="@color/Background" >
 
 
-<RelativeLayout
+    <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     >
@@ -24,6 +24,7 @@
         android:textColor="@color/Selected"
         android:textSize="30sp" />
 
+
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
@@ -32,26 +33,59 @@
         />
 
 
-    <RelativeLayout
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/wallpaper_changer_layout"
+            android:layout_below="@id/title_settings">
+
+            <TextView
+                android:id="@+id/wallpaper_changer_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Wallpaper changer"
+                android:textColor="@color/Selected"
+                android:textSize="20sp"
+                android:padding="10dp"
+                />
+            <TextView
+                android:id="@+id/wallpaper_changer_settings_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_below="@id/wallpaper_changer_title"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:padding="10dp"
+                android:text="Start wallpaper changer"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
         android:id="@+id/cache_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/title_settings"
-
+        android:layout_below="@id/wallpaper_changer_layout"
         android:layout_marginTop="15dp"
         >
 
-        <TextView
-            android:id="@+id/cache_title_settings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:padding="10dp"
-            android:text="Cache"
-            android:textColor="@color/Selected"
-            android:textSize="20sp" />
+            <TextView
+                android:id="@+id/cache_title_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:padding="10dp"
+                android:text="Cache"
+                android:textColor="@color/Selected"
+                android:textSize="20sp" />
 
-        <TextView
+            <TextView
             android:id="@+id/clear_cache_settings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -65,19 +99,19 @@
             android:textColor="@color/white"
             android:textSize="20sp" />
 
-        <TextView
-            android:id="@+id/clear_saved_images_settings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/clear_cache_settings"
-            android:layout_marginBottom="2dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:padding="10dp"
-            android:text="Clear saved images"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
+            <TextView
+                android:id="@+id/clear_saved_images_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/clear_cache_settings"
+                android:layout_marginBottom="2dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:padding="10dp"
+                android:text="Clear saved images"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
 
 
     </RelativeLayout>
@@ -131,6 +165,9 @@
             android:textColor="@color/white"
             android:textSize="20sp" />
     </RelativeLayout>
+
+
+
 
 
 </RelativeLayout>

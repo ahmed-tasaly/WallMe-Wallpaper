@@ -16,6 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Wallpaper"
         tools:ignore="DataExtractionRules">
+        <service android:name=".wallpaper_changer_service" android:permission="android.permission.BIND_JOB_SERVICE">
+
+        </service>
         <activity
             android:name=".TagActivity"
             android:exported="false"
