@@ -25,7 +25,6 @@
 
 ## Download
 
-note the fdroid version might be outdated since i update the app frequently
 
 [<img src="./Images/fdroid_downlaod.png" width=200/>](https://f-droid.org/packages/com.alaory.wallmewallpaper/)
 [<img src="./Images/github_download.png" width=200/>](https://github.com/Alaory/WallMe-Wallpaper/releases/latest)
