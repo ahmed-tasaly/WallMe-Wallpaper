@@ -43,6 +43,17 @@
         <item>year</item>
     </string-array>
 
+    <string-array name="wallpaperChangerTime">
+        <item>min</item>
+        <item>hour</item>
+        <item>day</item>
+    </string-array>
+    <string-array name="screens">
+        <item>HomeScreen</item>
+        <item>LockScreen</item>
+        <item>Both</item>
+    </string-array>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_tag">tagActivity</string>
