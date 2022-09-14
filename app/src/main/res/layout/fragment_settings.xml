@@ -67,12 +67,16 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
-                    android:padding="10dp"
                     android:text="Start wallpaper changer"
                     android:textColor="@color/white"
                     android:textSize="20sp"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:background="@drawable/image_border_line"
+                    android:paddingVertical="10dp"
+                    android:paddingHorizontal="5dp"
+                    android:layout_margin="5dp"
+                    />
                 <RelativeLayout
                     android:id="@+id/wallpaperchangerconfiglayout"
                     android:layout_width="wrap_content"
@@ -113,7 +117,9 @@
                         android:layout_toRightOf="@id/editTextTime"
                         android:background="@drawable/textinput"
                         android:entries="@array/wallpaperChangerTime"
-                        android:padding="5dp" />
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="7dp"
+                        />
 
                 </RelativeLayout>
 
@@ -143,11 +149,22 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
 
+                        android:layout_marginBottom="10dp"
                         android:layout_toRightOf="@id/texttemp_forScreen"
                         android:background="@drawable/textinput"
                         android:entries="@array/screens"
-                        android:padding="5dp"
-                        android:layout_marginBottom="10dp"
+                        android:padding="5dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/wallpaper_changer_time_spinner_forScreen"
+                        android:layout_alignParentLeft="true"
+                        android:paddingLeft="10dp"
+                        android:ems="20"
+                        android:paddingBottom="10dp"
+                        android:textColor="@color/white"
+                        android:text="@string/wallpaper_changer_des"
                         />
 
                 </RelativeLayout>

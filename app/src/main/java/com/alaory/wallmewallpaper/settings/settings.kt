@@ -7,12 +7,14 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.preference.PreferenceManager
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.addCallback
 import androidx.core.content.getSystemService
 import com.alaory.wallmewallpaper.MainActivity
@@ -27,11 +29,42 @@ class settings : Fragment() {
     var supportMe : TextView? = null;
 
 
+    var editbox : EditText? = null;
+    var timecount : Spinner? = null;
+    var screen : Spinner? = null;
+
     val JOBID = 212;
+
+
+
+
+    companion object{
+        var time: String = "15";
+        var timecountSelection: Int = 0;
+        var screenSelection: Int = 0;
+
+        fun saveprefs(context: Context){
+            val preferenceManager = context.getSharedPreferences("settings",Context.MODE_PRIVATE);
+
+            preferenceManager.edit().putString("timecount",time).apply();
+            preferenceManager.edit().putInt("timecountSelection",timecountSelection).apply();
+            preferenceManager.edit().putInt("screenSelection",screenSelection).apply();
+        }
+        fun loadprefs(context: Context){
+            val preferenceManager = context.getSharedPreferences("settings",Context.MODE_PRIVATE);
+            time = preferenceManager.getString("timecount","15")!!.toString();
+            timecountSelection = preferenceManager.getInt("timecountSelection",0);
+            screenSelection = preferenceManager.getInt("screenSelection",0);
+        }
+
+
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val layout = inflater.inflate(R.layout.fragment_settings, container, false);
         val jobsc = requireContext().getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler;
 
+        loadprefs(requireContext());
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             MainActivity.change_fragment(MainActivity.LastFragmentMode!!, true);
         }
@@ -42,6 +75,12 @@ class settings : Fragment() {
         clearImages = layout.findViewById(R.id.clear_saved_images_settings);
         github = layout.findViewById(R.id.github_settings);
         supportMe = layout.findViewById(R.id.support_settings);
+
+        editbox = layout.findViewById(R.id.editTextTime);
+        timecount = layout.findViewById(R.id.wallpaper_changer_time_spinner);
+        screen = layout.findViewById(R.id.wallpaper_changer_time_spinner_forScreen);
+
+
 
         for(i in jobsc.allPendingJobs){
             if(i.id == JOBID){
@@ -59,6 +98,23 @@ class settings : Fragment() {
                 }
 
                 if(!isrunning) {
+                    saveprefs(requireContext());
+                    var localtimecount = 60;
+                    when (timecountSelection){
+                        0 -> {
+                            localtimecount = 60;
+                        }
+                        1 -> {
+                            localtimecount = 60 * 60;
+                        }
+                        2 -> {
+                            localtimecount = 60 * 60 * 24;
+                        }
+                    }
+
+                    val timeperiodTochangewallpaper: Long = time.toLong() * localtimecount * 1000;//min is 15m
+
+
                     val jobinfo = JobInfo.Builder(
                         JOBID,
                         ComponentName(
@@ -66,17 +122,58 @@ class settings : Fragment() {
                             "com.alaory.wallmewallpaper.wallpaper_changer_service"
                         )
                     );
-                    val timeperiodTochangewallpaper: Long = 30*60*1000;//min is 15m
+
                     val job = jobinfo
                         .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                         .setPeriodic(timeperiodTochangewallpaper)
                         .build();
+
+
                     jobsc.schedule(job);
                     wallpaper_changer?.setText("Stop wallpaper changer");
                 }else{
                     wallpaper_changer?.setText("Start wallpaper changer")
                     jobsc.cancel(JOBID);
                 }
+            }
+        }
+
+        editbox?.let {
+            it.setText(time);
+            it.addTextChangedListener(object : TextWatcher{
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+                }
+
+                override fun onTextChanged(text: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    time = text.toString();
+                }
+
+                override fun afterTextChanged(p0: Editable?) {
+
+                }
+            })
+        }
+        timecount?.let {
+            it.setSelection(timecountSelection);
+            it.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, selection: Long) {
+                    timecountSelection = selection.toInt();
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {}
+            }
+        }
+
+
+        screen?.let {
+            it.setSelection(screenSelection);
+            it.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, selection: Long) {
+                    screenSelection = selection.toInt();
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {}
             }
         }
         clearCache?.let {

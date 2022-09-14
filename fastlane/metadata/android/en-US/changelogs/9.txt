@@ -1,0 +1,5 @@
+release 1.8:
+    -changed settings ui
+    -added wallpaper changer
+    -minor bug fixes 
+    -made reddit search results safer 
