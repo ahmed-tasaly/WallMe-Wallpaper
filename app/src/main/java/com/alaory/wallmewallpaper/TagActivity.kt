@@ -25,6 +25,12 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
      var Tag_recyclerView : RecyclerView? = null;
      var tag_post_list : wallhaven_api.Tag? = null;
 
+    override fun onResume() {
+        super.onResume()
+        MainActivity.HideSystemBar(window);
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tag);

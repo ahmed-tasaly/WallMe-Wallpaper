@@ -1,0 +1,5 @@
+release 1.81:
+    -fixed wallpaper changer orientation 
+    -fixed main UI navigation
+    -system navigation bar can be hidden now
+    -fixed bottom bar showing when screen rotate 

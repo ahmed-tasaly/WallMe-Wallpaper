@@ -4,6 +4,8 @@ import android.app.WallpaperManager
 import android.app.job.JobParameters
 import android.app.job.JobService
 import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Rect
 import android.graphics.RectF
@@ -51,8 +53,16 @@ class wallpaper_changer_service : JobService() {
                         super.onSuccess(result);
                         try{
                             val wallpapermanager = WallpaperManager.getInstance(this@wallpaper_changer_service);
-                            val screenWidth = resources.displayMetrics.widthPixels;
-                            val screenHeight = resources.displayMetrics.heightPixels;
+
+                            var screenWidth = resources.displayMetrics.widthPixels;
+                            var screenHeight = resources.displayMetrics.heightPixels;
+
+                            if(Resources.getSystem().configuration.orientation != Configuration.ORIENTATION_PORTRAIT){
+                                screenWidth = resources.displayMetrics.heightPixels;
+                                screenHeight =  resources.displayMetrics.widthPixels;//i know its bad i'll fix it later ;(
+                            }
+
+
                             val Image = result.toBitmap();
                             wallpapermanager.suggestDesiredDimensions(screenWidth,screenHeight);
 
@@ -104,6 +114,8 @@ class wallpaper_changer_service : JobService() {
     override fun onStartJob(param: JobParameters?): Boolean {
         //Toast.makeText(this,"wallpaper background service $resused",Toast.LENGTH_SHORT).show();
         //Log.i("Jobmeout","called $resused");
+
+
 
         val screenSelection = this.getSharedPreferences("settings", Context.MODE_PRIVATE).getInt("screenSelection",0);
         when (screenSelection){

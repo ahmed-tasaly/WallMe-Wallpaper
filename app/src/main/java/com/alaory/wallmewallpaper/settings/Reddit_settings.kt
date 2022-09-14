@@ -88,6 +88,7 @@ class Reddit_settings : Fragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        MainActivity.hidenav();
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_reddit_settings, container, false);
 

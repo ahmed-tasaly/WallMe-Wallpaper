@@ -185,10 +185,10 @@ class Image_Activity(): AppCompatActivity(){
     }
 
 
-
-
-
-
+    override fun onResume() {
+        super.onResume()
+        MainActivity.HideSystemBar(window);
+    }
 
 
 
@@ -238,6 +238,7 @@ class Image_Activity(): AppCompatActivity(){
 
 
             this.state = BottomSheetBehavior.STATE_COLLAPSED;
+            this.isHideable = false;
 
             val Views = LayoutInflater.from(this@Image_Activity).inflate(R.layout.bottom_sheet,null);
             bottomsheetfragment.addView(Views);

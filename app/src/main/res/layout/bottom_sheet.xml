@@ -19,7 +19,6 @@
                 android:id="@+id/pullbottom"
                 android:layout_width="match_parent"
                 android:layout_marginHorizontal="40dp"
-                android:paddingBottom="10dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/pull_ic"
                 android:layout_gravity="center_horizontal"

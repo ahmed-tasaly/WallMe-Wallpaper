@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.addCallback
 import androidx.core.content.getSystemService
+import androidx.core.text.set
 import com.alaory.wallmewallpaper.MainActivity
 import com.alaory.wallmewallpaper.R
 
@@ -60,9 +61,12 @@ class settings : Fragment() {
 
     }
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val layout = inflater.inflate(R.layout.fragment_settings, container, false);
         val jobsc = requireContext().getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler;
+        MainActivity.hidenav();
+
 
         loadprefs(requireContext());
         requireActivity().onBackPressedDispatcher.addCallback(this) {
@@ -150,7 +154,11 @@ class settings : Fragment() {
                 }
 
                 override fun afterTextChanged(p0: Editable?) {
-
+                    p0?.let {
+                        if(it.isEmpty()){
+                            it.append("15")
+                        }
+                    }
                 }
             })
         }

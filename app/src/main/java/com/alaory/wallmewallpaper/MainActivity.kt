@@ -1,28 +1,28 @@
 package com.alaory.wallmewallpaper
 
 import android.content.DialogInterface
+import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.drawable.Animatable2
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import com.alaory.wallmewallpaper.api.Reddit_Api
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.alaory.wallmewallpaper.databinding.ActivityMainBinding
 import com.alaory.wallmewallpaper.settings.Reddit_settings
 import com.alaory.wallmewallpaper.settings.wallhaven_settings
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity(){
@@ -40,10 +40,17 @@ class MainActivity : AppCompatActivity(){
     var wallhavenPosts = wallhaven_posts();
     var favoriteList = favorite_list();
 
+
+
     //init database
     val DataBase = database(this);
     var firstTimeOPen = true;
 
+    enum class menu{
+        reddit,
+        wallhaven,
+        favorite
+    }
 
     companion object{
         //fragment check
@@ -58,11 +65,13 @@ class MainActivity : AppCompatActivity(){
 
 
         //nav
-        var lastfloatingiconIcon : Int = 0;
-        var bottomnav : BottomNavigationView ? = null;
+        var lastfloatingiconIcon : menu? = null;
         var filterbutton : FloatingActionButton ? = null;
         var navbox : ConstraintLayout ?  = null;
-
+        //navigation buttons
+        var reddit_floatingButton : FloatingActionButton? = null;
+        var wallhaven_floatingButton : FloatingActionButton? = null;
+        var favorite_floatingButton : FloatingActionButton? = null;
 
 
         fun checkorein(){
@@ -86,8 +95,9 @@ class MainActivity : AppCompatActivity(){
 
         fun enableBottomButtons(enable: Boolean){
             filterbutton!!.isEnabled = enable;
-            for(i in 0 until bottomnav!!.menu.size())
-                bottomnav!!.menu.get(i).isEnabled = enable;
+            reddit_floatingButton!!.isEnabled = enable;
+            wallhaven_floatingButton!!.isEnabled = enable;
+            favorite_floatingButton!!.isEnabled = enable;
         }
 
 
@@ -117,9 +127,10 @@ class MainActivity : AppCompatActivity(){
             }
         }
 
-        fun change_fragment(fragment: Fragment,shownav : Boolean = false){
+        fun change_fragment(fragment: Fragment,shownav : Boolean = false,changelastfragment : Boolean = false){
 
-            LastFragmentMode = mainactivity?.supportFragmentManager?.fragments!!.lastOrNull();
+            if (changelastfragment)
+                LastFragmentMode = fragment;
 
             val fragman = mainactivity?.supportFragmentManager?.beginTransaction();
             LastFragmentMode?.let {
@@ -135,7 +146,10 @@ class MainActivity : AppCompatActivity(){
         }
 
         fun HideSystemBar(window: Window){
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN;
+            window.decorView.apply {
+             this.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+            }
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ){
                 window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
             }
@@ -159,6 +173,8 @@ class MainActivity : AppCompatActivity(){
         super.onResume();
         BottonLoading.loctionbottom = 0;
         BottonLoading.updatebottom_navtigation(0);
+        HideSystemBar(window);
+
     }
 
     fun showstartdialog(){
@@ -175,6 +191,7 @@ class MainActivity : AppCompatActivity(){
             .show()
 
     }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -227,62 +244,93 @@ class MainActivity : AppCompatActivity(){
         //set buttom navigtion
         filterbutton = findViewById<FloatingActionButton>(R.id.filterbutton);
         navbox = findViewById(R.id.navigation_constraint_box);
-        bottomnav = findViewById<BottomNavigationView>(R.id.bottom_navigation);
-        bottomnav?.selectedItemId = R.id.Reddit_posts_List;
+        reddit_floatingButton = findViewById(R.id.reddit_list_navigation_button);
+        wallhaven_floatingButton = findViewById(R.id.wallhaven_list_navigation_button);
+        favorite_floatingButton = findViewById(R.id.favorite_list_navigation_button);
 
-        if(lastfloatingiconIcon != 0)
-            setfloatingIcon(lastfloatingiconIcon);
+
+        if(lastfloatingiconIcon != null){
+            setfloatingIcon(lastfloatingiconIcon!!);
+            setFABcolor(lastfloatingiconIcon!!);
+        }
+        else{
+            change_fragment(redditPosts,false,true);
+            lastfloatingiconIcon = menu.reddit;
+            setFABcolor(menu.reddit);
+        }
+
 
         //set button navitgtion actions
-        bottomnav?.setOnItemSelectedListener {
-           when (it.itemId){
-               R.id.Reddit_posts_List -> {
-                   change_fragment(redditPosts);
-               }
-               R.id.wallhaven_posts_list -> {
-                   change_fragment(wallhavenPosts);
-               }
-               R.id.Favorite_posts_list -> {
-                   change_fragment(favoriteList);
-               }
-           }
-            lastfloatingiconIcon = it.itemId;
-            setfloatingIcon(it.itemId);
-            return@setOnItemSelectedListener true;
+        reddit_floatingButton?.let {
+            it.setOnClickListener {
+                change_fragment(redditPosts,false,true);
+                lastfloatingiconIcon = menu.reddit;
+                setFABcolor(lastfloatingiconIcon!!);
+            }
+        }
+        wallhaven_floatingButton?.let {
+            it.setOnClickListener {
+                change_fragment(wallhavenPosts,false,true);
+                lastfloatingiconIcon = menu.wallhaven;
+                setFABcolor(lastfloatingiconIcon!!);
+            }
+        }
+        favorite_floatingButton?.let {
+            it.setOnClickListener {
+                change_fragment(favoriteList,false,true);
+                lastfloatingiconIcon = menu.favorite;
+                setFABcolor(lastfloatingiconIcon!!);
+            }
         }
 
 
         //set floating button actions
         filterbutton?.setOnClickListener {
-            val button = it as FloatingActionButton;
-            when(bottomnav?.selectedItemId){
-                R.id.Reddit_posts_List -> {
-                    hidenav();
+            when(lastfloatingiconIcon!!){
+                menu.reddit -> {
                     change_fragment(reddit_filter);
                 }
-                R.id.wallhaven_posts_list -> {
-                    hidenav();
+                menu.wallhaven -> {
                     change_fragment(wallhaven_filter);
                 }
-                R.id.Favorite_posts_list -> {
-                    hidenav()
+                menu.favorite -> {
                     change_fragment(settings);
                 }
-                else -> {}
             }
         }
 
     }
 
-    fun setfloatingIcon(id : Int){
+    fun setFABcolor(icon : menu){
+        when (icon){
+            menu.reddit ->{
+                reddit_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Selected,theme));
+                wallhaven_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));
+                favorite_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));
+            }
+            menu.wallhaven ->{
+                reddit_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));
+                wallhaven_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Selected,theme));
+                favorite_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));
+            }
+            menu.favorite ->{
+                reddit_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));
+                wallhaven_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));
+                favorite_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Selected,theme));
+            }
+        }
+    }
+
+
+    fun setfloatingIcon(id : menu){
         when(id){
-            R.id.Reddit_posts_List -> {
+            menu.reddit -> {
                 filterbutton!!.setImageResource(R.drawable.filter_ic);
             }
-            R.id.wallhaven_posts_list -> {
+            menu.wallhaven -> {
                 filterbutton!!.setImageResource(R.drawable.filter_ic);
             }
-            R.id.Favorite_posts_list -> {
+            menu.favorite -> {
                 filterbutton!!.setImageResource(R.drawable.ic_outline_settings_24);
             }
         }
