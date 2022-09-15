@@ -35,10 +35,12 @@ class wallpaper_changer_service : JobService() {
     }
 
 
-    fun change_Wallpaper(wallpaperFlag : Int): Boolean{
+    fun change_Wallpaper(wallpaperFlag : Int,callback: (Status : Int) -> Unit = {}): Boolean{
         Database.update_image_info_list_from_database();
         if(database.imageinfo_list.isEmpty()) {//if empty dont change
-            return false;
+            callback(200);
+
+            return true;
         }
 
 
@@ -50,8 +52,11 @@ class wallpaper_changer_service : JobService() {
             rannum = (0..database.imageinfo_list.lastIndex).random(Random(stringtonum(lastname)));
             imageInfo = database.imageinfo_list[rannum];
 
-            if(this.getSharedPreferences("wallpaper_changer_service", MODE_PRIVATE).getString("wallpapername","0") == imageInfo.Image_name)
+            if(this.getSharedPreferences("wallpaper_changer_service", MODE_PRIVATE).getString("wallpapername","0") == imageInfo.Image_name){
+                callback(200);
                 return true;
+            }
+
         }
 
 
@@ -63,6 +68,10 @@ class wallpaper_changer_service : JobService() {
             .data(imageInfo.Image_url)
             .target(
                 object : Target{
+                    override fun onError(error: Drawable?) {
+                        super.onError(error)
+                        callback(400);
+                    }
                     override fun onSuccess(result: Drawable) {
                         super.onSuccess(result);
                         try{
@@ -88,8 +97,6 @@ class wallpaper_changer_service : JobService() {
                             val imagescreenHeight = Image.height*scaleimage;
 
 
-
-
                             val rectImage = Rect(
                                 0,
                                 0,
@@ -98,7 +105,9 @@ class wallpaper_changer_service : JobService() {
                             );
 
                             wallpapermanager.setBitmap(Image,rectImage,true,wallpaperFlag);
+                            callback(200);
                         }catch (e : Exception){
+                            callback(400);
                             Log.e(WallpaperManager::class.java.simpleName,e.toString());
                         }
                     }
@@ -113,40 +122,53 @@ class wallpaper_changer_service : JobService() {
                     .build()
             }.build();
 
-       imageloader.enqueue(imagerequest);
+        imageloader.enqueue(imagerequest);
         return true;
     }
+
 
 
 
     override fun onStartJob(param: JobParameters?): Boolean {
         if(Resources.getSystem().configuration.orientation != Configuration.ORIENTATION_PORTRAIT){
             Toast.makeText(this,"wallpaper background failed",Toast.LENGTH_SHORT).show();
+            jobFinished(param,false);
             return true;
         }
 
 
 
         Toast.makeText(this,"wallpaper background service $resused",Toast.LENGTH_SHORT).show();
-        //Log.i("Jobmeout","called $resused");
+        Log.i("Jobmeout","called $resused");
 
+        val callback: (status : Int) -> Unit = {
+            when(it){
+                400 ->{
+                    jobFinished(param,true)
+                }
+                200 ->{
+                    jobFinished(param,false)
+                }
+                else ->{
+                    jobFinished(param,false)
+                }
+            }
+        }
 
         var state = true;
         val screenSelection = this.getSharedPreferences("settings", Context.MODE_PRIVATE).getInt("screenSelection",0);
         when (screenSelection){
             0 ->{
-                state = change_Wallpaper(WallpaperManager.FLAG_SYSTEM);
+                state = change_Wallpaper(WallpaperManager.FLAG_SYSTEM,callback);
             }
             1 ->{
-                state =  change_Wallpaper(WallpaperManager.FLAG_LOCK);
+                state =  change_Wallpaper(WallpaperManager.FLAG_LOCK,callback);
             }
             2 ->{
                 change_Wallpaper(WallpaperManager.FLAG_SYSTEM);
-                state =  change_Wallpaper(WallpaperManager.FLAG_LOCK);
+                state =  change_Wallpaper(WallpaperManager.FLAG_LOCK,callback);
             }
         }
-
-
 
 
         return true;
@@ -154,6 +176,7 @@ class wallpaper_changer_service : JobService() {
 
     override fun onStopJob(param: JobParameters?): Boolean {
         jobFinished(param,true);
+        Toast.makeText(this,"wallpaper background onStopJob called",Toast.LENGTH_LONG).show();
         return true;
     }
 
