@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.alaory.wallmewallpaper.adabter.Image_list_adapter
 import com.alaory.wallmewallpaper.api.Reddit_Api
 import com.alaory.wallmewallpaper.settings.Reddit_settings
-import com.alaory.wallmewallpaper.settings.wallhaven_settings
 
 class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
 
@@ -174,7 +173,7 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
                 showloading();
             }
         }
-        Reddit_Api.get_shuffle_andGive { Status ->
+        Reddit_Api.get_allposts_andGive { Status ->
             if(Status == 400)
                 failedFirstLoading = true;
 
@@ -187,7 +186,7 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
                             hideloading();
                         }
                     }
-                    return@get_shuffle_andGive;
+                    return@get_allposts_andGive;
                 }
                 requireActivity().runOnUiThread {
                     PostsAdabter?.removeLoadingView();

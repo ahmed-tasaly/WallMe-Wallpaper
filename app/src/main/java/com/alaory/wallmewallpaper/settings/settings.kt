@@ -7,17 +7,14 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.addCallback
-import androidx.core.content.getSystemService
-import androidx.core.text.set
+import androidx.fragment.app.Fragment
 import com.alaory.wallmewallpaper.MainActivity
 import com.alaory.wallmewallpaper.R
 
@@ -94,14 +91,14 @@ class settings : Fragment() {
 
         wallpaper_changer?.let {
             it.setOnClickListener {
-                var isrunning = false;
-                for(i in jobsc.allPendingJobs){
-                    if(i.id == JOBID){
-                        isrunning = true;
-                    }
-                }
+               var isrunning = false;
+               for(i in jobsc.allPendingJobs){
+                   if(i.id == JOBID){
+                       isrunning = true;
+                   }
+               }
 
-                if(!isrunning) {
+               if(!isrunning) {
                     saveprefs(requireContext());
                     var localtimecount = 60;
                     when (timecountSelection){
@@ -131,7 +128,6 @@ class settings : Fragment() {
                         .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                         .setPeriodic(timeperiodTochangewallpaper)
                         .build();
-
 
                     jobsc.schedule(job);
                     wallpaper_changer?.setText("Stop wallpaper changer");

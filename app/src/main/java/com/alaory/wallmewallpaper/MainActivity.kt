@@ -266,6 +266,7 @@ class MainActivity : AppCompatActivity(){
                 change_fragment(redditPosts,false,true);
                 lastfloatingiconIcon = menu.reddit;
                 setFABcolor(lastfloatingiconIcon!!);
+                setfloatingIcon(lastfloatingiconIcon!!);
             }
         }
         wallhaven_floatingButton?.let {
@@ -273,6 +274,7 @@ class MainActivity : AppCompatActivity(){
                 change_fragment(wallhavenPosts,false,true);
                 lastfloatingiconIcon = menu.wallhaven;
                 setFABcolor(lastfloatingiconIcon!!);
+                setfloatingIcon(lastfloatingiconIcon!!);
             }
         }
         favorite_floatingButton?.let {
@@ -280,6 +282,7 @@ class MainActivity : AppCompatActivity(){
                 change_fragment(favoriteList,false,true);
                 lastfloatingiconIcon = menu.favorite;
                 setFABcolor(lastfloatingiconIcon!!);
+                setfloatingIcon(lastfloatingiconIcon!!);
             }
         }
 

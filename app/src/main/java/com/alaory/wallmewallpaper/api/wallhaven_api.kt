@@ -32,6 +32,8 @@ class wallhaven_api {
             var Tags_String = "&q=";
             try{
                 for(i in wallhaven_settings.TagsSequnce){
+                    if(Reddit_Api.filter_words(i))
+                        continue;
                     Tags_String += i;
                 }
             }catch (e:Exception){
@@ -86,7 +88,6 @@ class wallhaven_api {
                                     postInfo.getString("url"),
                                     Image_Ratio(postInfo.getString("resolution"))
                                 );
-
                                 TempList += post;
                             } catch (e: JSONException) {
                                 Log.e("wallhaven_api", "err: ${e.toString()} url: $body");
@@ -95,6 +96,18 @@ class wallhaven_api {
                         if(TempList.size > 0){
                             currentPage++;
                             lastindex = wallhaven_homepage_posts.size;
+//                            for (post in 0 until TempList.size ){
+//                                if(post % 2 == 0){
+//                                    wallhaven_homepage_posts += TempList[post];
+//                                    continue;
+//                                }
+//                                imageInfo(TempList[post]){
+//                                    if(it == 200)
+//
+//                                    if(post == TempList.lastIndex)
+//
+//                                }
+//                            }
                             wallhaven_homepage_posts += TempList;
                             callback();
                         }else{
@@ -116,7 +129,7 @@ class wallhaven_api {
         fun TagPosts(tag: Tag, sorting: String = "&sorting=views", ordering:String = "&order=desc", callback: (Status : Int) -> Unit = {}){
             var url = "https://wallhaven.cc/api/v1/search?page=${tag.Page_Tag}${tag.Name_Tag}${sorting}${ordering}";
             url = url.replace(" ","%20")
-            var tagPosts_request = Request.Builder()
+            val tagPosts_request = Request.Builder()
                 .url(url)
                 .build();
 
@@ -198,10 +211,16 @@ class wallhaven_api {
                         val body = response.body!!.string();
                         val data = JSONObject(body).getJSONObject("data");
                         listimage_ref.Image_auther = data.getJSONObject("uploader").getString("username");
+                        var shouldshow = true;
                         try {
                             Image_Activity.TagNameList = emptyArray();
                             val TagsJson = data.getJSONArray("tags");
                             for(i in 0 until TagsJson.length()){
+                                if(Reddit_Api.filter_words(TagsJson.getJSONObject(i).getString("name"))){
+                                        shouldshow = false;
+                                        break;
+                                }
+
                                 if(TagsJson.getJSONObject(i).getString("purity") == "sfw")
                                     Image_Activity.TagNameList += TagsJson.getJSONObject(i).getString("name");
                             }
@@ -210,8 +229,10 @@ class wallhaven_api {
                         }catch (e : JSONException){
                             Log.e("wallhaven_api","Tag error ${e.toString()}")
                         }
-
-                        callback(200);
+                        if(shouldshow)
+                            callback(200);
+                        else
+                            callback(300);
                     }catch (e: JSONException){
                         Log.e("wallhaven_api",e.toString());
                         callback(400);

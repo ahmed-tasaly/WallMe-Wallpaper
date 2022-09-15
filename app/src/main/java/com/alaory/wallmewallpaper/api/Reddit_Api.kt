@@ -81,29 +81,24 @@ class Reddit_Api(subredditname: String) {
         }
 
 
-        fun get_shuffle_andGive(callback_update: (Status: Int) -> Unit = {}){
-            var temp_array_of_posts: MutableList<Image_Info> = emptyList<Image_Info>().toMutableList();
+        fun get_allposts_andGive(callback_update: (Status: Int) -> Unit = {}){
             for (subreddit in 0 until Subreddits.size){
                 Subreddits.get(subreddit).get_subreddit_posts{ posts, Status ->
-
-                    temp_array_of_posts += posts;
-
-                        Log.i("Reddit_Api","temp_array_of_posts size is ${temp_array_of_posts.size}")
-                        temp_array_of_posts.shuffle();
-
-                        //LAST INDEX
-                        last_index = reddit_global_posts.size;
-                        reddit_global_posts += temp_array_of_posts;
-                        temp_array_of_posts.clear();
-                        callback_update(Status);
+                    reddit_global_posts += posts;
+                    last_index = reddit_global_posts.size;
+                    callback_update(Status);
                 }
             }
         }
 
         fun filter_words(word : String): Boolean{
             val word = word.lowercase();
-            if(word.contains("nsfw") || word.contains("adult") || word.contains("gay") || word.contains("lgbt") || word.contains("lgb") || word.contains("sex")|| word.contains("rainbow") || word.contains("pride") || word.contains("furry"))
-                return true;
+            val filterWords: Array<String> = arrayOf("nsfw","adult","gay","cross","lgbt","lgb","sex","rainbow","pride","furry")
+
+            for(i in filterWords)
+                if(word.contains(i))
+                    return true
+
             return false;
         }
 
