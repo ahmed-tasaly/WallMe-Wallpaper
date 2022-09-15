@@ -88,7 +88,7 @@ since the app is still in development the ui may change :)
 - [x] add favorite page
 - [x] add progress bar when downloading an image
 - [x] add landscape and portrait mode //currently only for wallhaven ;(
-- [x] add auto wallpaper changer with the user configuration //still work in progress
+- [x] add auto wallpaper changer with the user configuration //still work in progress. dev note: service keep being kiiled
 - [ ] add Wallhaven user's posts page
 - [ ] add the ability to add images from the device to the favorite page
 - [ ] add support for gif wallpapers
