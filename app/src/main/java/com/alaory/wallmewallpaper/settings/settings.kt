@@ -66,8 +66,8 @@ class settings : Fragment() {
         val layout = inflater.inflate(R.layout.fragment_settings, container, false);
         MainActivity.hidenav();
 
-
         loadprefs(requireContext());
+
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             MainActivity.change_fragment(MainActivity.LastFragmentMode!!, true);
         }

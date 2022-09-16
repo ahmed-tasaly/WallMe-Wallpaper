@@ -1,0 +1,3 @@
+release 1.9:
+    -minor bug fixes
+    -fixed auto wallpaper not working when the user leaves the app

@@ -206,9 +206,7 @@ class MainActivity : AppCompatActivity(){
         mainactivity = this;
 
 
-        //update settings
-        Reddit_settings.loadprefs(this);
-        wallhaven_settings.loadprefs(this);
+
         //update database
         DataBase.update_image_info_list_from_database();
 
