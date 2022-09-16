@@ -1,22 +1,23 @@
 package com.alaory.wallmewallpaper.settings
 
-import android.app.job.JobInfo
-import android.app.job.JobScheduler
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
+import androidx.work.*
 import com.alaory.wallmewallpaper.MainActivity
 import com.alaory.wallmewallpaper.R
+import com.alaory.wallmewallpaper.wallpaperChanger_Worker
+import java.util.concurrent.TimeUnit
 
 class settings : Fragment() {
 
@@ -55,13 +56,14 @@ class settings : Fragment() {
             screenSelection = preferenceManager.getInt("screenSelection",0);
         }
 
+        val WorkerTag = "WallpaperChanger";
+        var isworkerrunning = false;
 
     }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val layout = inflater.inflate(R.layout.fragment_settings, container, false);
-        val jobsc = requireContext().getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler;
         MainActivity.hidenav();
 
 
@@ -81,59 +83,53 @@ class settings : Fragment() {
         timecount = layout.findViewById(R.id.wallpaper_changer_time_spinner);
         screen = layout.findViewById(R.id.wallpaper_changer_time_spinner_forScreen);
 
-
-
-        for(i in jobsc.allPendingJobs){
-            if(i.id == JOBID){
-                wallpaper_changer?.setText("Stop wallpaper changer")
+        val worklistinfo = WorkManager.getInstance(requireContext()).getWorkInfosByTag(WorkerTag)
+        for (i in worklistinfo.get())
+            if(!i.state.isFinished ){
+                Log.i("workermee",i.tags.toString());
+                isworkerrunning = true;
             }
-        }
+
+
+        if(isworkerrunning)
+            wallpaper_changer?.setText("Stop wallpaper changer")
 
         wallpaper_changer?.let {
             it.setOnClickListener {
-               var isrunning = false;
-               for(i in jobsc.allPendingJobs){
-                   if(i.id == JOBID){
-                       isrunning = true;
-                   }
-               }
 
-               if(!isrunning) {
+               if(!isworkerrunning) {
                     saveprefs(requireContext());
-                    var localtimecount = 60;
+
+                    var localtimecount: TimeUnit = TimeUnit.MINUTES;
                     when (timecountSelection){
                         0 -> {
-                            localtimecount = 60;
+                            localtimecount = TimeUnit.MINUTES;
                         }
                         1 -> {
-                            localtimecount = 60 * 60;
+                            localtimecount = TimeUnit.HOURS;
                         }
                         2 -> {
-                            localtimecount = 60 * 60 * 24;
+                            localtimecount = TimeUnit.DAYS;
                         }
                     }
 
-                    val timeperiodTochangewallpaper: Long = time.toLong() * localtimecount * 1000;//min is 15m
+                   val wrokerConstraints = Constraints.Builder()
+                       .setRequiredNetworkType(NetworkType.CONNECTED)
+                       .build()
+
+                   val workreq = PeriodicWorkRequestBuilder<wallpaperChanger_Worker>(time.toLong(),localtimecount)
+                       .addTag(WorkerTag)
+                       .setConstraints(wrokerConstraints)
+                       .build();
 
 
-                    val jobinfo = JobInfo.Builder(
-                        JOBID,
-                        ComponentName(
-                            "com.alaory.wallmewallpaper",
-                            "com.alaory.wallmewallpaper.wallpaper_changer_service"
-                        )
-                    );
-
-                    val job = jobinfo
-                        .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                        .setPeriodic(timeperiodTochangewallpaper)
-                        .build();
-
-                    jobsc.schedule(job);
-                    wallpaper_changer?.setText("Stop wallpaper changer");
+                   WorkManager.getInstance(requireContext()).enqueueUniquePeriodicWork(WorkerTag, ExistingPeriodicWorkPolicy.REPLACE,workreq);
+                   wallpaper_changer?.setText("Stop wallpaper changer");
+                   isworkerrunning = true;
                 }else{
-                    wallpaper_changer?.setText("Start wallpaper changer")
-                    jobsc.cancel(JOBID);
+                    isworkerrunning = false;
+                    wallpaper_changer?.setText("Start wallpaper changer");
+                    WorkManager.getInstance(requireContext()).cancelAllWorkByTag(WorkerTag);
                 }
             }
         }

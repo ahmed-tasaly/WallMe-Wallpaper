@@ -1,9 +1,7 @@
 package com.alaory.wallmewallpaper
 
-
-import android.app.NotificationManager
+import android.app.Notification
 import android.app.WallpaperManager
-import android.app.job.JobParameters
 import android.app.job.JobService
 import android.content.Context
 import android.content.res.Configuration
@@ -14,18 +12,19 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.work.CoroutineWorker
+import androidx.work.ForegroundInfo
+import androidx.work.Worker
+import androidx.work.WorkerParameters
 import coil.ImageLoader
 import coil.disk.DiskCache
 import coil.request.ImageRequest
 import coil.target.Target
 import kotlin.random.Random
 
-class wallpaper_changer_service : JobService() {
+class wallpaperChanger_Worker(val context: Context, param : WorkerParameters) : CoroutineWorker(context,param) {
 
-    companion object{
-        var resused = 1;
-    }
-    var Database = database(this);
+    var Database = database(context);
 
     fun stringtonum(string: String): Long{
         var count: Long = 0;
@@ -35,11 +34,9 @@ class wallpaper_changer_service : JobService() {
     }
 
 
-    fun change_Wallpaper(wallpaperFlag : Int,callback: (Status : Int) -> Unit = {}): Boolean{
+    suspend fun change_Wallpaper(wallpaperFlag : Int): Boolean{
         Database.update_image_info_list_from_database();
         if(database.imageinfo_list.isEmpty()) {//if empty dont change
-            callback(200);
-
             return true;
         }
 
@@ -47,13 +44,14 @@ class wallpaper_changer_service : JobService() {
         var rannum = (0..database.imageinfo_list.lastIndex).random();
         var imageInfo = database.imageinfo_list[rannum];
 
-        val lastname = this.getSharedPreferences("wallpaper_changer_service", MODE_PRIVATE).getString("wallpapername","0");
+        val lastname = context.getSharedPreferences("wallpaper_changer_service",
+            JobService.MODE_PRIVATE
+        ).getString("wallpapername","0");
         if(lastname == imageInfo.Image_name){
             rannum = (0..database.imageinfo_list.lastIndex).random(Random(stringtonum(lastname)));
             imageInfo = database.imageinfo_list[rannum];
 
-            if(this.getSharedPreferences("wallpaper_changer_service", MODE_PRIVATE).getString("wallpapername","0") == imageInfo.Image_name){
-                callback(200);
+            if(context.getSharedPreferences("wallpaper_changer_service", JobService.MODE_PRIVATE).getString("wallpapername","0") == imageInfo.Image_name){
                 return true;
             }
 
@@ -62,23 +60,24 @@ class wallpaper_changer_service : JobService() {
 
 
 
-        this.getSharedPreferences("wallpaper_changer_service", MODE_PRIVATE).edit().putString("wallpapername",imageInfo.Image_name).apply();
+        context.getSharedPreferences("wallpaper_changer_service", JobService.MODE_PRIVATE).edit().putString("wallpapername",imageInfo.Image_name).apply();
 
-        val imagerequest = ImageRequest.Builder(this)
+        var requestState = true;
+        val imagerequest = ImageRequest.Builder(context)
             .data(imageInfo.Image_url)
             .target(
-                object : Target{
+                object : Target {
                     override fun onError(error: Drawable?) {
-                        super.onError(error)
-                        callback(400);
+                        super.onError(error);
+                        requestState = false;
                     }
                     override fun onSuccess(result: Drawable) {
                         super.onSuccess(result);
                         try{
-                            val screenWidth = resources.displayMetrics.widthPixels;
-                            val screenHeight = resources.displayMetrics.heightPixels;
+                            val screenWidth = context.resources.displayMetrics.widthPixels;
+                            val screenHeight = context.resources.displayMetrics.heightPixels;
 
-                            val wallpapermanager = WallpaperManager.getInstance(this@wallpaper_changer_service);
+                            val wallpapermanager = WallpaperManager.getInstance(context);
                             wallpapermanager.suggestDesiredDimensions(screenWidth,screenHeight);
 
 
@@ -105,9 +104,8 @@ class wallpaper_changer_service : JobService() {
                             );
 
                             wallpapermanager.setBitmap(Image,rectImage,true,wallpaperFlag);
-                            callback(200);
                         }catch (e : Exception){
-                            callback(400);
+                            requestState = false;
                             Log.e(WallpaperManager::class.java.simpleName,e.toString());
                         }
                     }
@@ -115,69 +113,50 @@ class wallpaper_changer_service : JobService() {
             )
             .build()
 
-        val imageloader = ImageLoader.Builder(this@wallpaper_changer_service)
+        val imageloader = ImageLoader.Builder(context)
             .diskCache {
                 DiskCache.Builder()
-                    .directory(this.cacheDir.resolve("imagesaved"))
+                    .directory(context.cacheDir.resolve("imagesaved"))
                     .build()
             }.build();
 
-        imageloader.enqueue(imagerequest);
-        return true;
+        imageloader.execute(imagerequest);
+        return requestState;
     }
 
-
-
-
-    override fun onStartJob(param: JobParameters?): Boolean {
-        if(Resources.getSystem().configuration.orientation != Configuration.ORIENTATION_PORTRAIT){
-            Toast.makeText(this,"wallpaper background failed",Toast.LENGTH_SHORT).show();
-            jobFinished(param,false);
-            return true;
+    override suspend fun doWork(): Result {
+        Database.update_image_info_list_from_database();
+        if(Resources.getSystem().configuration.orientation != Configuration.ORIENTATION_PORTRAIT || database.imageinfo_list.isEmpty()){
+            return Result.success();
         }
 
-
-
-        Toast.makeText(this,"wallpaper background service $resused",Toast.LENGTH_SHORT).show();
-        Log.i("Jobmeout","called $resused");
-
-        val callback: (status : Int) -> Unit = {
-            when(it){
-                400 ->{
-                    jobFinished(param,true)
-                }
-                200 ->{
-                    jobFinished(param,false)
-                }
-                else ->{
-                    jobFinished(param,false)
-                }
-            }
-        }
-
+        val screenSelection = context.getSharedPreferences("settings", Context.MODE_PRIVATE).getInt("screenSelection",0);
         var state = true;
-        val screenSelection = this.getSharedPreferences("settings", Context.MODE_PRIVATE).getInt("screenSelection",0);
         when (screenSelection){
             0 ->{
-                state = change_Wallpaper(WallpaperManager.FLAG_SYSTEM,callback);
+                state = change_Wallpaper(WallpaperManager.FLAG_SYSTEM);
             }
             1 ->{
-                state =  change_Wallpaper(WallpaperManager.FLAG_LOCK,callback);
+                state = change_Wallpaper(WallpaperManager.FLAG_LOCK);
             }
             2 ->{
                 change_Wallpaper(WallpaperManager.FLAG_SYSTEM);
-                state =  change_Wallpaper(WallpaperManager.FLAG_LOCK,callback);
+                state = change_Wallpaper(WallpaperManager.FLAG_LOCK);
             }
         }
 
 
-        return true;
-    }
+        Log.i("workermee","changing wallpaper");
 
-    override fun onStopJob(param: JobParameters?): Boolean {
-        jobFinished(param,true);
-        Toast.makeText(this,"wallpaper background onStopJob called",Toast.LENGTH_LONG).show();
-        return true;
-    }
 
+        when(state){
+            true ->{
+                return Result.success();
+            }
+            false ->{
+                return Result.retry();
+            }
+        }
+
+    }
 }
