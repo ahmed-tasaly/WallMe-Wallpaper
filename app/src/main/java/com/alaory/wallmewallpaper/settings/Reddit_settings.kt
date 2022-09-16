@@ -45,7 +45,7 @@ class Reddit_settings : Fragment() {
         }
 
         private fun savepref(context: Context){
-            val redditSettings = PreferenceManager.getDefaultSharedPreferences(context);
+            val redditSettings = context.getSharedPreferences("redditsettings",Context.MODE_PRIVATE);
             redditSettings.edit().putString("subreddits", subredditsNames).apply();
             redditSettings.edit().putInt("image_preview", image_preview_qualiy_int).apply();
             redditSettings.edit().putInt("timePeriod", TimePeridLastInt).apply();
@@ -54,7 +54,7 @@ class Reddit_settings : Fragment() {
         }
 
         fun loadprefs(context: Context){
-            val sharedprefs = PreferenceManager.getDefaultSharedPreferences(context);
+            val sharedprefs = context.getSharedPreferences("redditsettings",Context.MODE_PRIVATE);
             val subtemp : String? = sharedprefs.getString("subreddits", "iphonexwallpapers+iphonewallpapers");
             val templistmode = sharedprefs.getString("listmode","Top");
             val temptimeperiod = sharedprefs.getString("timePeriodString","&t=all");

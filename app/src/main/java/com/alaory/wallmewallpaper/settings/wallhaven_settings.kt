@@ -53,7 +53,7 @@ class wallhaven_settings : Fragment() {
         var sortingint = 4;
 
         fun loadprefs(context: Context){
-            val wallhavenPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+            val wallhavenPrefs = context.getSharedPreferences("wallhavensettings",Context.MODE_PRIVATE);
             sorting = wallhavenPrefs.getString("sorting","favorites").toString();
             ordering = wallhavenPrefs.getString("ordering","desc").toString();
             ratio = wallhavenPrefs.getString("ratio","").toString();
@@ -91,7 +91,7 @@ class wallhaven_settings : Fragment() {
             tags.drop(1);
 
 
-        val wallhavenPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        val wallhavenPrefs = context.getSharedPreferences("wallhavensettings",Context.MODE_PRIVATE);
         wallhavenPrefs.edit().putString("tags",tags).apply();
         wallhavenPrefs.edit().putString("sorting", sorting).apply();
         wallhavenPrefs.edit().putString("ordering", ordering).apply();
