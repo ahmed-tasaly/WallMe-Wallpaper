@@ -1,0 +1,5 @@
+release 2.0:
+    -added icons to buttons in the settings
+    -added the ability to disable or enable sources in the settings
+    -changed bottom navigation size
+    -made the app safer to use

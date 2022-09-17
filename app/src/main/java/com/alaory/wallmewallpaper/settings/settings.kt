@@ -1,6 +1,7 @@
 package com.alaory.wallmewallpaper.settings
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -12,20 +13,35 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.addCallback
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.work.*
 import com.alaory.wallmewallpaper.MainActivity
 import com.alaory.wallmewallpaper.R
 import com.alaory.wallmewallpaper.wallpaperChanger_Worker
+import com.google.android.material.switchmaterial.SwitchMaterial
 import java.util.concurrent.TimeUnit
 
 class settings : Fragment() {
 
-    var wallpaper_changer : TextView? = null;
-    var clearCache : TextView? = null;
-    var clearImages : TextView? = null;
+    //wallpaper changer
+    var wallpaper_changer : LinearLayout? = null;
+    var wallpaper_changer_text : TextView? = null;
+
+    //sources
+    var wallhaven_source : SwitchMaterial? = null;
+    var reddit_source : SwitchMaterial? = null;
+
+    //cache
+    var clearCache : LinearLayout? = null;
+    var clearImages : LinearLayout? = null;
+
+    //about
     var github : TextView? = null;
     var supportMe : TextView? = null;
+
+
 
 
     var editbox : EditText? = null;
@@ -74,8 +90,15 @@ class settings : Fragment() {
 
 
         wallpaper_changer = layout.findViewById(R.id.wallpaper_changer_settings_button);
+        wallpaper_changer_text = layout.findViewById(R.id.wallpaper_changer_settings_button_text);
+
+        wallhaven_source = layout.findViewById(R.id.Switch_wallhaven_settings);
+        reddit_source = layout.findViewById(R.id.Switch_reddit_settings);
+
         clearCache = layout.findViewById(R.id.clear_cache_settings);
         clearImages = layout.findViewById(R.id.clear_saved_images_settings);
+
+
         github = layout.findViewById(R.id.github_settings);
         supportMe = layout.findViewById(R.id.support_settings);
 
@@ -92,7 +115,7 @@ class settings : Fragment() {
 
 
         if(isworkerrunning)
-            wallpaper_changer?.setText("Stop wallpaper changer")
+            wallpaper_changer_text?.setText("Stop wallpaper changer")
 
         wallpaper_changer?.let {
             it.setOnClickListener {
@@ -124,11 +147,11 @@ class settings : Fragment() {
 
 
                    WorkManager.getInstance(requireContext()).enqueueUniquePeriodicWork(WorkerTag, ExistingPeriodicWorkPolicy.REPLACE,workreq);
-                   wallpaper_changer?.setText("Stop wallpaper changer");
+                   wallpaper_changer_text?.setText("Stop wallpaper changer");
                    isworkerrunning = true;
                 }else{
                     isworkerrunning = false;
-                    wallpaper_changer?.setText("Start wallpaper changer");
+                   wallpaper_changer_text?.setText("Start wallpaper changer");
                     WorkManager.getInstance(requireContext()).cancelAllWorkByTag(WorkerTag);
                 }
             }
@@ -176,6 +199,50 @@ class settings : Fragment() {
                 override fun onNothingSelected(p0: AdapterView<*>?) {}
             }
         }
+
+
+        wallhaven_source?.let {
+            it.isChecked = requireContext().getSharedPreferences("settings",Context.MODE_PRIVATE).getBoolean("wallhaven_source",false);
+            it.setOnCheckedChangeListener { p0, ischecked ->
+                val prefs = p0.context.getSharedPreferences("settings",Context.MODE_PRIVATE);
+                prefs.edit().putBoolean("wallhaven_source",ischecked).apply();
+                if(ischecked){
+                    AlertDialog.Builder(p0.context,R.style.Dialog_first)
+                        .setTitle("Wait ")
+                        .setMessage("I've disabled this source by default because it may contain disturbing or sketchy images")
+                        .setPositiveButton("enable",object : DialogInterface.OnClickListener{
+                            override fun onClick(p0: DialogInterface?, p1: Int) {
+                                MainActivity.wallhaven_floatingButton!!.visibility = View.VISIBLE;
+                            }
+                        })
+                        .setNegativeButton("disable",object : DialogInterface.OnClickListener{
+                            override fun onClick(p0: DialogInterface?, p1: Int) {
+                                prefs.edit().putBoolean("wallhaven_source",false).apply();
+                                it.isChecked = false;
+                            }
+                        })
+                        .create()
+                        .show()
+                }else{
+                    MainActivity.wallhaven_floatingButton!!.visibility = View.GONE;
+                }
+            }
+        }
+        reddit_source?.let {
+            it.isChecked = requireContext().getSharedPreferences("settings",Context.MODE_PRIVATE).getBoolean("reddit_source",true);
+            it.setOnCheckedChangeListener { p0, ischecked ->
+                val prefs = p0.context.getSharedPreferences("settings",Context.MODE_PRIVATE);
+                prefs.edit().putBoolean("reddit_source",ischecked).apply();
+                if(ischecked){
+                    MainActivity.reddit_floatingButton!!.visibility = View.VISIBLE;
+                }else{
+                    MainActivity.reddit_floatingButton!!.visibility = View.GONE;
+                }
+            }
+        }
+
+
+
         clearCache?.let {
             it.setOnClickListener {
                 requireContext().cacheDir.resolve("imagePreview").deleteRecursively();
@@ -188,6 +255,12 @@ class settings : Fragment() {
                 Toast.makeText(requireContext(),"cleared saved images",Toast.LENGTH_SHORT).show();
             }
         }
+
+
+
+
+
+
         github?.let {
             it.setOnClickListener {
                 val uri = Uri.parse("https://github.com/Alaory/WallMe-Wallpaper");

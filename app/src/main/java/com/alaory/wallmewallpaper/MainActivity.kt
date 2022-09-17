@@ -258,6 +258,13 @@ class MainActivity : AppCompatActivity(){
         }
 
 
+        if(!this.getSharedPreferences("settings", MODE_PRIVATE).getBoolean("reddit_source",true)){
+            reddit_floatingButton!!.visibility = View.GONE;
+        }
+        if(!this.getSharedPreferences("settings", MODE_PRIVATE).getBoolean("wallhaven_source",false)){
+            wallhaven_floatingButton!!.visibility = View.GONE;
+        }
+
         //set button navitgtion actions
         reddit_floatingButton?.let {
             it.setOnClickListener {

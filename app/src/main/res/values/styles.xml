@@ -21,4 +21,9 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="switchbuttons" parent="Widget.Material3.CompoundButton.Switch">
+        <item name="colorControlActivated">@color/Selected</item>
+        <item name="colorSwitchThumbNormal">@color/Buttons</item>
+    </style>
+
 </resources>

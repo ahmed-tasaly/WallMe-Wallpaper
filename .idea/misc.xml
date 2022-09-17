@@ -15,6 +15,7 @@
         <entry key="app/src/main/res/drawable/filter_ic.xml" value="0.3295" />
         <entry key="app/src/main/res/drawable/homelist_ic.xml" value="0.3295" />
         <entry key="app/src/main/res/drawable/ic_baseline_horizontal_rule_24.xml" value="0.3525" />
+        <entry key="app/src/main/res/drawable/ic_cache_clear.xml" value="0.323" />
         <entry key="app/src/main/res/drawable/ic_favorite.xml" value="0.323" />
         <entry key="app/src/main/res/drawable/ic_filter.xml" value="0.3295" />
         <entry key="app/src/main/res/drawable/ic_image.xml" value="0.323" />
@@ -22,6 +23,7 @@
         <entry key="app/src/main/res/drawable/ic_round_save_24.xml" value="0.3525" />
         <entry key="app/src/main/res/drawable/ic_round_wallpaper_24.xml" value="0.3525" />
         <entry key="app/src/main/res/drawable/ic_save.xml" value="0.323" />
+        <entry key="app/src/main/res/drawable/ic_stages_wallpaper.xml" value="0.323" />
         <entry key="app/src/main/res/drawable/ic_wallhaven_2.xml" value="0.3295" />
         <entry key="app/src/main/res/drawable/image_border_line.xml" value="0.323" />
         <entry key="app/src/main/res/drawable/image_placeholder.xml" value="0.3525" />
