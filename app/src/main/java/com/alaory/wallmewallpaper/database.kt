@@ -7,13 +7,21 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import android.widget.Toast
 
-class database(val context: Context) : SQLiteOpenHelper(context, Image_info_database,null, database_version) {
+class database(val context: Context,val table_name: String = ImageInfo_Table,val databaseNameFile: String = "$ImageInfo_Table.dp") : SQLiteOpenHelper(context, databaseNameFile,null, database_version) {
 
     companion object{
         var imageinfo_list : MutableList<Image_Info> = emptyList<Image_Info>().toMutableList();
-        var Image_info_database = "Image_info.dp";
+        var imageblock_list : MutableList<Image_Info> = emptyList<Image_Info>().toMutableList();
+        var lastaddedImageInfo : Image_Info? = null;
+
+
         val database_version: Int = 1 ;
-        var table_name = "image_info_list"
+
+
+        val ImageInfo_Table = "image_info_list";
+        val ImageBlock_Table = "image_block_list";
+
+
 
         val name = "name";
         val auther = "auther";
@@ -37,7 +45,7 @@ class database(val context: Context) : SQLiteOpenHelper(context, Image_info_data
 
     fun add_image_info_to_database(image_info: Image_Info){
         try {
-
+            lastaddedImageInfo = image_info;
             val dp = this.writableDatabase ?: return;
             val CV = ContentValues();
 
@@ -87,7 +95,10 @@ class database(val context: Context) : SQLiteOpenHelper(context, Image_info_data
                 curser.getString(5),
                 Image_Ratio(curser.getInt(6),curser.getInt(7))
                 );
-            imageinfo_list += imageInfo;
+            if(table_name == ImageInfo_Table)
+                imageinfo_list += imageInfo;
+            else
+                imageblock_list += imageInfo;
         }
         curser.close();
         closedp();

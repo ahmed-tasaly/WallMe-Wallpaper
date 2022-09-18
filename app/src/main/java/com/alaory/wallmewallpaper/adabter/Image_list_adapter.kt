@@ -179,10 +179,12 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
         refresh_itemList(listPosts.lastIndex);
     }
 
+
+
     fun removeLoadingView(){
         if(LoadingIndex != -1){
+            notifyItemRemoved(LoadingIndex);
             listPosts.removeAt(LoadingIndex);
-            notifyItemRemoved(LoadingIndex+1);
             LoadingIndex = -1;
         }
     }

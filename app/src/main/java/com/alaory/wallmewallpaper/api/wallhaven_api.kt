@@ -6,6 +6,7 @@ import android.util.Log
 import com.alaory.wallmewallpaper.Image_Activity
 import com.alaory.wallmewallpaper.Image_Info
 import com.alaory.wallmewallpaper.Image_Ratio
+import com.alaory.wallmewallpaper.database
 import com.alaory.wallmewallpaper.settings.wallhaven_settings
 import okhttp3.*
 import org.json.JSONException
@@ -76,6 +77,10 @@ class wallhaven_api {
                                     if (j.Image_name == postInfo.getString("id"))
                                         found = true;
                                 }
+                                for(p in database.imageblock_list){
+                                    if (p.Image_name == postInfo.getString("id"))
+                                        found = true;
+                                }
                                 if (found)
                                     continue;
 
@@ -96,18 +101,6 @@ class wallhaven_api {
                         if(TempList.size > 0){
                             currentPage++;
                             lastindex = wallhaven_homepage_posts.size;
-//                            for (post in 0 until TempList.size ){
-//                                if(post % 2 == 0){
-//                                    wallhaven_homepage_posts += TempList[post];
-//                                    continue;
-//                                }
-//                                imageInfo(TempList[post]){
-//                                    if(it == 200)
-//
-//                                    if(post == TempList.lastIndex)
-//
-//                                }
-//                            }
                             wallhaven_homepage_posts += TempList;
                             callback();
                         }else{
@@ -160,8 +153,13 @@ class wallhaven_api {
                                 if (j.Image_name == postInfo.getString("id"))
                                     found = true;
                             }
+                            for(p in database.imageblock_list){
+                                if (p.Image_name == postInfo.getString("id"))
+                                    found = true;
+                            }
                             if (found)
                                 continue;
+
                             post = Image_Info(
                                 postInfo.getString("path"),
                                 postInfo.getJSONObject("thumbs").getString("original"),

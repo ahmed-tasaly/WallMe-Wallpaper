@@ -52,6 +52,7 @@ class Image_Activity(): AppCompatActivity(){
     private var setWallPaperButton : FloatingActionButton? = null;
     private var saveWallpaperButton : FloatingActionButton? = null;
     private var setfavorite : FloatingActionButton? = null;
+    private var blockimage : FloatingActionButton? = null;
 
     //bottom buttons
     private var setwallpaper_bottom_button: Button? = null;
@@ -60,7 +61,10 @@ class Image_Activity(): AppCompatActivity(){
 
 
      //database
-     val tempdatabase = database(this@Image_Activity);
+     val tempdatabase = database(this);
+     val tempblockdatavase = database(this,database.ImageBlock_Table,"${database.ImageBlock_Table}.dp");
+     var blocked = false;
+
 
      var myData : Image_Info? = null;
      var thumbnail: Drawable? = null;
@@ -249,9 +253,12 @@ class Image_Activity(): AppCompatActivity(){
             titlePost = Views.findViewById(R.id.title_post);
             auther_post = Views.findViewById(R.id.auther_post);
             url_post = Views.findViewById(R.id.url_post);
+
+            //buttons
             setWallPaperButton = Views.findViewById(R.id.set_bottomsheet_floatingbutton);
             saveWallpaperButton = Views.findViewById(R.id.save_imageButton);
             setfavorite = Views.findViewById(R.id.favorite_bottomsheet_floatingbutton);
+            blockimage = Views.findViewById(R.id.block_bottomsheet_floatingbutton);
 
             if(isOnDatabase())
                 setfavorite!!.setImageResource(R.drawable.ic_heartfull);
@@ -267,6 +274,20 @@ class Image_Activity(): AppCompatActivity(){
                     duration = 300;
 
                     rotationXBy(180f);
+                }
+            }
+
+            blockimage?.let {
+                it.setOnClickListener {
+
+                    if(!blocked){
+                        blocked = true;
+                        tempblockdatavase.add_image_info_to_database(myData!!);
+                        Toast.makeText(this@Image_Activity,"added to block list",Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(this@Image_Activity,"removed from the block list",Toast.LENGTH_SHORT).show();
+                        tempblockdatavase.remove_image_info_from_database(myData!!);
+                    }
                 }
             }
 

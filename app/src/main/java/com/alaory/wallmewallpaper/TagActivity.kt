@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.alaory.wallmewallpaper.adabter.Image_list_adapter
+import com.alaory.wallmewallpaper.api.Reddit_Api
 import com.alaory.wallmewallpaper.api.wallhaven_api
 
 class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
@@ -18,7 +19,8 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
 
     companion object{
         var Tag_Assing : wallhaven_api.Tag = wallhaven_api.Tag("");
-
+        var lastPastImageInfo : Image_Info? = null;
+        var lastPastImageInfo_pos : Int = -1;
     }
 
      var TagAdab : Image_list_adapter? = null;
@@ -28,6 +30,12 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
     override fun onResume() {
         super.onResume()
         MainActivity.HideSystemBar(window);
+        if(lastPastImageInfo != null && database.lastaddedImageInfo != null){
+            if(lastPastImageInfo!!.Image_name == database.lastaddedImageInfo!!.Image_name){
+                TagAdab!!.notifyDataSetChanged();
+                Reddit_Api.reddit_global_posts.removeAt(Reddit_posts.lastPastImageInfo_pos);
+            }
+        }
     }
 
 
@@ -100,6 +108,8 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
 
     override fun onImageClick(Pos: Int, thumbnail: Drawable) {
         try{
+            lastPastImageInfo = tag_post_list!!.Tag_Post_list[Pos];
+            lastPastImageInfo_pos = Pos;
             val intent = Intent(this,Image_Activity::class.java);
             Image_Activity.MYDATA = tag_post_list!!.Tag_Post_list[Pos];
             Image_Activity.THUMBNAIL = thumbnail;

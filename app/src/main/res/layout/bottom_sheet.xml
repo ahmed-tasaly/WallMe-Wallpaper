@@ -62,10 +62,10 @@
                     android:id="@+id/save_imageButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="32dp"
+                    android:layout_marginStart="15dp"
                     android:layout_marginTop="8dp"
                     app:backgroundTint="@color/Buttons"
-                    android:src="@drawable/ic_save"
+                    android:src="@drawable/ic_download"
                     app:borderWidth="0dp"
                     app:layout_constraintStart_toEndOf="@+id/set_bottomsheet_floatingbutton"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -76,12 +76,24 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintStart_toEndOf="@+id/save_imageButton"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginStart="32dp"
+                    android:layout_marginStart="15dp"
                     android:layout_marginTop="8dp"
                     app:backgroundTint="@color/Buttons"
                     android:src="@drawable/ic_favorite"
                     app:borderWidth="0dp"
                     />
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/block_bottomsheet_floatingbutton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toEndOf="@+id/favorite_bottomsheet_floatingbutton"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="8dp"
+                        app:backgroundTint="@color/Buttons"
+                        android:src="@drawable/ic_block"
+                        app:borderWidth="0dp"
+                        />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView

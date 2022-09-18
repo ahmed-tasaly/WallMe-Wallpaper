@@ -36,6 +36,8 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
     companion object{
         var userhitsave : Boolean = false;
+        var lastPastImageInfo : Image_Info? = null;
+        var lastPastImageInfo_pos : Int = -1;
     }
 
 
@@ -115,6 +117,16 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
         wallhaven_adabter!!.removeLoadingView();
     }
 
+    override fun onResume() {
+        super.onResume()
+        if(lastPastImageInfo != null && database.lastaddedImageInfo != null){
+            if(lastPastImageInfo!!.Image_name == database.lastaddedImageInfo!!.Image_name){
+                wallhaven_adabter!!.notifyDataSetChanged();
+                wallhaven_api.wallhaven_homepage_posts.removeAt(lastPastImageInfo_pos);
+            }
+        }
+    }
+
     private fun SetRVLayoutManager(){
         mLayoutManager = StaggeredGridLayoutManager(MainActivity.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL)
         wallhaven_recycle!!.layoutManager = mLayoutManager;
@@ -178,6 +190,8 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
     override fun onImageClick(Pos: Int, thumbnail: Drawable) {
         try{
+            lastPastImageInfo =  wallhaven_api.wallhaven_homepage_posts[Pos];
+            lastPastImageInfo_pos = Pos;
             var intent = Intent(requireContext(),Image_Activity::class.java);
             Image_Activity.MYDATA = wallhaven_api.wallhaven_homepage_posts[Pos];
             Image_Activity.THUMBNAIL = thumbnail;

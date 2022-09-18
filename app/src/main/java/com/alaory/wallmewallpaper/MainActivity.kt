@@ -16,13 +16,11 @@ import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import com.alaory.wallmewallpaper.api.Reddit_Api
 import com.alaory.wallmewallpaper.databinding.ActivityMainBinding
 import com.alaory.wallmewallpaper.settings.Reddit_settings
 import com.alaory.wallmewallpaper.settings.wallhaven_settings
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity(){
@@ -42,8 +40,7 @@ class MainActivity : AppCompatActivity(){
 
 
 
-    //init database
-    val DataBase = database(this);
+
     var firstTimeOPen = true;
 
     enum class menu{
@@ -206,11 +203,6 @@ class MainActivity : AppCompatActivity(){
         mainactivity = this;
 
 
-
-        //update database
-        DataBase.update_image_info_list_from_database();
-
-
         //set ui
         binding = ActivityMainBinding.inflate(layoutInflater);
         setContentView(binding!!.root);
@@ -247,47 +239,43 @@ class MainActivity : AppCompatActivity(){
         favorite_floatingButton = findViewById(R.id.favorite_list_navigation_button);
 
 
+        val settingsprefs = this.getSharedPreferences("settings", MODE_PRIVATE);
+
+        if(!settingsprefs.getBoolean("reddit_source",true)){
+            reddit_floatingButton!!.visibility = View.GONE;
+            lastfloatingiconIcon = menu.wallhaven;
+        }
+        if(!settingsprefs.getBoolean("wallhaven_source",false)){
+            wallhaven_floatingButton!!.visibility = View.GONE;
+            lastfloatingiconIcon = menu.reddit;
+            if(!settingsprefs.getBoolean("reddit_source",true))
+                lastfloatingiconIcon = menu.favorite;
+        }
+
         if(lastfloatingiconIcon != null){
-            setfloatingIcon(lastfloatingiconIcon!!);
-            setFABcolor(lastfloatingiconIcon!!);
+            setFragmentmenu(lastfloatingiconIcon!!);
         }
         else{
-            change_fragment(redditPosts,false,true);
-            lastfloatingiconIcon = menu.reddit;
-            setFABcolor(menu.reddit);
+            setFragmentmenu(menu.reddit);
         }
 
 
-        if(!this.getSharedPreferences("settings", MODE_PRIVATE).getBoolean("reddit_source",true)){
-            reddit_floatingButton!!.visibility = View.GONE;
-        }
-        if(!this.getSharedPreferences("settings", MODE_PRIVATE).getBoolean("wallhaven_source",false)){
-            wallhaven_floatingButton!!.visibility = View.GONE;
-        }
+
 
         //set button navitgtion actions
         reddit_floatingButton?.let {
             it.setOnClickListener {
-                change_fragment(redditPosts,false,true);
-                lastfloatingiconIcon = menu.reddit;
-                setFABcolor(lastfloatingiconIcon!!);
-                setfloatingIcon(lastfloatingiconIcon!!);
+                setFragmentmenu(menu.reddit);
             }
         }
         wallhaven_floatingButton?.let {
             it.setOnClickListener {
-                change_fragment(wallhavenPosts,false,true);
-                lastfloatingiconIcon = menu.wallhaven;
-                setFABcolor(lastfloatingiconIcon!!);
-                setfloatingIcon(lastfloatingiconIcon!!);
+                setFragmentmenu(menu.wallhaven);
             }
         }
         favorite_floatingButton?.let {
             it.setOnClickListener {
-                change_fragment(favoriteList,false,true);
-                lastfloatingiconIcon = menu.favorite;
-                setFABcolor(lastfloatingiconIcon!!);
-                setfloatingIcon(lastfloatingiconIcon!!);
+                setFragmentmenu(menu.favorite);
             }
         }
 
@@ -308,6 +296,25 @@ class MainActivity : AppCompatActivity(){
         }
 
     }
+
+
+    fun setFragmentmenu(menuButton : menu ){
+        when(menuButton){
+            menu.reddit -> {
+                change_fragment(redditPosts,false,true);
+            }
+            menu.wallhaven -> {
+                change_fragment(wallhavenPosts,false,true);
+            }
+            menu.favorite -> {
+                change_fragment(favoriteList,false,true);
+            }
+        }
+        lastfloatingiconIcon = menuButton;
+        setfloatingIcon(lastfloatingiconIcon!!);
+        setFABcolor(lastfloatingiconIcon!!);
+    }
+
 
     fun setFABcolor(icon : menu){
         when (icon){

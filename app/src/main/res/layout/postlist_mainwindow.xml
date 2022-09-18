@@ -9,11 +9,10 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fragmentrec"
-        android:layoutDirection="ltr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/Background"
-        />
+        android:layoutDirection="ltr" />
 
     <ImageView
         android:id="@+id/loading_recyclye"

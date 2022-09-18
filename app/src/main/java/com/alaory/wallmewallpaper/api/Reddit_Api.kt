@@ -4,6 +4,7 @@ import android.util.Log
 import com.alaory.wallmewallpaper.BuildConfig
 import com.alaory.wallmewallpaper.Image_Info
 import com.alaory.wallmewallpaper.Image_Ratio
+import com.alaory.wallmewallpaper.database
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONException
@@ -93,7 +94,7 @@ class Reddit_Api(subredditname: String) {
 
         fun filter_words(word : String): Boolean{
             val word = word.lowercase();
-            val filterWords: Array<String> = arrayOf("nsfw","adult","gay","cross","lgbt","lgb","sex","rainbow","pride","furry")
+            val filterWords: Array<String> = arrayOf("nsfw","adult","gay","cross","bible","chris","lgbt","lgb","sex","rainbow","pride","furry")
 
             for(i in filterWords)
                 if(word.contains(i))
@@ -207,6 +208,10 @@ class Reddit_Api(subredditname: String) {
 
                                 for (j in 0 until subreddit_posts_list.size) {
                                     if (dataJson.getString("name") == subreddit_posts_list.get(j).Image_name)
+                                        found = true;
+                                }
+                                for (p in database.imageblock_list) {
+                                    if (dataJson.getString("name") == p.Image_name)
                                         found = true;
                                 }
 
