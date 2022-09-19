@@ -34,6 +34,7 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
             if(lastPastImageInfo!!.Image_name == database.lastaddedImageInfo!!.Image_name){
                 TagAdab!!.notifyDataSetChanged();
                 Reddit_Api.reddit_global_posts.removeAt(Reddit_posts.lastPastImageInfo_pos);
+                lastPastImageInfo = null;
             }
         }
     }

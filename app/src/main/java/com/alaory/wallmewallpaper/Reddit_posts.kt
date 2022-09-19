@@ -85,6 +85,7 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
             if(lastPastImageInfo!!.Image_name == database.lastaddedImageInfo!!.Image_name){
                 PostsAdabter!!.notifyDataSetChanged();
                 Reddit_Api.reddit_global_posts.removeAt(lastPastImageInfo_pos);
+                lastPastImageInfo = null;
             }
         }
     }

@@ -123,12 +123,14 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
             if(lastPastImageInfo!!.Image_name == database.lastaddedImageInfo!!.Image_name){
                 wallhaven_adabter!!.notifyDataSetChanged();
                 wallhaven_api.wallhaven_homepage_posts.removeAt(lastPastImageInfo_pos);
+                lastPastImageInfo = null;
             }
         }
     }
 
     private fun SetRVLayoutManager(){
-        mLayoutManager = StaggeredGridLayoutManager(MainActivity.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL)
+        mLayoutManager = StaggeredGridLayoutManager(MainActivity.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
+        //(mLayoutManager as StaggeredGridLayoutManager).gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS;
         wallhaven_recycle!!.layoutManager = mLayoutManager;
         wallhaven_recycle!!.setHasFixedSize(true);
         wallhaven_recycle?.adapter = wallhaven_adabter;

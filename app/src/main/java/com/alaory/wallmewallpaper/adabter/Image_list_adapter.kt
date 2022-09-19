@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.drawable.toDrawable
@@ -46,20 +47,24 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             .allowRgb565(true)
             .bitmapConfig(Bitmap.Config.RGB_565)
             .precision(Precision.INEXACT)
+            .allowHardware(true)
             .memoryCache {
                 MemoryCache.Builder(recyclerView.context!!)
                     .maxSizePercent(0.15)
-                    .weakReferencesEnabled(false)
-                    .strongReferencesEnabled(false)
                     .build()
             }
-            .memoryCachePolicy(CachePolicy.DISABLED)
+            .bitmapFactoryMaxParallelism(6)
+            .networkCachePolicy(CachePolicy.READ_ONLY)
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .crossfade(true)
             .diskCache {
                 DiskCache.Builder()
                     .directory( recyclerView.context!!.cacheDir.resolve("imagePreview"))
-                    .maxSizePercent(0.20)
+                    .maxSizePercent(0.05)
                     .build();
             }
+
             .build();
 
     }
@@ -85,7 +90,6 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             .data(listPosts.get(holder.pos).Image_thumbnail)
             .placeholder(tempDrawable)
             .target(holder.image_main)
-            .memoryCachePolicy(CachePolicy.DISABLED)
             .listener(
                 onSuccess = {_,_ ->
                     holder.cricle_prograssBar.visibility = View.GONE;
@@ -125,6 +129,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
             adab_ImageLoader?.let {
                 it.enqueue(getImagerequest(holder));
+                Log.d("MemoryCoil","disk cache: ${it.diskCache!!.size}  memory cache: ${it.memoryCache!!.size}")
             }
 
 
@@ -158,7 +163,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     class ItemViewHolder(view : View) : RecyclerView.ViewHolder(view) {
         var pos = 0;
         var imageRatio = Image_Ratio(1,1);
-        var root_view = itemView.findViewById(R.id.root_imageView) as ConstraintLayout;
+        var root_view = itemView.findViewById(R.id.root_imageView) as FrameLayout;
         var image_main = itemView.findViewById(R.id.image_main) as ImageView;
         var cricle_prograssBar = itemView.findViewById(R.id.cricle_prograssBar) as ImageView;
     }

@@ -57,7 +57,6 @@ class BottonLoading {
             super.onScrolled(recyclerView, dx, dy)
             updatebottom_navtigation(dy);
 
-            if(dy <= 0) return;
 
             totalItemCount = MlayoutManager.itemCount;
             if(MlayoutManager is GridLayoutManager)

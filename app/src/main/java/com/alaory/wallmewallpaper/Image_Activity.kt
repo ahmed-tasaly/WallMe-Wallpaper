@@ -21,6 +21,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import coil.ImageLoader
 import coil.disk.DiskCache
+import coil.request.CachePolicy
 import com.alaory.wallmewallpaper.api.wallhaven_api
 import com.alaory.wallmewallpaper.interpreter.progressRespondBody
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -100,7 +101,6 @@ class Image_Activity(): AppCompatActivity(){
         var postmode = mode.reddit;
         //wallhaven tags
         var TagNameList : Array<String> = emptyArray();
-
 
 
 
@@ -279,7 +279,9 @@ class Image_Activity(): AppCompatActivity(){
 
             blockimage?.let {
                 it.setOnClickListener {
-
+                    it.animate().apply {
+                        duration = 500
+                    }
                     if(!blocked){
                         blocked = true;
                         tempblockdatavase.add_image_info_to_database(myData!!);
@@ -425,6 +427,9 @@ class Image_Activity(): AppCompatActivity(){
                     .directory(this.cacheDir.resolve("imagesaved"))
                     .build()
             }
+            .memoryCachePolicy(CachePolicy.DISABLED)
+            .networkCachePolicy(CachePolicy.READ_ONLY)
+            .crossfade(true)
             .okHttpClient {
                 OkHttpClient().newBuilder()
                     .addInterceptor(object : Interceptor{

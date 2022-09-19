@@ -104,11 +104,12 @@
 
     <FrameLayout
         android:id="@+id/ImageInfo_BottomSheet"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         app:behavior_peekHeight="110dp"
         app:behavior_hideable="true"
+        android:layout_gravity="center_horizontal"
         />
 
 
