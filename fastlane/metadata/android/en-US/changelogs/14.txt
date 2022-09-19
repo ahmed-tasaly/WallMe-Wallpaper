@@ -1,0 +1,3 @@
+release 2.11:
+    -fixed favorite tab not showing images
+    -fixed adding an image to the favorite tab getting removed

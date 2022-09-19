@@ -28,7 +28,7 @@ class favorite_list() : Fragment(), Image_list_adapter.OnImageClick {
     val TAG = "favorite_list";
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        favoriteList_adabter = Image_list_adapter(database.imageinfo_list,this);
+        favoriteList_adabter = Image_list_adapter(database.imageinfo_list.toMutableList(),this);
         BottonLoading.loctionbottom = 0;
         BottonLoading.updatebottom_navtigation(0);
     }

@@ -30,8 +30,8 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
     override fun onResume() {
         super.onResume()
         MainActivity.HideSystemBar(window);
-        if(lastPastImageInfo != null && database.lastaddedImageInfo != null){
-            if(lastPastImageInfo!!.Image_name == database.lastaddedImageInfo!!.Image_name){
+        if(lastPastImageInfo != null && database.lastblockedaddedImageInfo != null){
+            if(lastPastImageInfo!!.Image_name == database.lastblockedaddedImageInfo!!.Image_name){
                 TagAdab!!.notifyDataSetChanged();
                 Reddit_Api.reddit_global_posts.removeAt(Reddit_posts.lastPastImageInfo_pos);
                 lastPastImageInfo = null;

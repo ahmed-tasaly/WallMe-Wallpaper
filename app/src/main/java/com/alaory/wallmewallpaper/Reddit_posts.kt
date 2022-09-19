@@ -19,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.alaory.wallmewallpaper.adabter.Image_list_adapter
 import com.alaory.wallmewallpaper.api.Reddit_Api
-import com.alaory.wallmewallpaper.api.wallhaven_api
 import com.alaory.wallmewallpaper.settings.Reddit_settings
 
 class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
@@ -81,8 +80,8 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
     }
     override fun onResume() {
         super.onResume()
-        if(lastPastImageInfo != null && database.lastaddedImageInfo != null){
-            if(lastPastImageInfo!!.Image_name == database.lastaddedImageInfo!!.Image_name){
+        if(lastPastImageInfo != null && database.lastblockedaddedImageInfo != null){
+            if(lastPastImageInfo!!.Image_name == database.lastblockedaddedImageInfo!!.Image_name){
                 PostsAdabter!!.notifyDataSetChanged();
                 Reddit_Api.reddit_global_posts.removeAt(lastPastImageInfo_pos);
                 lastPastImageInfo = null;
