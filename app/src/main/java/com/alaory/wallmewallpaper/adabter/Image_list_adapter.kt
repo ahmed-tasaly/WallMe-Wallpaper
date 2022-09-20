@@ -47,7 +47,6 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             .allowRgb565(true)
             .bitmapConfig(Bitmap.Config.RGB_565)
             .precision(Precision.INEXACT)
-            .allowHardware(true)
             .memoryCache {
                 MemoryCache.Builder(recyclerView.context!!)
                     .maxSizePercent(0.15)
@@ -105,6 +104,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                 }
             )
             .build()
+
         return request;
     }
 
@@ -112,7 +112,6 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if(holder.itemViewType == VIEW_TYPE_ITEM){
             val holder = holder as ItemViewHolder;
-
 
             var width = 1;
             var height = 1;

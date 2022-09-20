@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
+import androidx.palette.graphics.Palette
 import coil.ImageLoader
 import coil.disk.DiskCache
 import coil.request.CachePolicy
@@ -74,6 +75,7 @@ class Image_Activity(): AppCompatActivity(){
         wallhaven,
         reddit
     }
+
     enum class setmode{
         HomeScreen,
         LockScreen,
@@ -97,6 +99,9 @@ class Image_Activity(): AppCompatActivity(){
          var MYDATA : Image_Info? = null;
          var THUMBNAIL: Drawable? = null;
         //save bitmap to file and load it as a uri
+
+
+
         //mode
         var postmode = mode.reddit;
         //wallhaven tags
@@ -430,6 +435,7 @@ class Image_Activity(): AppCompatActivity(){
             .memoryCachePolicy(CachePolicy.DISABLED)
             .networkCachePolicy(CachePolicy.READ_ONLY)
             .crossfade(true)
+            .allowHardware(false)
             .okHttpClient {
                 OkHttpClient().newBuilder()
                     .addInterceptor(object : Interceptor{
@@ -469,6 +475,11 @@ class Image_Activity(): AppCompatActivity(){
                         loaded = true;
                         mybitmap = result.toBitmap();
                         Full_image!!.setImageBitmap(mybitmap);
+                        Palette.generateAsync(mybitmap,object : Palette.PaletteAsyncListener{
+                            override fun onGenerated(palette: Palette?) {
+                                Log.i("palette","colors: ${palette!!.dominantSwatch} ")
+                            }
+                        })
                     }
                 })
                 .listener(
