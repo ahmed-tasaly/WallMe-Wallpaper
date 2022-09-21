@@ -56,6 +56,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             .networkCachePolicy(CachePolicy.READ_ONLY)
             .memoryCachePolicy(CachePolicy.ENABLED)
             .diskCachePolicy(CachePolicy.ENABLED)
+            .allowHardware(false)
             .crossfade(true)
             .diskCache {
                 DiskCache.Builder()
@@ -128,7 +129,6 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
             adab_ImageLoader?.let {
                 it.enqueue(getImagerequest(holder));
-                Log.d("MemoryCoil","disk cache: ${it.diskCache!!.size}  memory cache: ${it.memoryCache!!.size}")
             }
 
 

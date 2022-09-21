@@ -1,12 +1,16 @@
 package com.alaory.wallmewallpaper
 
+import android.animation.ValueAnimator
 import android.app.AlertDialog
 import android.app.WallpaperManager
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.TransitionDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -17,6 +21,7 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import androidx.palette.graphics.Palette
@@ -34,6 +39,7 @@ import com.ortiz.touchview.TouchImageView
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
+import okhttp3.internal.toHexString
 import java.io.ByteArrayOutputStream
 import java.io.File
 import kotlin.math.absoluteValue
@@ -48,6 +54,9 @@ class Image_Activity(): AppCompatActivity(){
     private var counter_image: TextView? = null;
     private var mybitmap: Bitmap? = null;
     private var taggroup: ChipGroup? = null;
+
+    //bottom sheet
+    private var sheet_body : ConstraintLayout? = null;
 
 
     //buttons
@@ -258,6 +267,7 @@ class Image_Activity(): AppCompatActivity(){
             titlePost = Views.findViewById(R.id.title_post);
             auther_post = Views.findViewById(R.id.auther_post);
             url_post = Views.findViewById(R.id.url_post);
+            sheet_body = Views.findViewById(R.id.bottom_sheet_body);
 
             //buttons
             setWallPaperButton = Views.findViewById(R.id.set_bottomsheet_floatingbutton);
@@ -475,11 +485,62 @@ class Image_Activity(): AppCompatActivity(){
                         loaded = true;
                         mybitmap = result.toBitmap();
                         Full_image!!.setImageBitmap(mybitmap);
-                        Palette.generateAsync(mybitmap,object : Palette.PaletteAsyncListener{
-                            override fun onGenerated(palette: Palette?) {
-                                Log.i("palette","colors: ${palette!!.dominantSwatch} ")
+
+                        Palette.Builder(mybitmap!!).generate{ palette ->
+                            palette?.let { pal ->
+                                try{
+
+                                    val endBackground = ResourcesCompat.getDrawable(resources,R.drawable.bottomsheetshape,theme);
+                                    endBackground!!.setTint(pal.mutedSwatch!!.rgb);
+                                    val startBackground = sheet_body!!.background;
+
+                                    val animationColor = arrayOf(startBackground,endBackground);
+                                    val transitionDrawable = TransitionDrawable(animationColor);
+                                    sheet_body!!.background =transitionDrawable;
+                                    transitionDrawable.startTransition(1000);
+
+                                    //set text color
+                                    titlePost!!.setTextColor(pal.dominantSwatch!!.bodyTextColor);
+                                    auther_post!!.setTextColor(pal.dominantSwatch!!.titleTextColor);
+
+                                    //bottons color
+                                    var buttoncolor : Int = 0;
+                                    var buttonIconcolor : Int = 0;
+
+                                    if(pal.darkMutedSwatch != null){
+                                        buttoncolor = pal.darkMutedSwatch!!.rgb;
+                                        buttonIconcolor = pal.darkMutedSwatch!!.bodyTextColor;
+                                    }else if(pal.darkVibrantSwatch != null){
+                                        buttoncolor = pal.darkVibrantSwatch!!.rgb;
+                                        buttonIconcolor = pal.darkVibrantSwatch!!.bodyTextColor;
+                                    }else{
+                                        buttoncolor = pal.lightMutedSwatch!!.rgb;
+                                        buttonIconcolor = pal.lightMutedSwatch!!.bodyTextColor;
+                                    }
+
+
+
+                                    setWallPaperButton?.backgroundTintList = ColorStateList.valueOf(buttoncolor);
+                                    setWallPaperButton?.imageTintList = ColorStateList.valueOf(buttonIconcolor);
+
+                                    setfavorite?.backgroundTintList = ColorStateList.valueOf(buttoncolor);
+                                    setfavorite?.imageTintList = ColorStateList.valueOf(buttonIconcolor);
+
+                                    saveWallpaperButton?.backgroundTintList = ColorStateList.valueOf(buttoncolor);
+                                    saveWallpaperButton?.imageTintList = ColorStateList.valueOf(buttonIconcolor);
+
+                                    blockimage?.backgroundTintList = ColorStateList.valueOf(buttoncolor);
+                                    blockimage?.imageTintList = ColorStateList.valueOf(buttonIconcolor);
+
+
+
+                                }catch (e: Exception){
+                                    Log.e(Image_Activity::class.java.simpleName,e.toString());
+                                }
+
                             }
-                        })
+
+                        }
                     }
                 })
                 .listener(
