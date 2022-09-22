@@ -11,8 +11,11 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import coil.ImageLoader
@@ -21,10 +24,8 @@ import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import coil.size.Precision
-import com.alaory.wallmewallpaper.Image_Info
-import com.alaory.wallmewallpaper.Image_Ratio
-import com.alaory.wallmewallpaper.MainActivity
-import com.alaory.wallmewallpaper.R
+import com.alaory.wallmewallpaper.*
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : OnImageClick): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -40,8 +41,23 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     val TAG = "Image_list_adapter";
 
     var adab_ImageLoader : ImageLoader? = null;
+
+
+
+    var blockDatabase : database? = null;
+    var favoriteDatabase : database? = null;
+
+
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
+        super.onAttachedToRecyclerView(recyclerView);
+
+        if(blockDatabase ==null && favoriteDatabase == null){
+            blockDatabase = database(recyclerView.context,database.ImageBlock_Table,"${database.ImageBlock_Table}.dp");
+            favoriteDatabase = database(recyclerView.context);
+        }
+
+
+
         this.context = recyclerView.context;
         adab_ImageLoader = ImageLoader.Builder(recyclerView.context!!)
             .allowRgb565(true)
@@ -86,6 +102,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     private fun getImagerequest(holder: ItemViewHolder): ImageRequest{
         val tempBitmap : Bitmap = Bitmap.createBitmap(holder.imageRatio.Width,holder.imageRatio.Height,Bitmap.Config.ARGB_8888);
         val tempDrawable = tempBitmap.toDrawable(context!!.resources);
+
         val request = coil.request.ImageRequest.Builder(this.context!!)
             .data(listPosts.get(holder.pos).Image_thumbnail)
             .placeholder(tempDrawable)
@@ -93,6 +110,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             .listener(
                 onSuccess = {_,_ ->
                     holder.cricle_prograssBar.visibility = View.GONE;
+                    holder.loaded = true;
                 },
                 onCancel = {
                     holder.cricle_prograssBar.visibility = View.GONE;
@@ -133,7 +151,55 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
 
             holder.root_view.setOnClickListener {
-                imgclick.onImageClick(position,holder.image_main.drawable);
+                holder.buttonframe.visibility = View.GONE;
+                imgclick.onImageClick(position,holder.image_main.drawable,holder.loaded);
+            }
+            holder.root_view.setOnLongClickListener {
+                if(holder.buttonframe.isVisible){
+                    holder.buttonframe.visibility = View.GONE;
+                }else{
+                    holder.buttonframe.visibility = View.VISIBLE;
+                }
+                return@setOnLongClickListener true;
+            }
+            holder.favoriteButton.setOnClickListener {
+                var found = false;
+                for(i in database.imageinfo_list){
+                    if(i.Image_name == listPosts.get(position).Image_name){
+                        found = true;
+                    }
+                }
+
+                if(!found){
+                    favoriteDatabase!!.add_image_info_to_database(listPosts.get(position));
+                    holder.favoriteButton.setImageResource(R.drawable.ic_heartfull);
+                }
+                else{
+                    favoriteDatabase!!.remove_image_info_from_database(listPosts.get(position));
+                    holder.favoriteButton.setImageResource(R.drawable.ic_favorite);
+                }
+
+            }
+
+            holder.blockButton.setOnClickListener {
+                var found = false;
+                for(i in database.imageblock_list){
+                    if(i.Image_name == listPosts.get(position).Image_name){
+                        found = true;
+                    }
+                }
+
+                if(!found){
+                    blockDatabase!!.add_image_info_to_database(listPosts.get(position));
+                    Toast.makeText(context,"added to the block list",Toast.LENGTH_SHORT).show();
+
+                }
+                else{
+                    blockDatabase!!.remove_image_info_from_database(listPosts.get(position));
+                    Toast.makeText(context,"removed from  the block list",Toast.LENGTH_SHORT).show();
+                }
+
+
             }
 
             holder.root_view.startAnimation(AnimationUtils.loadAnimation(holder.itemView.context,R.anim.item_scroll_animation))
@@ -161,10 +227,14 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
     class ItemViewHolder(view : View) : RecyclerView.ViewHolder(view) {
         var pos = 0;
+        var loaded = false;
         var imageRatio = Image_Ratio(1,1);
-        var root_view = itemView.findViewById(R.id.root_imageView) as FrameLayout;
+        var root_view = itemView.findViewById(R.id.root_imageView) as LinearLayout;
         var image_main = itemView.findViewById(R.id.image_main) as ImageView;
         var cricle_prograssBar = itemView.findViewById(R.id.cricle_prograssBar) as ImageView;
+        var favoriteButton = itemView.findViewById(R.id.favorite_scrollable_floatingbutton) as FloatingActionButton;
+        var blockButton = itemView.findViewById(R.id.block_scrollable_floatingbutton) as FloatingActionButton;
+        var buttonframe = itemView.findViewById(R.id.frame_scrollable_floatingbutton) as FrameLayout
     }
 
     class LoadingViewHolder(view: View): RecyclerView.ViewHolder(view){
@@ -208,7 +278,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
 
     interface OnImageClick{
-        fun onImageClick(Pos: Int,thumbnail: Drawable);
+        fun onImageClick(Pos: Int,thumbnail: Drawable,loaded : Boolean = false);
     }
 
 

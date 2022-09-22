@@ -211,7 +211,7 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
     }
 
 
-    override fun onImageClick(Pos: Int,thumbnail : Drawable) {
+    override fun onImageClick(Pos: Int,thumbnail : Drawable,loaded : Boolean) {
         try {
             lastPastImageInfo = Reddit_Api.reddit_global_posts.get(Pos);
             lastPastImageInfo_pos = Pos;
@@ -219,6 +219,7 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
             Image_Activity.MYDATA = Reddit_Api.reddit_global_posts.get(Pos);
             Image_Activity.THUMBNAIL = thumbnail;
             Image_Activity.postmode = Image_Activity.mode.reddit;
+            Image_Activity.loadedPreview = loaded;
             startActivity(intent);
         }catch (e: Exception){
             Log.e("Reddit_posts","error while trying to set image activity")

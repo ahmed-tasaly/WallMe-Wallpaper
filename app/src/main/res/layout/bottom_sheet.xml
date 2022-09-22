@@ -113,7 +113,10 @@
                     android:text="Auther name"
                     android:paddingBottom="20dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/title_post" />
+                    app:layout_constraintTop_toBottomOf="@+id/title_post"
+                    app:layout_constraintBottom_toTopOf="@+id/button_box_bottomsheet"
+
+                    />
 
                 <TextView
                     android:id="@+id/url_post"
@@ -121,12 +124,13 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:paddingBottom="20dp"
-                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
                     android:autoLink="web"
-                    android:text="url"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/auther_post"
+                    android:text="@string/imageLinkUrl"
+                    android:textColor="@color/teal_200"
+                    app:layout_constraintTop_toBottomOf="@+id/title_post"
                     app:layout_constraintBottom_toTopOf="@+id/button_box_bottomsheet"
+                    app:layout_constraintRight_toRightOf="parent"
                     />
 
                 <TextView

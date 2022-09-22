@@ -107,6 +107,7 @@ class Image_Activity(): AppCompatActivity(){
         //the clicked data by the user
          var MYDATA : Image_Info? = null;
          var THUMBNAIL: Drawable? = null;
+         var loadedPreview : Boolean = false;
         //save bitmap to file and load it as a uri
 
 
@@ -292,6 +293,13 @@ class Image_Activity(): AppCompatActivity(){
                 }
             }
 
+            url_post?.let{
+                it.setOnClickListener {
+                    val linkuri = Uri.parse("https://${MYDATA!!.post_url}");
+                    this@Image_Activity.startActivity(Intent(Intent.ACTION_VIEW,linkuri));
+                }
+            }
+
             blockimage?.let {
                 it.setOnClickListener {
                     it.animate().apply {
@@ -374,7 +382,6 @@ class Image_Activity(): AppCompatActivity(){
             titlePost!!.visibility = View.GONE;
 
         auther_post!!.setText("posted by: ${myData?.Image_auther}");
-        url_post!!.setText(myData?.post_url)
         counter_image!!.isVisible = false;
 
 
@@ -460,6 +467,81 @@ class Image_Activity(): AppCompatActivity(){
             }
             .build()
 
+        //set bottom sheet colors
+        val SetBottomSheetColorsLambda: (bitmap : Bitmap) -> Unit = {bitmap ->
+            Palette.Builder(bitmap).generate{ palette ->
+                palette?.let { pal ->
+                    try{
+                        Log.d("Pallate","lightvibrant ${pal.lightVibrantSwatch?.rgb?.toHexString()} " +
+                                "vibrant ${pal.vibrantSwatch?.rgb?.toHexString()} " +
+                                "darkVibrant ${pal.darkVibrantSwatch?.rgb?.toHexString()} " +
+                                "lightMuted ${pal.lightMutedSwatch?.rgb?.toHexString()} " +
+                                "muted ${pal.mutedSwatch?.rgb?.toHexString()} " +
+                                "darkMuted ${pal.darkMutedSwatch?.rgb?.toHexString()} ")
+
+                        var BottomSheetSwatch : Palette.Swatch? = null;
+
+                        if(pal.darkMutedSwatch != null){
+                            BottomSheetSwatch = pal.darkMutedSwatch;
+                        }else if(pal.darkVibrantSwatch != null){
+                            BottomSheetSwatch = pal.darkVibrantSwatch;
+                        }else{
+                            BottomSheetSwatch = pal.lightVibrantSwatch;
+                        }
+
+                        val endBackground = ResourcesCompat.getDrawable(resources,R.drawable.bottomsheetshape,theme);
+                        BottomSheetSwatch?.rgb?.let { endBackground!!.setTint(it) };
+                        val startBackground = sheet_body!!.background;
+
+                        val animationColor = arrayOf(startBackground,endBackground);
+                        val transitionDrawable = TransitionDrawable(animationColor);
+                        sheet_body!!.background =transitionDrawable;
+                        transitionDrawable.startTransition(1000);
+
+                        //set text color
+                        BottomSheetSwatch?.bodyTextColor?.let { titlePost!!.setTextColor(it) };
+                        BottomSheetSwatch?.titleTextColor?.let { auther_post!!.setTextColor(it) };
+                        //BottomSheetSwatch?.population?.let { url_post!!.setTextColor(it) };
+
+                        //bottons color
+                        var buttoncolor = 0;
+                        var buttonIconcolor = 0;
+
+                        if(pal.mutedSwatch != null){
+                            buttoncolor = pal.mutedSwatch!!.rgb;
+                            buttonIconcolor = pal.mutedSwatch!!.bodyTextColor;
+                        }else if(pal.lightMutedSwatch != null){
+                            buttoncolor = pal.lightMutedSwatch!!.rgb;
+                            buttonIconcolor = pal.lightMutedSwatch!!.bodyTextColor;
+                        }else{
+                            buttoncolor = pal.vibrantSwatch!!.rgb;
+                            buttonIconcolor = pal.vibrantSwatch!!.bodyTextColor;
+                        }
+
+
+
+                        setWallPaperButton?.backgroundTintList = ColorStateList.valueOf(buttoncolor);
+                        setWallPaperButton?.imageTintList = ColorStateList.valueOf(buttonIconcolor);
+
+                        setfavorite?.backgroundTintList = ColorStateList.valueOf(buttoncolor);
+                        setfavorite?.imageTintList = ColorStateList.valueOf(buttonIconcolor);
+
+                        saveWallpaperButton?.backgroundTintList = ColorStateList.valueOf(buttoncolor);
+                        saveWallpaperButton?.imageTintList = ColorStateList.valueOf(buttonIconcolor);
+
+                        blockimage?.backgroundTintList = ColorStateList.valueOf(buttoncolor);
+                        blockimage?.imageTintList = ColorStateList.valueOf(buttonIconcolor);
+
+                        //url_post!!.setTextColor(if(buttonIconcolor > buttoncolor) buttonIconcolor else buttoncolor);
+
+                    }catch (e: Exception){
+                        Log.e(Image_Activity::class.java.simpleName,e.toString());
+                    }
+
+                }
+
+            }
+        }
 
         //load local bitmap and ui imageview data and do it in a callback
         imageloader?.let {
@@ -478,6 +560,9 @@ class Image_Activity(): AppCompatActivity(){
                         super.onStart(placeholder)
                         mybitmap = placeholder!!.toBitmap();
                         Full_image!!.setImageBitmap(mybitmap);
+                        if(loadedPreview)
+                            SetBottomSheetColorsLambda(mybitmap!!);
+
                     }
 
                     override fun onSuccess(result: Drawable) {
@@ -485,62 +570,7 @@ class Image_Activity(): AppCompatActivity(){
                         loaded = true;
                         mybitmap = result.toBitmap();
                         Full_image!!.setImageBitmap(mybitmap);
-
-                        Palette.Builder(mybitmap!!).generate{ palette ->
-                            palette?.let { pal ->
-                                try{
-
-                                    val endBackground = ResourcesCompat.getDrawable(resources,R.drawable.bottomsheetshape,theme);
-                                    endBackground!!.setTint(pal.mutedSwatch!!.rgb);
-                                    val startBackground = sheet_body!!.background;
-
-                                    val animationColor = arrayOf(startBackground,endBackground);
-                                    val transitionDrawable = TransitionDrawable(animationColor);
-                                    sheet_body!!.background =transitionDrawable;
-                                    transitionDrawable.startTransition(1000);
-
-                                    //set text color
-                                    titlePost!!.setTextColor(pal.dominantSwatch!!.bodyTextColor);
-                                    auther_post!!.setTextColor(pal.dominantSwatch!!.titleTextColor);
-
-                                    //bottons color
-                                    var buttoncolor : Int = 0;
-                                    var buttonIconcolor : Int = 0;
-
-                                    if(pal.darkMutedSwatch != null){
-                                        buttoncolor = pal.darkMutedSwatch!!.rgb;
-                                        buttonIconcolor = pal.darkMutedSwatch!!.bodyTextColor;
-                                    }else if(pal.darkVibrantSwatch != null){
-                                        buttoncolor = pal.darkVibrantSwatch!!.rgb;
-                                        buttonIconcolor = pal.darkVibrantSwatch!!.bodyTextColor;
-                                    }else{
-                                        buttoncolor = pal.lightMutedSwatch!!.rgb;
-                                        buttonIconcolor = pal.lightMutedSwatch!!.bodyTextColor;
-                                    }
-
-
-
-                                    setWallPaperButton?.backgroundTintList = ColorStateList.valueOf(buttoncolor);
-                                    setWallPaperButton?.imageTintList = ColorStateList.valueOf(buttonIconcolor);
-
-                                    setfavorite?.backgroundTintList = ColorStateList.valueOf(buttoncolor);
-                                    setfavorite?.imageTintList = ColorStateList.valueOf(buttonIconcolor);
-
-                                    saveWallpaperButton?.backgroundTintList = ColorStateList.valueOf(buttoncolor);
-                                    saveWallpaperButton?.imageTintList = ColorStateList.valueOf(buttonIconcolor);
-
-                                    blockimage?.backgroundTintList = ColorStateList.valueOf(buttoncolor);
-                                    blockimage?.imageTintList = ColorStateList.valueOf(buttonIconcolor);
-
-
-
-                                }catch (e: Exception){
-                                    Log.e(Image_Activity::class.java.simpleName,e.toString());
-                                }
-
-                            }
-
-                        }
+                        SetBottomSheetColorsLambda(mybitmap!!);
                     }
                 })
                 .listener(
