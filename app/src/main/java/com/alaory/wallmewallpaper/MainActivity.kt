@@ -19,6 +19,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import com.alaory.wallmewallpaper.api.Reddit_Api
 import com.alaory.wallmewallpaper.databinding.ActivityMainBinding
+import com.alaory.wallmewallpaper.postPage.Reddit_posts
+import com.alaory.wallmewallpaper.postPage.favorite_list
+import com.alaory.wallmewallpaper.postPage.wallhaven_posts
 import com.alaory.wallmewallpaper.settings.Reddit_settings
 import com.alaory.wallmewallpaper.settings.wallhaven_settings
 import com.google.android.material.floatingactionbutton.FloatingActionButton

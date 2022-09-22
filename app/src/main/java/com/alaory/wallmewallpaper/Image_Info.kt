@@ -31,6 +31,6 @@ data class Image_Info(
     var Image_auther:String = "Unknown",
     var Image_title: String = "Unknown",
     var post_url: String = "",
-    var imageRatio: Image_Ratio? = null
+    var imageRatio: Image_Ratio = Image_Ratio(1,1)
 ) {}
 

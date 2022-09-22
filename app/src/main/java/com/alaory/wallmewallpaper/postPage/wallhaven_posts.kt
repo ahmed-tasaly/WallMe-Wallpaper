@@ -1,4 +1,4 @@
-package com.alaory.wallmewallpaper
+package com.alaory.wallmewallpaper.postPage
 
 import android.content.DialogInterface
 import android.content.Intent
@@ -17,6 +17,7 @@ import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.alaory.wallmewallpaper.*
 import com.alaory.wallmewallpaper.adabter.Image_list_adapter
 import com.alaory.wallmewallpaper.api.wallhaven_api
 
@@ -71,7 +72,7 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
-            AlertDialog.Builder(requireContext(),R.style.Dialog_first)
+            AlertDialog.Builder(requireContext(), R.style.Dialog_first)
                 .setTitle("Do you want to leave the app")
                 .setPositiveButton("Yes",object : DialogInterface.OnClickListener{
                     override fun onClick(p0: DialogInterface?, p1: Int) {
@@ -141,7 +142,7 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
     private fun SetRvScrollListener(){
         bottomloading = BottonLoading.ViewLodMore(mLayoutManager as StaggeredGridLayoutManager);
-        bottomloading!!.setOnLoadMoreListener(object : BottonLoading.OnLoadMoreListener{
+        bottomloading!!.setOnLoadMoreListener(object : BottonLoading.OnLoadMoreListener {
             override fun onLoadMore() {
                 wallhaven_recycle?.post {
                     wallhaven_adabter!!.addLoadingView();
@@ -194,7 +195,7 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
         try{
             lastPastImageInfo =  wallhaven_api.wallhaven_homepage_posts[Pos];
             lastPastImageInfo_pos = Pos;
-            var intent = Intent(requireContext(),Image_Activity::class.java);
+            var intent = Intent(requireContext(), Image_Activity::class.java);
             Image_Activity.MYDATA = wallhaven_api.wallhaven_homepage_posts[Pos];
             Image_Activity.THUMBNAIL = thumbnail;
             Image_Activity.postmode = Image_Activity.mode.wallhaven;

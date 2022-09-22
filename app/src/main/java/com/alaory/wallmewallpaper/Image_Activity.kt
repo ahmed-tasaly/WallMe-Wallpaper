@@ -1,12 +1,10 @@
 package com.alaory.wallmewallpaper
 
-import android.animation.ValueAnimator
 import android.app.AlertDialog
 import android.app.WallpaperManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
@@ -30,6 +28,7 @@ import coil.disk.DiskCache
 import coil.request.CachePolicy
 import com.alaory.wallmewallpaper.api.wallhaven_api
 import com.alaory.wallmewallpaper.interpreter.progressRespondBody
+import com.alaory.wallmewallpaper.postPage.TagActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -253,7 +252,9 @@ class Image_Activity(): AppCompatActivity(){
 
 
 
-        BottomSheetBehavior.from(bottomsheetfragment).apply {
+        BottomSheetBehavior.from(bottomsheetfragment)
+            .apply {
+
 
 
             this.state = BottomSheetBehavior.STATE_COLLAPSED;
@@ -322,7 +323,8 @@ class Image_Activity(): AppCompatActivity(){
 
                 if(!found){
                     tempdatabase.add_image_info_to_database(myData!!);
-                    button.setImageResource(R.drawable.ic_heartfull)
+                    button.setImageResource(R.drawable.ic_heartfull);
+                    Log.d(Image_Activity::class.java.simpleName, myData!!.Image_name);
                 }
                 else{
                     tempdatabase.remove_image_info_from_database(myData!!);
@@ -367,7 +369,7 @@ class Image_Activity(): AppCompatActivity(){
             }
             Full_image!!.setOnTouchImageViewListener ( object : OnTouchImageViewListener{
                 override fun onMove() {
-                    bottomsheetfragment.isVisible = !Full_image!!.isZoomed
+                    bottomsheetfragment.isVisible = !Full_image!!.isZoomed;
                 }
             });
         }
@@ -571,6 +573,7 @@ class Image_Activity(): AppCompatActivity(){
                         mybitmap = result.toBitmap();
                         Full_image!!.setImageBitmap(mybitmap);
                         SetBottomSheetColorsLambda(mybitmap!!);
+                        myData!!.imageRatio = Image_Ratio(mybitmap!!.width,mybitmap!!.height);
                     }
                 })
                 .listener(
@@ -666,7 +669,7 @@ class Image_Activity(): AppCompatActivity(){
             }
         };
 
-        Log.i("Image_Activity","Info url ${myData?.Image_url} name ${myData?.Image_name} thumbnail ${myData?.Image_thumbnail}");
+        Log.d("Image_Activity","Info url ${myData?.Image_url} name ${myData?.Image_name} thumbnail ${myData?.Image_thumbnail}");
         //------------------------------------------------------------------------------
 
     }

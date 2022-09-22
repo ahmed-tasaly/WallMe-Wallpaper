@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -22,7 +21,7 @@ import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import com.alaory.wallmewallpaper.R
 import com.alaory.wallmewallpaper.api.Reddit_Api
-import com.alaory.wallmewallpaper.Reddit_posts
+import com.alaory.wallmewallpaper.postPage.Reddit_posts
 import com.alaory.wallmewallpaper.adabter.list_item_adabter
 
 

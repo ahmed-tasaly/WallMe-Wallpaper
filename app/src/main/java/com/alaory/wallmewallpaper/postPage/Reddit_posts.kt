@@ -1,4 +1,4 @@
-package com.alaory.wallmewallpaper
+package com.alaory.wallmewallpaper.postPage
 
 import android.content.DialogInterface
 import android.content.Intent
@@ -17,6 +17,7 @@ import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.alaory.wallmewallpaper.*
 import com.alaory.wallmewallpaper.adabter.Image_list_adapter
 import com.alaory.wallmewallpaper.api.Reddit_Api
 import com.alaory.wallmewallpaper.settings.Reddit_settings
@@ -111,7 +112,7 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
-            AlertDialog.Builder(requireContext(),R.style.Dialog_first)
+            AlertDialog.Builder(requireContext(), R.style.Dialog_first)
                 .setTitle("Do you want to leave the app")
                 .setPositiveButton("Yes",object : DialogInterface.OnClickListener{
                     override fun onClick(p0: DialogInterface?, p1: Int) {
@@ -166,7 +167,7 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
 
     private fun SetRvScrollListener(){
         scrollListener = BottonLoading.ViewLodMore(mLayoutManager as StaggeredGridLayoutManager);
-        scrollListener!!.setOnLoadMoreListener(object : BottonLoading.OnLoadMoreListener{
+        scrollListener!!.setOnLoadMoreListener(object : BottonLoading.OnLoadMoreListener {
             override fun onLoadMore() {
                 myrec?.post {
                     LoadMore();

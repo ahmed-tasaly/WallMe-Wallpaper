@@ -18,7 +18,7 @@
         android:theme="@style/Theme.Wallpaper"
         tools:ignore="DataExtractionRules">
         <activity
-            android:name=".TagActivity"
+            android:name=".postPage.TagActivity"
             android:exported="false"
             android:launchMode="singleTop"
             />

@@ -1,4 +1,4 @@
-package com.alaory.wallmewallpaper
+package com.alaory.wallmewallpaper.postPage
 
 import android.content.DialogInterface
 import android.content.Intent
@@ -15,6 +15,7 @@ import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.alaory.wallmewallpaper.*
 import com.alaory.wallmewallpaper.adabter.Image_list_adapter
 
 
@@ -45,7 +46,7 @@ class favorite_list() : Fragment(), Image_list_adapter.OnImageClick {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
-            AlertDialog.Builder(requireContext(),R.style.Dialog_first)
+            AlertDialog.Builder(requireContext(), R.style.Dialog_first)
                 .setTitle("Do you want to leave the app")
                 .setPositiveButton("Yes",object : DialogInterface.OnClickListener{
                     override fun onClick(p0: DialogInterface?, p1: Int) {
@@ -89,7 +90,7 @@ class favorite_list() : Fragment(), Image_list_adapter.OnImageClick {
 
     override fun onImageClick(Pos: Int, thumbnail: Drawable,loaded : Boolean) {
         try {
-            val intent = Intent(requireContext(),Image_Activity::class.java);
+            val intent = Intent(requireContext(), Image_Activity::class.java);
             Image_Activity.THUMBNAIL = thumbnail;
             Image_Activity.MYDATA = database.imageinfo_list[Pos];
             Image_Activity.postmode = Image_Activity.mode.reddit;
