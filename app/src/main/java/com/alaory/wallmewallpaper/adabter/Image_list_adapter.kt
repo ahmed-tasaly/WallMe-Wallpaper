@@ -29,7 +29,6 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
     val VIEW_TYPE_LOADING = 1;
     val VIEW_TYPE_ITEM = 0;
-
     var LoadingIndex = -1;
 
 
@@ -39,11 +38,10 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     val TAG = "Image_list_adapter";
 
     var adab_ImageLoader : ImageLoader? = null;
-
-
-
     var blockDatabase : database? = null;
     var favoriteDatabase : database? = null;
+
+    var lastLongpressedItem : PostItemView? = null;
 
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -92,6 +90,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             val itemtoload = LayoutInflater.from(parent.context).inflate(R.layout.bottomloading_prograssbar,parent,false);
             return LoadingViewHolder(itemtoload);
         }
+
     }
 
 
@@ -99,7 +98,6 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     private fun getImagerequest(holder: PostItemView): ImageRequest{
         val tempBitmap : Bitmap = Bitmap.createBitmap(holder.imageRatio.Width,holder.imageRatio.Height,Bitmap.Config.ARGB_8888);
         val tempDrawable = tempBitmap.toDrawable(context!!.resources);
-
         val request = coil.request.ImageRequest.Builder(this.context!!)
             .data(listPosts.get(holder.pos).Image_thumbnail)
             .placeholder(tempDrawable)
@@ -134,9 +132,13 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     }
 
 
+
+
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if(holder.itemViewType == VIEW_TYPE_ITEM){
             val holder = holder as PostItemView;
+
 
             var width = 1;
             var height = 1;
@@ -160,7 +162,13 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                 holder.buttonframe.visibility = View.GONE;
                 imgclick.onImageClick(position,holder.image_main.drawable,holder.loaded);
             }
+
             holder.root_view.setOnLongClickListener {
+                if(lastLongpressedItem != null){
+                    lastLongpressedItem!!.buttonframe.visibility = View.GONE;
+                }
+                lastLongpressedItem = holder;
+
                 if(holder.buttonframe.isVisible){
                     holder.buttonframe.visibility = View.GONE;
                 }else{
@@ -178,43 +186,11 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             }
 
             holder.favoriteButton.setOnClickListener {
-                var found = false;
-                for(i in database.imageinfo_list){
-                    if(i.Image_name == listPosts.get(position).Image_name){
-                        found = true;
-                    }
-                }
-
-                if(!found){
-                    favoriteDatabase!!.add_image_info_to_database(listPosts.get(position));
-                    holder.favoriteButton.setImageResource(R.drawable.ic_heartfull);
-                }
-                else{
-                    favoriteDatabase!!.remove_image_info_from_database(listPosts.get(position));
-                    holder.favoriteButton.setImageResource(R.drawable.ic_favorite);
-                }
-
+                FavoriteButton(holder);
             }
 
             holder.blockButton.setOnClickListener {
-                var found = false;
-                for(i in database.imageblock_list){
-                    if(i.Image_name == listPosts.get(position).Image_name){
-                        found = true;
-                    }
-                }
-
-                if(!found){
-                    blockDatabase!!.add_image_info_to_database(listPosts.get(position));
-                    Toast.makeText(context,"added to the block list",Toast.LENGTH_SHORT).show();
-
-                }
-                else{
-                    blockDatabase!!.remove_image_info_from_database(listPosts.get(position));
-                    Toast.makeText(context,"removed from  the block list",Toast.LENGTH_SHORT).show();
-                }
-
-
+                blockButton(holder);
             }
 
             holder.root_view.startAnimation(AnimationUtils.loadAnimation(holder.itemView.context,R.anim.item_scroll_animation))
@@ -240,10 +216,51 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     }
 
 
+
+    fun FavoriteButton(holder: PostItemView){
+        var found = false;
+        val position = holder.layoutPosition;
+        for(i in database.imageinfo_list){
+            if(i.Image_name == listPosts.get(position).Image_name){
+                found = true;
+            }
+        }
+
+        if(!found){
+            favoriteDatabase!!.add_image_info_to_database(listPosts.get(position));
+            holder.favoriteButton.setImageResource(R.drawable.ic_heartfull);
+        }
+        else{
+            favoriteDatabase!!.remove_image_info_from_database(listPosts.get(position));
+            holder.favoriteButton.setImageResource(R.drawable.ic_favorite);
+        }
+
+    }
+    fun blockButton(holder: PostItemView){
+        var found = false;
+        val position = holder.layoutPosition;
+        for(i in database.imageblock_list){
+            if(i.Image_name == listPosts.get(position).Image_name){
+                found = true;
+            }
+        }
+
+        if(!found){
+            blockDatabase!!.add_image_info_to_database(listPosts.get(position));
+            Toast.makeText(context,"added to the block list",Toast.LENGTH_SHORT).show();
+            removeItem(position);
+        }
+        else{
+            blockDatabase!!.remove_image_info_from_database(listPosts.get(position));
+            Toast.makeText(context,"removed from  the block list",Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+
     class PostItemView(view : View) : RecyclerView.ViewHolder(view) {
         var pos = 0;
         var loaded = false;
-
         var imageRatio = Image_Ratio(1,1);
         var root_view = itemView.findViewById(R.id.root_imageView) as LinearLayout;
         var image_main = itemView.findViewById(R.id.image_main) as ImageView;
@@ -261,7 +278,6 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     fun addLoadingView(){
         if(LoadingIndex != -1)
             removeLoadingView();
-
         listPosts.add(
             Image_Info("LOADING","")
         );
@@ -269,12 +285,17 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
         refresh_itemList(listPosts.lastIndex);
     }
 
+    fun removeItem(position : Int){
+        this.notifyItemRemoved(position);
+        listPosts.removeAt(position);
+        this.notifyItemRangeChanged(position,listPosts.size);
+    }
+
 
 
     fun removeLoadingView(){
         if(LoadingIndex != -1){
-            notifyItemRemoved(LoadingIndex);
-            listPosts.removeAt(LoadingIndex);
+            removeItem(LoadingIndex);
             LoadingIndex = -1;
         }
     }
