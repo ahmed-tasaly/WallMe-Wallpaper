@@ -53,6 +53,7 @@ class Image_Activity(): AppCompatActivity(){
     private var counter_image: TextView? = null;
     private var mybitmap: Bitmap? = null;
     private var taggroup: ChipGroup? = null;
+    private var bottomsheetarrow: ImageButton? =null;
 
     //bottom sheet
     private var sheet_body : ConstraintLayout? = null;
@@ -252,8 +253,7 @@ class Image_Activity(): AppCompatActivity(){
 
 
 
-        BottomSheetBehavior.from(bottomsheetfragment)
-            .apply {
+       BottomSheetBehavior.from(bottomsheetfragment).apply {
 
 
 
@@ -276,22 +276,17 @@ class Image_Activity(): AppCompatActivity(){
             saveWallpaperButton = Views.findViewById(R.id.save_imageButton);
             setfavorite = Views.findViewById(R.id.favorite_bottomsheet_floatingbutton);
             blockimage = Views.findViewById(R.id.block_bottomsheet_floatingbutton);
+            bottomsheetarrow = Views.findViewById<ImageButton>(R.id.pullbottom);
 
             if(isOnDatabase())
                 setfavorite!!.setImageResource(R.drawable.ic_heartfull);
 
             //pull buttonimage
-            Views.findViewById<ImageButton>(R.id.pullbottom).setOnClickListener {
+            bottomsheetarrow!!.setOnClickListener {
                 if(this.state == BottomSheetBehavior.STATE_EXPANDED)
                     this.state = BottomSheetBehavior.STATE_COLLAPSED;
                 else
                     this.state = BottomSheetBehavior.STATE_EXPANDED;
-
-                it.animate().apply {
-                    duration = 300;
-
-                    rotationXBy(180f);
-                }
             }
 
             url_post?.let{
@@ -372,7 +367,18 @@ class Image_Activity(): AppCompatActivity(){
                     bottomsheetfragment.isVisible = !Full_image!!.isZoomed;
                 }
             });
-        }
+        }.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback(){
+           override fun onStateChanged(bottomSheet: View, newState: Int) {}
+           override fun onSlide(bottomSheet: View, slideOffset: Float) {
+               bottomsheetarrow!!.animate().apply {
+                   duration = 0;
+                   rotationX(180f*slideOffset);
+               }
+           }
+       })
+
+
+
 
         //----------------------------------------------------
 

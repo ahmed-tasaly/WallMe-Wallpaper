@@ -2,7 +2,6 @@ package com.alaory.wallmewallpaper.adabter
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,7 +12,6 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -63,24 +61,23 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             .allowRgb565(true)
             .bitmapConfig(Bitmap.Config.RGB_565)
             .precision(Precision.INEXACT)
-            .memoryCache {
-                MemoryCache.Builder(recyclerView.context!!)
-                    .maxSizePercent(0.15)
-                    .build()
-            }
             .bitmapFactoryMaxParallelism(6)
             .networkCachePolicy(CachePolicy.READ_ONLY)
             .memoryCachePolicy(CachePolicy.ENABLED)
             .diskCachePolicy(CachePolicy.ENABLED)
             .allowHardware(false)
             .crossfade(true)
+            .memoryCache {
+                MemoryCache.Builder(recyclerView.context!!)
+                    .maxSizePercent(0.15)
+                    .build()
+            }
             .diskCache {
                 DiskCache.Builder()
                     .directory( recyclerView.context!!.cacheDir.resolve("imagePreview"))
                     .maxSizePercent(0.05)
                     .build();
             }
-
             .build();
 
     }
@@ -90,7 +87,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if(viewType == VIEW_TYPE_ITEM){
             val itemtoView = LayoutInflater.from(parent.context).inflate(R.layout.image_scrolable,parent,false);
-            return ItemViewHolder(itemtoView);
+            return PostItemView(itemtoView);
         }else{
             val itemtoload = LayoutInflater.from(parent.context).inflate(R.layout.bottomloading_prograssbar,parent,false);
             return LoadingViewHolder(itemtoload);
@@ -99,7 +96,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
 
 
-    private fun getImagerequest(holder: ItemViewHolder): ImageRequest{
+    private fun getImagerequest(holder: PostItemView): ImageRequest{
         val tempBitmap : Bitmap = Bitmap.createBitmap(holder.imageRatio.Width,holder.imageRatio.Height,Bitmap.Config.ARGB_8888);
         val tempDrawable = tempBitmap.toDrawable(context!!.resources);
 
@@ -127,10 +124,19 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
         return request;
     }
 
+    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
+        super.onViewDetachedFromWindow(holder);
+        if(holder.itemViewType == VIEW_TYPE_ITEM){
+            val holder = holder as PostItemView;
+            if(holder.buttonframe.isVisible)
+                holder.buttonframe.visibility = View.GONE;
+        }
+    }
+
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if(holder.itemViewType == VIEW_TYPE_ITEM){
-            val holder = holder as ItemViewHolder;
+            val holder = holder as PostItemView;
 
             var width = 1;
             var height = 1;
@@ -158,10 +164,19 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                 if(holder.buttonframe.isVisible){
                     holder.buttonframe.visibility = View.GONE;
                 }else{
+                    var found = false;
+                    for(i in database.imageinfo_list){
+                        if(i.Image_name == listPosts.get(position).Image_name){
+                            found = true;
+                        }
+                    }
+                    if(found)
+                        holder.favoriteButton.setImageResource(R.drawable.ic_heartfull);
                     holder.buttonframe.visibility = View.VISIBLE;
                 }
                 return@setOnLongClickListener true;
             }
+
             holder.favoriteButton.setOnClickListener {
                 var found = false;
                 for(i in database.imageinfo_list){
@@ -225,9 +240,10 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     }
 
 
-    class ItemViewHolder(view : View) : RecyclerView.ViewHolder(view) {
+    class PostItemView(view : View) : RecyclerView.ViewHolder(view) {
         var pos = 0;
         var loaded = false;
+
         var imageRatio = Image_Ratio(1,1);
         var root_view = itemView.findViewById(R.id.root_imageView) as LinearLayout;
         var image_main = itemView.findViewById(R.id.image_main) as ImageView;

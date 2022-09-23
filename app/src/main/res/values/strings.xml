@@ -65,6 +65,6 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-    <string name="imageLinkUrl"><u>Image URL</u></string>
+    <string name="imageLinkUrl"><u>Source</u></string>
     <string name="wallpaper_changer_des">Automatically change the wallpaper from the favorite wallpaper list. minimum time is 15m and it might not work on battery mode</string>
 </resources>
