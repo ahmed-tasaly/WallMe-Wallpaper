@@ -164,9 +164,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             }
 
             holder.root_view.setOnLongClickListener {
-                if(lastLongpressedItem != null){
-                    lastLongpressedItem!!.buttonframe.visibility = View.GONE;
-                }
+                lastLongpressedItem?.buttonframe?.visibility = View.GONE;
                 lastLongpressedItem = holder;
 
                 if(holder.buttonframe.isVisible){
