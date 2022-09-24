@@ -108,11 +108,3 @@ since the app is still in development the ui may change :)
     - TouchImageView
 
 
-
-
-## Note: 
-
-    this is the first time i use Kotlin for something
-    and also my first released android app :) 
-    soooo expect a loooooooot of bugs
-
