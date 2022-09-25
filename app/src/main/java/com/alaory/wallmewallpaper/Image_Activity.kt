@@ -412,12 +412,10 @@ class Image_Activity(): AppCompatActivity(){
                             TagChip.text = TagNameList[i];
 
                             TagChip.setOnClickListener {
-
                                 try {
-                                    val tempTag = wallhaven_api.Tag("&q=+$i");
+                                    val tempTag = wallhaven_api.Tag("&q=${TagNameList[i]}");
                                     val intent = Intent(this, TagActivity::class.java);
-                                    intent.flags =
-                                        (Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                    intent.flags = (Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     TagActivity.Tag_Assing = tempTag;
                                     startActivity(intent);
                                 } catch (e: Exception) {
