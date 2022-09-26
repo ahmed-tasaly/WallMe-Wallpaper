@@ -1,10 +1,7 @@
 package com.alaory.wallmewallpaper.api
 
 import android.util.Log
-import com.alaory.wallmewallpaper.BuildConfig
-import com.alaory.wallmewallpaper.Image_Info
-import com.alaory.wallmewallpaper.Image_Ratio
-import com.alaory.wallmewallpaper.database
+import com.alaory.wallmewallpaper.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONException
@@ -94,7 +91,7 @@ class Reddit_Api(subredditname: String) {
 
         fun filter_words(word : String): Boolean{
             val word = word.lowercase();
-            val filterWords: Array<String> = arrayOf("nsfw","adult","gay","cross","bible","chris","lgbt","lgb","sex","rainbow","pride","furry")
+            val filterWords: Array<String> = arrayOf("nsfw","adult","gender","gay","cross","bible","chris","lgbt","lgb","sex","rainbow","pride","furry")
 
             for(i in filterWords)
                 if(word.contains(i))
@@ -215,26 +212,26 @@ class Reddit_Api(subredditname: String) {
                                         found = true;
                                 }
 
-                                if (dataJson.getBoolean("over_18") || found || dataJson.optBoolean(
-                                        "is_video",
-                                        false
-                                    )
-                                )
+                                if (dataJson.getBoolean("over_18") || found)
                                     continue;
                                 //----------------------------------------------
 
 
+
+
+
                                 //add the image
                                 //get image name to skip it next time
-
-
-
-                                val lastChars = dataJson.getString("url").reversed().substring(0,5);
-
-                                //check again if its an image
-                                if (filter_words(dataJson.getString("title")) || dataJson.getString("thumbnail") == "self" || dataJson.getString("thumbnail") == "default" || !lastChars.contains('.'))
+                                if (filter_words(dataJson.getString("title")))
                                     continue;
 
+                                var type = UrlType.Image;
+                                var selfthumbnail = false
+                                if(dataJson.getString("thumbnail") == "self" || dataJson.getString("thumbnail") == "default")
+                                    selfthumbnail = true;
+
+                                if(dataJson.optBoolean("is_video", false))
+                                    type = UrlType.Video;
 
                                 //parse image gallery post
                                 if (dataJson.optBoolean("is_gallery", false)) {
@@ -281,6 +278,7 @@ class Reddit_Api(subredditname: String) {
                                 }
 
                                 val one_post: Image_Info;
+                                //post doesn't have a preview
                                 if (dataJson.optString("preview").isNullOrBlank()) {
                                     one_post = Image_Info(
                                         dataJson.getString("url"),
@@ -288,29 +286,37 @@ class Reddit_Api(subredditname: String) {
                                         dataJson.getString("name"),
                                         dataJson.getString("author"),
                                         dataJson.getString("title"),
-                                        "reddit.com${dataJson.getString("permalink")}"
+                                        "reddit.com${dataJson.getString("permalink")}",
+                                        Image_Ratio(1,1),
+                                        type
                                     )
 
-                                } else {
+                                }
+                                //post does have a preview
+                                else {
+                                    //get image source from list
                                     val image_source_url = dataJson
                                         .getJSONObject("preview").getJSONArray("images")
                                         .getJSONObject(0)
                                         .getJSONObject("source").getString("url")
                                         .replace("amp;", "");
 
+                                    //get image preview from list
                                     val image_preview_url = dataJson
                                         .getJSONObject("preview").getJSONArray("images")
                                         .getJSONObject(0)
                                         .getJSONArray("resolutions").getJSONObject(previewQulaity)
                                         .getString("url").replace("amp;", "");
 
+                                    //get image Ratio from list
                                     val imageRatio = Image_Ratio(
+                                        //width
                                         dataJson
                                         .getJSONObject("preview").getJSONArray("images")
                                         .getJSONObject(0)
                                         .getJSONArray("resolutions").getJSONObject(previewQulaity)
                                         .getInt("width"),
-
+                                        //height
                                         dataJson
                                             .getJSONObject("preview").getJSONArray("images")
                                             .getJSONObject(0)
@@ -328,7 +334,8 @@ class Reddit_Api(subredditname: String) {
                                         dataJson.getString("author"),
                                         dataJson.getString("title"),
                                         "reddit.com${dataJson.getString("permalink")}",
-                                        imageRatio
+                                        imageRatio,
+                                        type
                                     )
                                 }
 
@@ -336,13 +343,11 @@ class Reddit_Api(subredditname: String) {
 
 
                                 temp_list += one_post;
-                                //----------------------------------
                             }
                             catch (e:Exception ){
-                                Log.i("Reddit_Api","Reddit_Api for loop erorr")
+                                Log.d("Reddit_Api","Reddit_Api getting one post error")
                             }
                         }
-
                         if(temp_list.isNotEmpty()){
                             subreddit_posts_list += temp_list;
                             callback_update(temp_list,200);

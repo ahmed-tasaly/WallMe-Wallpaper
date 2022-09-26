@@ -33,11 +33,12 @@ class database(val context: Context,val table_name: String = ImageInfo_Table,val
         val post_source = "source"
         val width = "width";
         val height = "height";
+        val type  = "Type";
     }
 
     override fun onCreate(dp: SQLiteDatabase?) {
         //create sql table and add image_info coloums
-        val sql_query_createtable = "CREATE TABLE IF NOT EXISTS $table_name ($name TEXT,$auther TEXT,$url TEXT,$thumbnail TEXT,$title TEXT,$post_source TEXT,$width INTEGER,$height INTEGER);"
+        val sql_query_createtable = "CREATE TABLE IF NOT EXISTS $table_name ($name TEXT,$auther TEXT,$url TEXT,$thumbnail TEXT,$title TEXT,$post_source TEXT,$width INTEGER,$height INTEGER,$type TEXT);"
         dp!!.execSQL(sql_query_createtable);
     }
 
@@ -62,6 +63,7 @@ class database(val context: Context,val table_name: String = ImageInfo_Table,val
             CV.put(post_source, image_info.post_url);
             CV.put(width, image_info.imageRatio!!.Width);
             CV.put(height, image_info.imageRatio!!.Height);
+            CV.put(type, image_info.type.name)
 
             val result = dp.insert(table_name, null, CV);
 
@@ -104,7 +106,8 @@ class database(val context: Context,val table_name: String = ImageInfo_Table,val
                 curser.getString(1),
                 curser.getString(4),
                 curser.getString(5),
-                Image_Ratio(curser.getInt(6),curser.getInt(7))
+                Image_Ratio(curser.getInt(6),curser.getInt(7)),
+                UrlType.valueOf(curser.getString(8))
                 );
             if(table_name == ImageInfo_Table)
                 imageinfo_list += imageInfo;
