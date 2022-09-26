@@ -39,7 +39,15 @@ class database(val context: Context,val table_name: String = ImageInfo_Table,val
     override fun onCreate(dp: SQLiteDatabase?) {
         //create sql table and add image_info coloums
         val sql_query_createtable = "CREATE TABLE IF NOT EXISTS $table_name ($name TEXT,$auther TEXT,$url TEXT,$thumbnail TEXT,$title TEXT,$post_source TEXT,$width INTEGER,$height INTEGER,$type TEXT);"
+
         dp!!.execSQL(sql_query_createtable);
+        try {
+            //i am not good at sql also its 0:33 for me :)
+            val addType_query = "ALTER TABLE $table_name ADD COLUMN $type TEXT DEFAULT \"${UrlType.Image.name}\";";
+            dp!!.execSQL(addType_query);
+        }catch (e: Exception){
+        }
+
     }
 
     override fun onUpgrade(p0: SQLiteDatabase?, p1: Int, p2: Int) {
@@ -85,9 +93,6 @@ class database(val context: Context,val table_name: String = ImageInfo_Table,val
     }
 
     fun update_image_info_list_from_database(){
-
-
-
 
         if(table_name == ImageInfo_Table)
             imageinfo_list = emptyArray();
