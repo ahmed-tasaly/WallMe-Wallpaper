@@ -17,6 +17,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import coil.ImageLoader
+import coil.decode.VideoFrameDecoder
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import coil.request.CachePolicy
@@ -65,6 +66,9 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             .diskCachePolicy(CachePolicy.ENABLED)
             .allowHardware(false)
             .crossfade(true)
+            .components {
+                add(VideoFrameDecoder.Factory())
+            }
             .memoryCache {
                 MemoryCache.Builder(recyclerView.context!!)
                     .maxSizePercent(0.15)

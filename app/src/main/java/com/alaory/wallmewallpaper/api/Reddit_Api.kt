@@ -326,9 +326,13 @@ class Reddit_Api(subredditname: String) {
                                             .getInt("height")
                                     );
 
+                                    var source_url = image_source_url;
+                                    if(type == UrlType.Video){
+                                        source_url = dataJson.getJSONObject("media").getJSONObject("reddit_video").getString("fallback_url");
+                                    }
                                     //parse json into data to use
                                     one_post = Image_Info(
-                                        image_source_url,
+                                        source_url,
                                         image_preview_url,
                                         dataJson.getString("name"),
                                         dataJson.getString("author"),
