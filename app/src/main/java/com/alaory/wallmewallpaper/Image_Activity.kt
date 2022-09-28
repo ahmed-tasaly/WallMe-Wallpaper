@@ -2,6 +2,7 @@ package com.alaory.wallmewallpaper
 
 import android.app.AlertDialog
 import android.app.WallpaperManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -33,6 +34,7 @@ import coil.request.CachePolicy
 import com.alaory.wallmewallpaper.api.wallhaven_api
 import com.alaory.wallmewallpaper.interpreter.progressRespondBody
 import com.alaory.wallmewallpaper.postPage.TagActivity
+import com.alaory.wallmewallpaper.wallpaper.livewallpaper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -44,6 +46,7 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.internal.toHexString
+import okio.Path.Companion.toPath
 import java.io.ByteArrayOutputStream
 import java.io.File
 import kotlin.math.absoluteValue
@@ -347,6 +350,18 @@ class Image_Activity(): AppCompatActivity(){
 
             //hide bottmsheet and show setwallpaper button
             setWallPaperButton?.setOnClickListener {
+                //if video call video sevice
+                if(MYDATA!!.type == UrlType.Video){
+                    WallpaperManager.getInstance(it.context).clear();
+                    val liveintent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
+                    val video_path = imageloader!!.diskCache!![MemoryCache.Key(MYDATA!!.Image_url).key]!!.data.toString();
+                    this@Image_Activity.getSharedPreferences("LiveWallpaper",Context.MODE_PRIVATE).edit().putString("Video_Path",video_path).apply();
+                    liveintent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, ComponentName(this@Image_Activity,livewallpaper::class.java));
+                    startActivity(liveintent);
+                    return@setOnClickListener;
+                }
+
+                // normal wallpaper
                 this@apply.state = BottomSheetBehavior.STATE_COLLAPSED;
                 bottomsheetfragment.animate().apply {
                     this?.duration = 100;
@@ -527,7 +542,6 @@ class Image_Activity(): AppCompatActivity(){
                         blockimage?.backgroundTintList = ColorStateList.valueOf(buttoncolor);
                         blockimage?.imageTintList = ColorStateList.valueOf(buttonIconcolor);
 
-                        //url_post!!.setTextColor(if(buttonIconcolor > buttoncolor) buttonIconcolor else buttoncolor);
 
                     }catch (e: Exception){
                         Log.e(Image_Activity::class.java.simpleName,e.toString());
@@ -541,7 +555,8 @@ class Image_Activity(): AppCompatActivity(){
             imageloader = ImageLoader.Builder(this)
                 .diskCache {
                     DiskCache.Builder()
-                        .directory(this.cacheDir.resolve("imagesaved"))
+                        //.directory(this.cacheDir.resolve("imagesaved"))
+                        .directory(this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.path.toPath())
                         .build()
                 }
                 .memoryCachePolicy(CachePolicy.DISABLED)
@@ -591,7 +606,6 @@ class Image_Activity(): AppCompatActivity(){
                         override fun onSuccess(result: Drawable) {
                             super.onSuccess(result);
                             if(myData!!.type == UrlType.Image) {
-                                loaded = true;
                                 mybitmap = result.toBitmap();
                                 Full_image!!.setImageBitmap(mybitmap);
                                 SetBottomSheetColorsLambda(mybitmap!!);
@@ -599,29 +613,31 @@ class Image_Activity(): AppCompatActivity(){
                                     Image_Ratio(mybitmap!!.width, mybitmap!!.height);
                             }
                             else{
-
-
-
                                 val SourceUrl = Uri.parse(imageloader!!.diskCache!![MemoryCache.Key(MYDATA!!.Image_url).key]!!.data.toString());
-                                val player  = MediaPlayer();
+                                val player = MediaPlayer();
                                 Full_video!!.setContentSize(MYDATA!!.imageRatio.Width.toFloat(),MYDATA!!.imageRatio.Height.toFloat());
                                 Full_video!!.addCallback(object  : ZoomSurfaceView.Callback{
                                     override fun onZoomSurfaceCreated(view: ZoomSurfaceView) {
                                         player.setSurface(Full_video!!.surface);
                                     }
                                     override fun onZoomSurfaceDestroyed(view: ZoomSurfaceView) {
+                                        if(player.isPlaying) player!!.stop();
                                         player.release();
                                     }
-                                })
-                                player.isLooping = true;
-                                player.setDataSource(this@Image_Activity,SourceUrl);
-                                player.prepare();
-                                player.start();
-                                player.setOnPreparedListener {
-                                    Full_video!!.visibility = View.VISIBLE;
-                                    Full_image!!.visibility = View.INVISIBLE;
+                                });
+                                player.apply {
+                                    isLooping = true;
+                                    setDataSource(this@Image_Activity,SourceUrl);
+                                    setOnPreparedListener {
+                                        Full_video!!.visibility = View.VISIBLE;
+                                        Full_image!!.visibility = View.INVISIBLE;
+                                    }
+                                    setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
+                                    prepare();
+                                    start();
                                 }
                             }
+                            loaded = true;
                         }
                     })
                     .listener(

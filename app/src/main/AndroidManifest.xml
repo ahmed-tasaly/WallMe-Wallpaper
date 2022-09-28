@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <uses-permission android:name="android.permission.SET_WALLPAPER_HINTS" />
-    <uses-feature android:name="android.software.live_wallpaper" android:required="true"/>
+    <uses-feature android:name="android.software.live_wallpaper" android:required="false"/>
 
     <application
         android:name=".wallmewallpaper"
@@ -18,6 +18,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Wallpaper"
         tools:ignore="DataExtractionRules">
+        <service android:name=".wallpaper.livewallpaper"
+            android:enabled="true"
+            android:permission="android.permission.BIND_WALLPAPER"
+            android:exported="true"
+            >
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/livewallpaper_info"
+                />
+        </service>
         <activity
             android:name=".postPage.TagActivity"
             android:exported="false"
