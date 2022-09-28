@@ -233,6 +233,9 @@ class Reddit_Api(subredditname: String) {
                                 if(dataJson.optBoolean("is_video", false))
                                     type = UrlType.Video;
 
+                                if(dataJson.optString("url","").lowercase().contains(".gif"))
+                                    type = UrlType.Gif;
+
                                 //parse image gallery post
                                 if (dataJson.optBoolean("is_gallery", false)) {
                                     val gallery_images_name = dataJson.getJSONObject("gallery_data")

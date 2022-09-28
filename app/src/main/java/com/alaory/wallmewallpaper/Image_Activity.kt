@@ -27,6 +27,8 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import androidx.palette.graphics.Palette
 import coil.ImageLoader
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
 import coil.decode.VideoFrameDecoder
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
@@ -34,6 +36,7 @@ import coil.request.CachePolicy
 import com.alaory.wallmewallpaper.api.wallhaven_api
 import com.alaory.wallmewallpaper.interpreter.progressRespondBody
 import com.alaory.wallmewallpaper.postPage.TagActivity
+import com.alaory.wallmewallpaper.wallpaper.gifwallpaper
 import com.alaory.wallmewallpaper.wallpaper.livewallpaper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
@@ -46,7 +49,6 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.internal.toHexString
-import okio.Path.Companion.toPath
 import java.io.ByteArrayOutputStream
 import java.io.File
 import kotlin.math.absoluteValue
@@ -157,10 +159,6 @@ class Image_Activity(): AppCompatActivity(){
             return Uri.fromFile(imagepath);
         }
 
-        fun setLiveWallpaper(context: Context,path : Path){
-            val wallpaperManager = WallpaperManager.getInstance(context);
-
-        }
 
 
         fun setWallpaper(context: Context,wallBitmap: Bitmap ,rectF: RectF,setLockScreen: setmode){
@@ -350,6 +348,12 @@ class Image_Activity(): AppCompatActivity(){
 
             //hide bottmsheet and show setwallpaper button
             setWallPaperButton?.setOnClickListener {
+                if(!loaded) {
+                    Toast.makeText(this@Image_Activity,"Please wait for the image to load",Toast.LENGTH_LONG).show();
+                    return@setOnClickListener;
+                }
+
+
                 //if video call video sevice
                 if(MYDATA!!.type == UrlType.Video){
                     WallpaperManager.getInstance(it.context).clear();
@@ -357,6 +361,14 @@ class Image_Activity(): AppCompatActivity(){
                     val video_path = imageloader!!.diskCache!![MemoryCache.Key(MYDATA!!.Image_url).key]!!.data.toString();
                     this@Image_Activity.getSharedPreferences("LiveWallpaper",Context.MODE_PRIVATE).edit().putString("Video_Path",video_path).apply();
                     liveintent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, ComponentName(this@Image_Activity,livewallpaper::class.java));
+                    startActivity(liveintent);
+                    return@setOnClickListener;
+                }else if(MYDATA!!.type == UrlType.Gif){
+                    WallpaperManager.getInstance(it.context).clear();
+                    val liveintent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
+                    val video_path = imageloader!!.diskCache!![MemoryCache.Key(MYDATA!!.Image_url).key]!!.data.toString();
+                    this@Image_Activity.getSharedPreferences("LiveWallpaper",Context.MODE_PRIVATE).edit().putString("Video_Path",video_path).apply();
+                    liveintent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, ComponentName(this@Image_Activity,gifwallpaper::class.java));
                     startActivity(liveintent);
                     return@setOnClickListener;
                 }
@@ -555,8 +567,8 @@ class Image_Activity(): AppCompatActivity(){
             imageloader = ImageLoader.Builder(this)
                 .diskCache {
                     DiskCache.Builder()
-                        //.directory(this.cacheDir.resolve("imagesaved"))
-                        .directory(this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.path.toPath())
+                        .directory(this.cacheDir.resolve("imagesaved"))
+                        //.directory(this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.path.toPath())
                         .build()
                 }
                 .memoryCachePolicy(CachePolicy.DISABLED)
@@ -564,7 +576,15 @@ class Image_Activity(): AppCompatActivity(){
                 .crossfade(true)
                 .allowHardware(false)
                 .components {
-                    add(VideoFrameDecoder.Factory())
+                    if(MYDATA!!.type == UrlType.Video){
+                        add(VideoFrameDecoder.Factory())
+                    }else{
+                        if (android.os.Build.VERSION.SDK_INT >= 28) {
+                            add(ImageDecoderDecoder.Factory())
+                        } else {
+                            add(GifDecoder.Factory())
+                        }
+                    }
                 }
                 .okHttpClient {
                     OkHttpClient().newBuilder()
@@ -605,15 +625,14 @@ class Image_Activity(): AppCompatActivity(){
 
                         override fun onSuccess(result: Drawable) {
                             super.onSuccess(result);
-                            if(myData!!.type == UrlType.Image) {
+                            val videoPath = imageloader!!.diskCache!![MemoryCache.Key(MYDATA!!.Image_url).key]!!.data.toString();
+                            if(myData!!.type == UrlType.Image || myData!!.type == UrlType.Gif) {
                                 mybitmap = result.toBitmap();
-                                Full_image!!.setImageBitmap(mybitmap);
+                                Full_image!!.setImageDrawable(result);
                                 SetBottomSheetColorsLambda(mybitmap!!);
                                 myData!!.imageRatio =
                                     Image_Ratio(mybitmap!!.width, mybitmap!!.height);
-                            }
-                            else{
-                                val SourceUrl = Uri.parse(imageloader!!.diskCache!![MemoryCache.Key(MYDATA!!.Image_url).key]!!.data.toString());
+                            }else{
                                 val player = MediaPlayer();
                                 Full_video!!.setContentSize(MYDATA!!.imageRatio.Width.toFloat(),MYDATA!!.imageRatio.Height.toFloat());
                                 Full_video!!.addCallback(object  : ZoomSurfaceView.Callback{
@@ -627,7 +646,7 @@ class Image_Activity(): AppCompatActivity(){
                                 });
                                 player.apply {
                                     isLooping = true;
-                                    setDataSource(this@Image_Activity,SourceUrl);
+                                    setDataSource(videoPath);
                                     setOnPreparedListener {
                                         Full_video!!.visibility = View.VISIBLE;
                                         Full_image!!.visibility = View.INVISIBLE;
@@ -725,12 +744,9 @@ class Image_Activity(): AppCompatActivity(){
 
 
         saveWallpaperButton?.setOnClickListener {
-            if(loaded) {
-                saveImage(applicationContext,mybitmap!!, myData!!.Image_name);
-                Toast.makeText(this,"Image has been saved to your photos directory",Toast.LENGTH_LONG).show();
-            } else{
-                Toast.makeText(this,"Please wait for the image to load",Toast.LENGTH_LONG).show();
-            }
+            saveImage(applicationContext,mybitmap!!, myData!!.Image_name);
+            Toast.makeText(this,"Image has been saved to your photos directory",Toast.LENGTH_LONG).show();
+
         };
 
         Log.d("Image_Activity","Info url ${myData?.Image_url} name ${myData?.Image_name} thumbnail ${myData?.Image_thumbnail}");
