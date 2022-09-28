@@ -19,6 +19,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import com.alaory.wallmewallpaper.api.Reddit_Api
 import com.alaory.wallmewallpaper.databinding.ActivityMainBinding
+import com.alaory.wallmewallpaper.postPage.Reddit_posts
+import com.alaory.wallmewallpaper.postPage.favorite_list
+import com.alaory.wallmewallpaper.postPage.wallhaven_posts
 import com.alaory.wallmewallpaper.settings.Reddit_settings
 import com.alaory.wallmewallpaper.settings.wallhaven_settings
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -317,21 +320,20 @@ class MainActivity : AppCompatActivity(){
 
 
     fun setFABcolor(icon : menu){
+        reddit_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));
+        wallhaven_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));
+        favorite_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));
+        favorite_floatingButton?.setImageResource(R.drawable.ic_favorite);
         when (icon){
             menu.reddit ->{
                 reddit_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Selected,theme));
-                wallhaven_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));
-                favorite_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));
             }
             menu.wallhaven ->{
-                reddit_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));
                 wallhaven_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Selected,theme));
-                favorite_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));
             }
             menu.favorite ->{
-                reddit_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));
-                wallhaven_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));
                 favorite_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Selected,theme));
+                favorite_floatingButton?.setImageResource(R.drawable.ic_heartfull);
             }
         }
     }

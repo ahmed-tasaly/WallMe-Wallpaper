@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -22,7 +21,7 @@ import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import com.alaory.wallmewallpaper.R
 import com.alaory.wallmewallpaper.api.Reddit_Api
-import com.alaory.wallmewallpaper.Reddit_posts
+import com.alaory.wallmewallpaper.postPage.Reddit_posts
 import com.alaory.wallmewallpaper.adabter.list_item_adabter
 
 
@@ -30,21 +29,28 @@ class Reddit_settings : Fragment() {
 
 
     companion object{
-        var subreddits_list_names : List<String> = listOf("amoledbackgrounds","wallpaper");
-        var subredditsNames = "amoledbackgrounds+wallpaper";
+        var subreddits_list_names : MutableList<String> = listOf("amoledbackgrounds","wallpaper").toMutableList();
         var CheckedChipListMode : String = "Top";
         var TimePeriod = "";
         var TimePeridLastInt = 4;
         var image_preview_qualiy_int = 2;
 
         fun parse_subreddits(SUBREDDITS : String){
-            subredditsNames = SUBREDDITS.filter { !it.isWhitespace() };
+            val subredditsNames = SUBREDDITS.filter { !it.isWhitespace() };
             Log.i("subreddits", subredditsNames.toString());
             subredditsNames.replace("\\s".toRegex(), "");
-            subreddits_list_names = subredditsNames.split("+");
+            subreddits_list_names = subredditsNames.split("+").toMutableList();
         }
 
         private fun savepref(context: Context){
+
+            var subredditsNames = "";
+            for(sub in subreddits_list_names){
+                subredditsNames += sub;
+                if(subreddits_list_names.last() != sub)
+                    subredditsNames += '+';
+            }
+
             val redditSettings = context.getSharedPreferences("redditsettings",Context.MODE_PRIVATE);
             redditSettings.edit().putString("subreddits", subredditsNames).apply();
             redditSettings.edit().putInt("image_preview", image_preview_qualiy_int).apply();
@@ -55,12 +61,13 @@ class Reddit_settings : Fragment() {
 
         fun loadprefs(context: Context){
             val sharedprefs = context.getSharedPreferences("redditsettings",Context.MODE_PRIVATE);
-            val subtemp : String? = sharedprefs.getString("subreddits", "iphonexwallpapers+iphonewallpapers");
+            val subtemp : String? = sharedprefs.getString("subreddits", "iphonexwallpapers+phonewallpapers");
             val templistmode = sharedprefs.getString("listmode","Top");
             val temptimeperiod = sharedprefs.getString("timePeriodString","&t=all");
 
             //set local settings
-            subredditsNames = subtemp!!;
+            if(subtemp!!.isNotEmpty())
+                parse_subreddits(subtemp!!);
             CheckedChipListMode = templistmode!!;
             TimePeriod = temptimeperiod!!;
             image_preview_qualiy_int = sharedprefs.getInt("image_preview",2);
@@ -70,8 +77,6 @@ class Reddit_settings : Fragment() {
             Reddit_Api.listMode = CheckedChipListMode;
             Reddit_Api.previewQulaity = image_preview_qualiy_int;
             Reddit_Api.timeperiod = timePreValue();
-            //set subreddits
-            parse_subreddits(subredditsNames);
         }
 
         //return value of timePeriod in a string like year,week etc when the option top is selected
@@ -88,6 +93,7 @@ class Reddit_settings : Fragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        loadprefs(requireContext());
         MainActivity.hidenav();
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_reddit_settings, container, false);
@@ -128,8 +134,20 @@ class Reddit_settings : Fragment() {
         val chipsearch : Chip = view.findViewById(R.id.reddit_subreddit_search);
 
         //subreddit input box and the save button
-        val inputtext = view.findViewById(R.id.inputText) as TextInputEditText;
-        inputtext.setText(subredditsNames);
+
+        val addmore  = object : list_item_adabter.Onclick{
+            override fun onclick(name: String) {}
+
+            override fun addmore() {
+               Toast.makeText(requireContext(),"toolazytoaddthefeature",Toast.LENGTH_SHORT).show();
+            }
+        }
+        val subredditlist_view = view.findViewById(R.id.recyclerview_subreddit) as RecyclerView;
+        val adabter  = list_item_adabter(subreddits_list_names,addmore,true);
+        subredditlist_view.adapter = adabter;
+        subredditlist_view.layoutManager = GridLayoutManager(requireContext(),1,GridLayoutManager.VERTICAL,false);
+
+
 
 
         chipsearch.setOnClickListener {
@@ -141,8 +159,6 @@ class Reddit_settings : Fragment() {
 
             val adapter = list_item_adabter(subredditList,object : list_item_adabter.Onclick{
                 override fun onclick(name: String) {
-                    subredditsNames = inputtext.text!!.toString();
-                    parse_subreddits(subredditsNames);
                     var found = false;
                     for (i in subreddits_list_names){
                         if(i.lowercase().trim() == name.lowercase().trim())
@@ -151,15 +167,11 @@ class Reddit_settings : Fragment() {
                     if(found)
                         return;
                     Log.i("subreddits_list_names",name);
-                    if(subredditsNames.isNotEmpty())
-                        subredditsNames += "+${name.lowercase()}"
-                    else
-                        subredditsNames += name.lowercase();
-
                     subreddits_list_names += name;
-                    inputtext.setText(subredditsNames);
                     Toast.makeText(requireContext(),"subreddit has been added",Toast.LENGTH_SHORT).show();
                 }
+
+                override fun addmore() {}
             });
 
 
@@ -230,9 +242,6 @@ class Reddit_settings : Fragment() {
 
         //when user clicks save
         view.findViewById<Button>(R.id.save_button_reddit_settings).setOnClickListener {
-
-            parse_subreddits(inputtext.text!!.toString().lowercase());
-            subredditsNames = inputtext.text!!.toString().lowercase();
 
             Reddit_posts.userHitSave = true;//save button have been clicked
 

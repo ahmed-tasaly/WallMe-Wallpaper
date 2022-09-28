@@ -119,9 +119,9 @@ class wallhaven_api {
 
 
         //request tag page
-        fun TagPosts(tag: Tag, sorting: String = "&sorting=views", ordering:String = "&order=desc", callback: (Status : Int) -> Unit = {}){
-            var url = "https://wallhaven.cc/api/v1/search?page=${tag.Page_Tag}${tag.Name_Tag}${sorting}${ordering}";
-            url = url.replace(" ","%20")
+        fun TagPosts(tag: Tag, sorting: String = "&sorting=favorites", ordering:String = "&order=desc", callback: (Status : Int) -> Unit = {}){
+            val url = "https://wallhaven.cc/api/v1/search?page=${tag.Page_Tag}${tag.Name_Tag}${sorting}${ordering}";
+            Log.d("tagpage",url);
             val tagPosts_request = Request.Builder()
                 .url(url)
                 .build();

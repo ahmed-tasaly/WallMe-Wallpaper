@@ -10,7 +10,10 @@ class wallmewallpaper : Application() {
     val DataBase = database(this);
     val blockdatabase = database(this,database.ImageBlock_Table,"${database.ImageBlock_Table}.dp");
     override fun onCreate() {
-        super.onCreate()
+        super.onCreate();
+        DataBase.onCreate(DataBase.writableDatabase);
+        blockdatabase.onCreate(blockdatabase.writableDatabase);
+
         DataBase.update_image_info_list_from_database();
         blockdatabase.update_image_info_list_from_database();
 

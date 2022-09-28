@@ -13,8 +13,8 @@ android {
         applicationId "com.alaory.wallmewallpaper"
         minSdk 24
         targetSdk 32
-        versionCode 12
-        versionName "2.0"
+        versionCode 15
+        versionName "2.2"
 
         buildConfigField "String", "API_KEY_Base",localProperties['Base64_API_KEY']
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -39,10 +39,13 @@ android {
 }
 
 dependencies {
+    implementation("androidx.palette:palette:1.0.0")
     implementation("androidx.work:work-runtime-ktx:2.7.1")
     implementation 'com.github.MikeOrtiz:TouchImageView:3.2.1'
-    implementation("io.coil-kt:coil-compose:2.1.0")
-    implementation "io.coil-kt:coil:2.1.0"
+    implementation("com.otaliastudios:zoomlayout:1.9.0")
+    implementation("io.coil-kt:coil-video:2.2.1")
+    implementation("io.coil-kt:coil-compose:2.2.0")
+    implementation "io.coil-kt:coil:2.2.0"
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.4.2'

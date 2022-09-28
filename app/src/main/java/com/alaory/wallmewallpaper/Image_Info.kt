@@ -20,10 +20,14 @@ class Image_Ratio(){
             Log.e("Image_Ratio","Error converting to int")
         }
     }
-
-
-
 }
+
+enum class UrlType {
+    Image,
+    Gif,
+    Video
+}
+
 data class Image_Info(
     var Image_url:String,
     var Image_thumbnail: String,
@@ -31,6 +35,7 @@ data class Image_Info(
     var Image_auther:String = "Unknown",
     var Image_title: String = "Unknown",
     var post_url: String = "",
-    var imageRatio: Image_Ratio? = null
+    var imageRatio: Image_Ratio = Image_Ratio(1,1),
+    var type : UrlType = UrlType.Image,
 ) {}
 

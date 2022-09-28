@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <uses-permission android:name="android.permission.SET_WALLPAPER_HINTS" />
+    <uses-feature android:name="android.software.live_wallpaper" android:required="true"/>
 
     <application
         android:name=".wallmewallpaper"
@@ -18,7 +19,7 @@
         android:theme="@style/Theme.Wallpaper"
         tools:ignore="DataExtractionRules">
         <activity
-            android:name=".TagActivity"
+            android:name=".postPage.TagActivity"
             android:exported="false"
             android:launchMode="singleTop"
             />
@@ -36,6 +37,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
+
+
 
 </manifest>

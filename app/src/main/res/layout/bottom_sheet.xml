@@ -10,6 +10,7 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottom_sheet_body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
@@ -40,21 +41,31 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/button_box_bottomsheet"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/url_post"
-                    app:layout_constraintRight_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/TagGroup"
                     android:paddingBottom="10dp"
+                    android:layout_marginHorizontal="20dp"
                     >
+                    <LinearLayout
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/set_bottomsheet_floatingbutton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     app:backgroundTint="@color/Buttons"
                     android:src="@drawable/ic_image"
                     app:borderWidth="0dp"
+                    app:elevation="0dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -63,37 +74,34 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
-                    android:layout_marginTop="8dp"
                     app:backgroundTint="@color/Buttons"
                     android:src="@drawable/ic_download"
                     app:borderWidth="0dp"
-                    app:layout_constraintStart_toEndOf="@+id/set_bottomsheet_floatingbutton"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:elevation="0dp"
+                    />
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/favorite_bottomsheet_floatingbutton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toEndOf="@+id/save_imageButton"
-                    app:layout_constraintTop_toTopOf="parent"
                     android:layout_marginStart="15dp"
-                    android:layout_marginTop="8dp"
                     app:backgroundTint="@color/Buttons"
                     android:src="@drawable/ic_favorite"
                     app:borderWidth="0dp"
+                    app:elevation="0dp"
                     />
                     <com.google.android.material.floatingactionbutton.FloatingActionButton
                         android:id="@+id/block_bottomsheet_floatingbutton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:layout_constraintStart_toEndOf="@+id/favorite_bottomsheet_floatingbutton"
-                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_marginStart="15dp"
-                        android:layout_marginTop="8dp"
                         app:backgroundTint="@color/Buttons"
                         android:src="@drawable/ic_block"
                         app:borderWidth="0dp"
+                        app:elevation="0dp"
+                        app:tint="@android:color/holo_red_dark"
                         />
+                    </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
@@ -101,11 +109,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-
+                    android:layout_marginStart="20dp"
                     android:text="Auther name"
                     android:paddingBottom="20dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/title_post" />
+                    app:layout_constraintTop_toBottomOf="@+id/title_post"
+                    app:layout_constraintBottom_toTopOf="@+id/button_box_bottomsheet"
+
+                    />
 
                 <TextView
                     android:id="@+id/url_post"
@@ -113,11 +124,14 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:paddingBottom="20dp"
-
+                    android:layout_marginEnd="20dp"
                     android:autoLink="web"
-                    android:text="url"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/auther_post" />
+                    android:text="@string/imageLinkUrl"
+                    android:textColor="@color/teal_200"
+                    app:layout_constraintTop_toBottomOf="@+id/title_post"
+                    app:layout_constraintBottom_toTopOf="@+id/button_box_bottomsheet"
+                    app:layout_constraintRight_toRightOf="parent"
+                    />
 
                 <TextView
 
@@ -126,6 +140,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:paddingBottom="20dp"
+                    android:layout_marginStart="20dp"
                     android:text="Title"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -133,13 +148,14 @@
 
                         <com.google.android.material.chip.ChipGroup
                             android:id="@+id/TagGroup"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="20dp"
-
+                            android:layout_marginHorizontal="40dp"
+                            android:layout_marginBottom="20dp"
+                            android:paddingHorizontal="15dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/button_box_bottomsheet"
+                            app:layout_constraintRight_toRightOf="parent"
 
                             android:visibility="invisible" />
 

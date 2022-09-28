@@ -1,0 +1,6 @@
+release 2.2:
+    -bottom sheet now adapts to the image color
+    -made image tags smaller
+    -now you can long press to add the image to the favorite list or remove it
+    -changed the Reddit filter settings subreddit list UI :)
+    -minor bug fixes

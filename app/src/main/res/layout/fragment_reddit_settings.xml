@@ -6,8 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/Background"
-    >
+    android:background="@color/Background">
 
     <ScrollView
         android:layout_marginTop="40dp"
@@ -38,7 +37,7 @@
                     android:text="@string/subreddits_input"
                     android:textColor="@color/white"
                     android:textSize="20sp"
-                    app:layout_constraintBottom_toTopOf="@+id/textInput_subreddit"
+                    app:layout_constraintBottom_toTopOf="@+id/recyclerview_subreddit"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -52,34 +51,24 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="Find subreddits"
+                    android:text="Add subreddits"
                     android:textSize="11sp"
                     app:chipBackgroundColor="@color/Selected"
                     android:textColor="@color/Background"
                     app:chipIcon="@drawable/search_ic"
                     />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textInput_subreddit"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerview_subreddit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
+                    app:layout_constraintHeight_max="200dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent">
+                    app:layout_constraintRight_toRightOf="parent"/>
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/inputText"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/textinput"
-                        android:hint="subreddits"
-                        android:text="@string/defualt_subreddi"
-                        android:textColor="@color/white"
-                        android:textColorHint="@color/white"
-                        />
 
-                </com.google.android.material.textfield.TextInputLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

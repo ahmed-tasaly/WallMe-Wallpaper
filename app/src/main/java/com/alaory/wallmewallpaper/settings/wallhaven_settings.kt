@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,6 +16,7 @@ import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import com.alaory.wallmewallpaper.*
 import com.alaory.wallmewallpaper.api.wallhaven_api
+import com.alaory.wallmewallpaper.postPage.wallhaven_posts
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 

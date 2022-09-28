@@ -1,4 +1,4 @@
-package com.alaory.wallmewallpaper
+package com.alaory.wallmewallpaper.postPage
 
 import android.content.Intent
 import android.graphics.drawable.Drawable
@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.alaory.wallmewallpaper.*
 import com.alaory.wallmewallpaper.adabter.Image_list_adapter
 import com.alaory.wallmewallpaper.api.Reddit_Api
 import com.alaory.wallmewallpaper.api.wallhaven_api
@@ -30,10 +31,11 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
     override fun onResume() {
         super.onResume()
         MainActivity.HideSystemBar(window);
-        if(lastPastImageInfo != null && database.lastaddedImageInfo != null){
-            if(lastPastImageInfo!!.Image_name == database.lastaddedImageInfo!!.Image_name){
+        if(lastPastImageInfo != null && database.lastblockedaddedImageInfo != null){
+            if(lastPastImageInfo!!.Image_name == database.lastblockedaddedImageInfo!!.Image_name){
                 TagAdab!!.notifyDataSetChanged();
                 Reddit_Api.reddit_global_posts.removeAt(Reddit_posts.lastPastImageInfo_pos);
+                lastPastImageInfo = null;
             }
         }
     }
@@ -76,7 +78,7 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
 
     private fun setScrollListenerForRv(){
         scrolllistener = BottonLoading.ViewLodMore(MlaoutManager as StaggeredGridLayoutManager);
-        scrolllistener!!.setOnLoadMoreListener(object : BottonLoading.OnLoadMoreListener{
+        scrolllistener!!.setOnLoadMoreListener(object : BottonLoading.OnLoadMoreListener {
             override fun onLoadMore() {
                 TagAdab!!.addLoadingView();
                 LoadMore();
@@ -106,14 +108,15 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
     }
 
 
-    override fun onImageClick(Pos: Int, thumbnail: Drawable) {
+    override fun onImageClick(Pos: Int, thumbnail: Drawable,loaded : Boolean) {
         try{
             lastPastImageInfo = tag_post_list!!.Tag_Post_list[Pos];
             lastPastImageInfo_pos = Pos;
-            val intent = Intent(this,Image_Activity::class.java);
+            val intent = Intent(this, Image_Activity::class.java);
             Image_Activity.MYDATA = tag_post_list!!.Tag_Post_list[Pos];
             Image_Activity.THUMBNAIL = thumbnail;
             Image_Activity.postmode = Image_Activity.mode.wallhaven;
+            Image_Activity.loadedPreview = loaded;
             startActivity(intent);
         }catch (e:Exception){
             Log.e("wallhaven_posts",e.toString())

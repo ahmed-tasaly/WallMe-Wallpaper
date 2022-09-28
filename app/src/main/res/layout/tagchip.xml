@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:clickable="true"
     android:textColor="@color/black"
-    android:textSize="12sp"
+    android:textSize="10sp"
     app:chipBackgroundColor="@color/multicolor_state"
     android:layout_height="wrap_content"
     android:focusable="true">

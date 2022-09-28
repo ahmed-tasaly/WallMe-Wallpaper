@@ -1,0 +1,6 @@
+release 2.1:
+    -added a block image button (you can now block images that you don't like)
+    -improved memory usage
+    -made the bottom sheet smaller
+    -minor bug fixes 
+    -made the app safer to use
