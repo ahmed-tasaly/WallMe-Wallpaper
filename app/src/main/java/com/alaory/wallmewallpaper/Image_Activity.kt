@@ -7,12 +7,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
+import android.graphics.Movie
 import android.graphics.Path
 import android.graphics.RectF
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.TransitionDrawable
+import android.graphics.drawable.*
 import android.media.MediaPlayer
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -367,7 +368,7 @@ class Image_Activity(): AppCompatActivity(){
                     WallpaperManager.getInstance(it.context).clear();
                     val liveintent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
                     val video_path = imageloader!!.diskCache!![MemoryCache.Key(MYDATA!!.Image_url).key]!!.data.toString();
-                    this@Image_Activity.getSharedPreferences("LiveWallpaper",Context.MODE_PRIVATE).edit().putString("Video_Path",video_path).apply();
+                    this@Image_Activity.getSharedPreferences("LiveWallpaper",Context.MODE_PRIVATE).edit().putString("Gif_Path",video_path).apply();
                     liveintent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, ComponentName(this@Image_Activity,gifwallpaper::class.java));
                     startActivity(liveintent);
                     return@setOnClickListener;
@@ -626,12 +627,25 @@ class Image_Activity(): AppCompatActivity(){
                         override fun onSuccess(result: Drawable) {
                             super.onSuccess(result);
                             val videoPath = imageloader!!.diskCache!![MemoryCache.Key(MYDATA!!.Image_url).key]!!.data.toString();
-                            if(myData!!.type == UrlType.Image || myData!!.type == UrlType.Gif) {
+                            if(myData!!.type == UrlType.Image  ) {
                                 mybitmap = result.toBitmap();
                                 Full_image!!.setImageDrawable(result);
                                 SetBottomSheetColorsLambda(mybitmap!!);
                                 myData!!.imageRatio =
                                     Image_Ratio(mybitmap!!.width, mybitmap!!.height);
+                            }else if(myData!!.type == UrlType.Gif) {
+                                Full_video!!.visibility = View.VISIBLE;
+                                Full_image!!.visibility = View.INVISIBLE;
+                                val holder = Full_video!!.holder;
+                                //val movie = Movie.decodeStream(resources.openRa)
+                                val canvas  = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                                { holder!!.lockHardwareCanvas(); } else { holder!!.lockCanvas(); }
+                                canvas.let {
+                                    it.save()
+                                    it.scale(2f,2f);
+
+                                }
+
                             }else{
                                 val player = MediaPlayer();
                                 Full_video!!.setContentSize(MYDATA!!.imageRatio.Width.toFloat(),MYDATA!!.imageRatio.Height.toFloat());
