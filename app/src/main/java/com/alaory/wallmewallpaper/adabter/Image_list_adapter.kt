@@ -17,6 +17,8 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import coil.ImageLoader
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
 import coil.decode.VideoFrameDecoder
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
@@ -68,6 +70,11 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             .crossfade(true)
             .components {
                 add(VideoFrameDecoder.Factory())
+                if (android.os.Build.VERSION.SDK_INT >= 28) {
+                    add(ImageDecoderDecoder.Factory())
+                } else {
+                    add(GifDecoder.Factory())
+                }
             }
             .memoryCache {
                 MemoryCache.Builder(recyclerView.context!!)
