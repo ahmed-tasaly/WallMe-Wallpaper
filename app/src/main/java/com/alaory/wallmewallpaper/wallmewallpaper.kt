@@ -1,6 +1,7 @@
 package com.alaory.wallmewallpaper
 
 import android.app.Application
+import android.util.Log
 import com.alaory.wallmewallpaper.settings.Reddit_settings
 import com.alaory.wallmewallpaper.settings.wallhaven_settings
 

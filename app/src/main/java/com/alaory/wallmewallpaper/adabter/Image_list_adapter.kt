@@ -8,10 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.Toast
+import android.widget.*
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -153,7 +150,8 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
             var width = 1;
             var height = 1;
-            listPosts.get(position).imageRatio?.let {
+            val currentpost = listPosts.get(position);
+            currentpost.imageRatio?.let {
                 val imageRatio = it;
                 val ratio = imageRatio.Width.toFloat() / imageRatio.Height.toFloat()
                 width = (50 * ratio).toInt() ;
@@ -163,6 +161,10 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             MainActivity.setImageView_asLoading(holder.cricle_prograssBar);
             holder.pos = position;
             holder.imageRatio = Image_Ratio(width,height);
+            if(currentpost.type != UrlType.Image){
+                holder.texttype.visibility = View.VISIBLE;
+                holder.texttype.setText("live");
+            }
 
             adab_ImageLoader?.let {
                 it.enqueue(getImagerequest(holder));
@@ -171,7 +173,9 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
             holder.root_view.setOnClickListener {
                 holder.buttonframe.visibility = View.GONE;
+                adab_ImageLoader!!.memoryCache!!.clear();
                 imgclick.onImageClick(position,holder.image_main.drawable,holder.loaded);
+
             }
 
             holder.root_view.setOnLongClickListener {
@@ -183,7 +187,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                 }else{
                     var found = false;
                     for(i in database.imageinfo_list){
-                        if(i.Image_name == listPosts.get(position).Image_name){
+                        if(i.Image_name == currentpost.Image_name){
                             found = true;
                         }
                     }
@@ -277,6 +281,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
         var favoriteButton = itemView.findViewById(R.id.favorite_scrollable_floatingbutton) as FloatingActionButton;
         var blockButton = itemView.findViewById(R.id.block_scrollable_floatingbutton) as FloatingActionButton;
         var buttonframe = itemView.findViewById(R.id.frame_scrollable_floatingbutton) as FrameLayout
+        var texttype = itemView.findViewById(R.id.text_type) as TextView;
     }
 
     class LoadingViewHolder(view: View): RecyclerView.ViewHolder(view){

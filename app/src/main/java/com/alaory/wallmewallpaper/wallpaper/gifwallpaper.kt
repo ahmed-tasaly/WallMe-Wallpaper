@@ -1,45 +1,47 @@
 package com.alaory.wallmewallpaper.wallpaper
 
-import android.graphics.Canvas
-import android.graphics.Movie
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.AnimatedImageDrawable
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.service.wallpaper.WallpaperService
-import android.util.Log
 import android.view.SurfaceHolder
-import java.io.File
+import androidx.compose.ui.geometry.Rect
+import kotlin.math.max
 
 class gifwallpaper : WallpaperService() {
     override fun onCreateEngine(): Engine {
-        val mygifengine = gifengine();
-        return mygifengine
+        return gifengine();
     }
 
     inner class gifengine : Engine(){
-        val GifPath = this@gifwallpaper.getSharedPreferences("LiveWallpaper",0).getString("Gif_Path","")!!.toString();
+        val GifPath = this@gifwallpaper.getSharedPreferences("LiveWallpaper",0).getString("Video_Path","")!!.toString();
         val gifdrawable: Drawable? = AnimatedImageDrawable.createFromPath(GifPath);
         val gifanimated = gifdrawable as? Animatable;
         var surfholder : SurfaceHolder? =null;
         val callbackHandler  = Handler(Looper.myLooper()!!);
         var scaleX = 0f;
         var scaleY = 0f;
-        var isVisiable :Boolean = true;
+        var largestscale = 0f;
+
+        //todo add rect to gif drawable
+
 
         val drawloopfun = Runnable {
             Draw();
-            Log.d("DrawCall","out: draw has been called");
         }
 
         fun Draw(){
             val canvas  = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             { surfholder?.lockHardwareCanvas(); } else { surfholder?.lockCanvas(); }
+            val rec = surfholder!!.surfaceFrame;
+            val drawrec = Rect(0f,0f,gifdrawable!!.intrinsicWidth*largestscale,gifdrawable!!.intrinsicHeight*largestscale);
+            val midpoint = (drawrec.right - rec.right) / 4f;
             canvas?.let {
-                it.scale(scaleY,scaleY);
+                it.scale(largestscale,largestscale);
+                it.translate(-midpoint,0f);
                 gifdrawable!!.draw(it);
                 surfholder!!.unlockCanvasAndPost(it);
             }
@@ -56,6 +58,7 @@ class gifwallpaper : WallpaperService() {
             callbackHandler.post(drawloopfun);
         }
 
+
         override fun onSurfaceChanged(
             holder: SurfaceHolder?,
             format: Int,
@@ -65,44 +68,31 @@ class gifwallpaper : WallpaperService() {
             super.onSurfaceChanged(holder, format, width, height);
             scaleX =  width.toFloat() / gifdrawable!!.intrinsicWidth.toFloat();
             scaleY =  height.toFloat() /gifdrawable.intrinsicHeight.toFloat();
+            largestscale = max(scaleX,scaleY);
         }
 
-        override fun onOffsetsChanged(
-            xOffset: Float,
-            yOffset: Float,
-            xOffsetStep: Float,
-            yOffsetStep: Float,
-            xPixelOffset: Int,
-            yPixelOffset: Int
-        ) {
-            super.onOffsetsChanged(
-                xOffset,
-                yOffset,
-                xOffsetStep,
-                yOffsetStep,
-                xPixelOffset,
-                yPixelOffset
-            )
-            Log.d("DrawCall","new offset $xOffset")
-        }
+
 
         override fun onVisibilityChanged(visible: Boolean) {
             super.onVisibilityChanged(visible)
-            isVisiable = visible;
+            callbackHandler.removeCallbacks(drawloopfun);
+            if(visible){
+                callbackHandler.post(drawloopfun);
+            }
         }
 
 
         override fun onSurfaceDestroyed(holder: SurfaceHolder?) {
-            super.onSurfaceDestroyed(holder);
             callbackHandler.removeCallbacks(drawloopfun);
             gifanimated?.stop();
+            super.onSurfaceDestroyed(holder);
         }
 
 
         override fun onDestroy() {
-            super.onDestroy();
             callbackHandler.removeCallbacks(drawloopfun);
             gifanimated?.stop();
+            super.onDestroy();
         }
     }
 }

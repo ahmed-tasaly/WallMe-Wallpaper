@@ -11,15 +11,15 @@ class BottonLoading {
         var loctionbottom = 0;
         val TAG = "BottonLoading_log";
         fun updatebottom_navtigation(dy: Int){
-            MainActivity.navbox!!.animate().apply {
+            MainActivity.navbox?.animate().apply {
                 loctionbottom += if(dy < 0) dy * 2 else dy;
-                duration = 0;
+                this?.duration = 0;
                 if(loctionbottom > 1000){
                     loctionbottom = 1000;
                 }else if(loctionbottom < 0){
                     loctionbottom = 0;
                 }
-                this.translationY(loctionbottom.toFloat());
+                this?.translationY(loctionbottom.toFloat());
             }
         }
     }

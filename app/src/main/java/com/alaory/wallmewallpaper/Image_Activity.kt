@@ -354,25 +354,33 @@ class Image_Activity(): AppCompatActivity(){
 
 
                 //if video call video sevice
-                if(MYDATA!!.type == UrlType.Video){
-                    WallpaperManager.getInstance(it.context).clear();
-                    val liveintent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
-                    val video_path = imageloader!!.diskCache!![MemoryCache.Key(MYDATA!!.Image_url).key]!!.data.toString();
-                    this@Image_Activity.getSharedPreferences("LiveWallpaper",Context.MODE_PRIVATE).edit().putString("Video_Path",video_path).apply();
-                    liveintent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, ComponentName(this@Image_Activity,livewallpaper::class.java));
-                    startActivity(liveintent);
-                    return@setOnClickListener;
-                }else if(MYDATA!!.type == UrlType.Gif){
-                    WallpaperManager.getInstance(it.context).clear();
-                    val liveintent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
-                    val video_path = imageloader!!.diskCache!![MemoryCache.Key(MYDATA!!.Image_url).key]!!.data.toString();
-                    this@Image_Activity.getSharedPreferences("LiveWallpaper",Context.MODE_PRIVATE).edit().putString("Gif_Path",video_path).apply();
-                    liveintent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, ComponentName(this@Image_Activity,gifwallpaper::class.java));
-                    startActivity(liveintent);
+                if(MYDATA!!.type != UrlType.Image){
+
+                    val wpm = WallpaperManager.getInstance(it.context);
+                    val wpminfo = wpm.wallpaperInfo;
+                    val videocomponent =ComponentName(applicationContext,livewallpaper::class.java);
+                    val gifcomponent = ComponentName(applicationContext,gifwallpaper::class.java);
+
+                    if(wpminfo !=null && (wpminfo.component == videocomponent  || wpminfo.component == gifcomponent))
+                        wpm.clear();//if there is a live wallpaper clear it
+
+                    try {
+                        val liveintent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        if(MYDATA!!.type == UrlType.Video)
+                            liveintent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, videocomponent);
+                        else
+                            liveintent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, gifcomponent);
+
+
+                        startActivity(liveintent);
+                    }catch (e :Exception){
+
+                    }
                     return@setOnClickListener;
                 }
 
                 // normal wallpaper
+                //hide bottom sheet and replace it with set wallpaper button
                 this@apply.state = BottomSheetBehavior.STATE_COLLAPSED;
                 bottomsheetfragment.animate().apply {
                     this?.duration = 100;
@@ -625,6 +633,7 @@ class Image_Activity(): AppCompatActivity(){
                         override fun onSuccess(result: Drawable) {
                             super.onSuccess(result);
                             val videoPath = imageloader!!.diskCache!![MemoryCache.Key(MYDATA!!.Image_url).key]!!.data.toString();
+                            getSharedPreferences("LiveWallpaper",Context.MODE_PRIVATE).edit().putString("Video_Path",videoPath).apply();
                             if(myData!!.type == UrlType.Image  || myData!!.type == UrlType.Gif) {
                                 mybitmap = result.toBitmap();
                                 Full_image!!.setImageDrawable(result);
@@ -644,6 +653,7 @@ class Image_Activity(): AppCompatActivity(){
                                         player.release();
                                     }
                                 });
+
                                 player.apply {
                                     isLooping = true;
                                     setDataSource(videoPath);
