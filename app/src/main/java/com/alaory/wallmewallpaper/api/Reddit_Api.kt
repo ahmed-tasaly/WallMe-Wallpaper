@@ -333,6 +333,9 @@ class Reddit_Api(subredditname: String) {
                                     if(type == UrlType.Video){
                                         source_url = dataJson.getJSONObject("media").getJSONObject("reddit_video").getString("fallback_url");
                                     }
+                                    if(type == UrlType.Gif){
+                                        source_url = dataJson.getString("url");
+                                    }
                                     //parse json into data to use
                                     one_post = Image_Info(
                                         source_url,
