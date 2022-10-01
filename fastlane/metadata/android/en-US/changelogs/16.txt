@@ -1,0 +1,4 @@
+release 2.21:
+    -added support for video wallpapers
+    -added support for gif wallpaper (also blame gifs for making the release take a long time)
+    -minor bug fixes

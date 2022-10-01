@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.service.wallpaper.WallpaperService
+import android.util.Log
 import android.view.SurfaceHolder
 import androidx.compose.ui.geometry.Rect
 import kotlin.math.max
@@ -14,6 +15,10 @@ import kotlin.math.max
 class gifwallpaper : WallpaperService() {
     override fun onCreateEngine(): Engine {
         return gifengine();
+    }
+
+    private val mainthred by lazy(LazyThreadSafetyMode.NONE) {
+        Handler(Looper.getMainLooper());
     }
 
     inner class gifengine : Engine(){
@@ -54,6 +59,19 @@ class gifwallpaper : WallpaperService() {
         }
         override fun onSurfaceCreated(holder: SurfaceHolder?) {
             super.onSurfaceCreated(holder);
+            gifdrawable?.callback = object : Drawable.Callback{
+                override fun invalidateDrawable(Who: Drawable) {
+                    Log.d("DrawableLog","invalidateDrawable");
+                }
+
+                override fun scheduleDrawable(Who: Drawable, What: Runnable, When: Long) {
+                    Log.d("DrawableLog","scheduleDrawable");
+                }
+
+                override fun unscheduleDrawable(Who: Drawable, What: Runnable) {
+                    Log.d("DrawableLog","scheduleDrawable");
+                }
+            }
             gifanimated?.start();
             callbackHandler.post(drawloopfun);
         }
