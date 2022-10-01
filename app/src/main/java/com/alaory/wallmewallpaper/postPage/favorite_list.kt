@@ -19,7 +19,7 @@ import com.alaory.wallmewallpaper.*
 import com.alaory.wallmewallpaper.adabter.Image_list_adapter
 
 
-class favorite_list() : Fragment(), Image_list_adapter.OnImageClick {
+class favorite_list(val MenuChange : MainActivity.MenuChange?) : Fragment(), Image_list_adapter.OnImageClick {
 
     var favoriteList_adabter: Image_list_adapter? = null;
     var favoriteList_recycler: RecyclerView? = null;
@@ -31,7 +31,9 @@ class favorite_list() : Fragment(), Image_list_adapter.OnImageClick {
         super.onCreate(savedInstanceState)
         favoriteList_adabter = Image_list_adapter(database.imageinfo_list.toMutableList(),this);
         BottonLoading.loctionbottom = 0;
-        BottonLoading.updatebottom_navtigation(0);
+        MenuChange?.PlayAnimation_forNav {
+            it.translationY(0f);
+        }
     }
 
     override fun onResume() {
@@ -99,5 +101,11 @@ class favorite_list() : Fragment(), Image_list_adapter.OnImageClick {
         }catch (e : Exception){
             Log.e(TAG,e.toString());
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy();
+        Log.d("DestoryLog",this::class.java.simpleName);
+        favoriteList_recycler?.adapter = null;
     }
 }

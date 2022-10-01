@@ -77,7 +77,7 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
     }
 
     private fun setScrollListenerForRv(){
-        scrolllistener = BottonLoading.ViewLodMore(MlaoutManager as StaggeredGridLayoutManager);
+        scrolllistener = BottonLoading.ViewLodMore(MlaoutManager as StaggeredGridLayoutManager,null);
         scrolllistener!!.setOnLoadMoreListener(object : BottonLoading.OnLoadMoreListener {
             override fun onLoadMore() {
                 TagAdab!!.addLoadingView();
@@ -121,5 +121,10 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
         }catch (e:Exception){
             Log.e("wallhaven_posts",e.toString())
         }
+    }
+    override fun onDestroy() {
+        super.onDestroy();
+        Log.d("DestoryLog",this::class.java.simpleName);
+        Tag_recyclerView?.adapter = null;
     }
 }

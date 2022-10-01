@@ -22,7 +22,7 @@ import com.alaory.wallmewallpaper.adabter.Image_list_adapter
 import com.alaory.wallmewallpaper.api.wallhaven_api
 
 
-class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
+class wallhaven_posts(val MenuChange : MainActivity.MenuChange?) : Fragment() , Image_list_adapter.OnImageClick{
 
      var wallhaven_recycle : RecyclerView? = null;
      var wallhaven_adabter : Image_list_adapter? = null;
@@ -141,7 +141,7 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
 
     private fun SetRvScrollListener(){
-        bottomloading = BottonLoading.ViewLodMore(mLayoutManager as StaggeredGridLayoutManager);
+        bottomloading =   BottonLoading.ViewLodMore(mLayoutManager as StaggeredGridLayoutManager, MenuChange);
         bottomloading!!.setOnLoadMoreListener(object : BottonLoading.OnLoadMoreListener {
             override fun onLoadMore() {
                 wallhaven_recycle?.post {
@@ -206,6 +206,11 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy();
+        Log.d("DestoryLog",this::class.java.simpleName);
+        wallhaven_recycle?.adapter = null;
+    }
 
 
 }

@@ -14,8 +14,11 @@ import kotlin.math.max
 
 class gifwallpaper : WallpaperService() {
     override fun onCreateEngine(): Engine {
-        return gifengine();
+
+        return  gifengine();
     }
+
+
 
     private val mainthred by lazy(LazyThreadSafetyMode.NONE) {
         Handler(Looper.getMainLooper());
@@ -23,8 +26,8 @@ class gifwallpaper : WallpaperService() {
 
     inner class gifengine : Engine(){
         val GifPath = this@gifwallpaper.getSharedPreferences("LiveWallpaper",0).getString("Video_Path","")!!.toString();
-        val gifdrawable: Drawable? = AnimatedImageDrawable.createFromPath(GifPath);
-        val gifanimated = gifdrawable as? Animatable;
+        var gifdrawable: Drawable? = AnimatedImageDrawable.createFromPath(GifPath);
+        var gifanimated = gifdrawable as? Animatable;
         var surfholder : SurfaceHolder? =null;
         val callbackHandler  = Handler(Looper.myLooper()!!);
         var scaleX = 0f;
@@ -55,23 +58,11 @@ class gifwallpaper : WallpaperService() {
 
         override fun onCreate(surfaceHolder: SurfaceHolder?) {
             super.onCreate(surfaceHolder);
-            surfholder = surfaceHolder;
+
         }
         override fun onSurfaceCreated(holder: SurfaceHolder?) {
             super.onSurfaceCreated(holder);
-            gifdrawable?.callback = object : Drawable.Callback{
-                override fun invalidateDrawable(Who: Drawable) {
-                    Log.d("DrawableLog","invalidateDrawable");
-                }
-
-                override fun scheduleDrawable(Who: Drawable, What: Runnable, When: Long) {
-                    Log.d("DrawableLog","scheduleDrawable");
-                }
-
-                override fun unscheduleDrawable(Who: Drawable, What: Runnable) {
-                    Log.d("DrawableLog","scheduleDrawable");
-                }
-            }
+            surfholder = surfaceHolder;
             gifanimated?.start();
             callbackHandler.post(drawloopfun);
         }
@@ -84,8 +75,8 @@ class gifwallpaper : WallpaperService() {
             height: Int
         ) {
             super.onSurfaceChanged(holder, format, width, height);
-            scaleX =  width.toFloat() / gifdrawable!!.intrinsicWidth.toFloat();
-            scaleY =  height.toFloat() /gifdrawable.intrinsicHeight.toFloat();
+            scaleX =  width.toFloat() / gifdrawable?.intrinsicWidth!!.toFloat();
+            scaleY =  height.toFloat() /gifdrawable?.intrinsicHeight!!.toFloat();
             largestscale = max(scaleX,scaleY);
         }
 
@@ -103,6 +94,7 @@ class gifwallpaper : WallpaperService() {
         override fun onSurfaceDestroyed(holder: SurfaceHolder?) {
             callbackHandler.removeCallbacks(drawloopfun);
             gifanimated?.stop();
+            surfholder = null;
             super.onSurfaceDestroyed(holder);
         }
 
@@ -110,6 +102,8 @@ class gifwallpaper : WallpaperService() {
         override fun onDestroy() {
             callbackHandler.removeCallbacks(drawloopfun);
             gifanimated?.stop();
+            gifanimated = null;
+            gifdrawable = null;
             super.onDestroy();
         }
     }

@@ -25,7 +25,7 @@ import com.alaory.wallmewallpaper.postPage.Reddit_posts
 import com.alaory.wallmewallpaper.adabter.list_item_adabter
 
 
-class Reddit_settings : Fragment() {
+class Reddit_settings(val MenuChange : MainActivity.MenuChange?) : Fragment() {
 
 
     companion object{
@@ -94,14 +94,14 @@ class Reddit_settings : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         loadprefs(requireContext());
-        MainActivity.hidenav();
+        MenuChange?.Shownav(false);//hide nav
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_reddit_settings, container, false);
 
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             loadprefs(requireContext());
-            MainActivity.change_fragment(MainActivity.LastFragmentMode!!, true);
+            MenuChange?.ChangeTo(MainActivity.menu.reddit,true);
         }
 
         //image preview quality spinner
@@ -251,12 +251,12 @@ class Reddit_settings : Fragment() {
 
             savepref(requireContext());
             Reddit_Api.reddit.dispatcher.cancelAll();
-            MainActivity.change_fragment(MainActivity.LastFragmentMode!!, true);
+            MenuChange?.ChangeTo(MainActivity.menu.reddit,true);
         }
 
         view.findViewById<Button>(R.id.cancel_button_reddit_settings).setOnClickListener {
             loadprefs(requireContext());
-            MainActivity.change_fragment(MainActivity.LastFragmentMode!!, true);
+            MenuChange?.ChangeTo(MainActivity.menu.reddit,true);
         }
 
 

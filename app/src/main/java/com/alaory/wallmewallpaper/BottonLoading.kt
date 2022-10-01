@@ -10,18 +10,6 @@ class BottonLoading {
     companion object{
         var loctionbottom = 0;
         val TAG = "BottonLoading_log";
-        fun updatebottom_navtigation(dy: Int){
-            MainActivity.navbox?.animate().apply {
-                loctionbottom += if(dy < 0) dy * 2 else dy;
-                this?.duration = 0;
-                if(loctionbottom > 1000){
-                    loctionbottom = 1000;
-                }else if(loctionbottom < 0){
-                    loctionbottom = 0;
-                }
-                this?.translationY(loctionbottom.toFloat());
-            }
-        }
     }
 
 
@@ -32,15 +20,18 @@ class BottonLoading {
         private var lastVisableItem : Int = 0;
         private var totalItemCount: Int = 0;
         private lateinit var MlayoutManager: RecyclerView.LayoutManager;
+        private var MenuChange : MainActivity.MenuChange? = null;
 
 
-        constructor(layoutManager: GridLayoutManager) : this() {
+        constructor(layoutManager: GridLayoutManager,MenuChange : MainActivity.MenuChange?) : this() {
             this.MlayoutManager = layoutManager;
             visableThreshold *= layoutManager.spanCount;
+            this.MenuChange = MenuChange;
         }
-        constructor(layoutManager: StaggeredGridLayoutManager) : this() {
+        constructor(layoutManager: StaggeredGridLayoutManager,MenuChange : MainActivity.MenuChange?) : this() {
             this.MlayoutManager = layoutManager;
             visableThreshold *= layoutManager.spanCount;
+            this.MenuChange = MenuChange;
         }
 
 
@@ -55,7 +46,16 @@ class BottonLoading {
 
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
-            updatebottom_navtigation(dy);
+            MenuChange?.PlayAnimation_forNav() {
+                loctionbottom += if(dy < 0) dy * 2 else dy;
+                it.duration = 0;
+                if(loctionbottom > 1000){
+                    loctionbottom = 1000;
+                }else if(loctionbottom < 0){
+                    loctionbottom = 0;
+                }
+                it.translationY(loctionbottom.toFloat());
+            }
 
 
             totalItemCount = MlayoutManager.itemCount;

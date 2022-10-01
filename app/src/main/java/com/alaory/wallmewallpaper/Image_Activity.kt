@@ -764,5 +764,17 @@ class Image_Activity(): AppCompatActivity(){
 
     }
 
+    override fun onDestroy(){
+        super.onDestroy()
+        Log.d("DestoryLog","Image Acvtivity");
+        Full_image = null;
+        Full_video = null;
+        mybitmap?.recycle();
+        imageloader?.let {
+            it.memoryCache?.clear();
+            it.shutdown();
+        }
+    }
+
 
 }

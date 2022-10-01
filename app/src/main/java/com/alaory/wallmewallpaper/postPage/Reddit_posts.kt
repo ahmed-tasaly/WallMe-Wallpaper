@@ -22,7 +22,7 @@ import com.alaory.wallmewallpaper.adabter.Image_list_adapter
 import com.alaory.wallmewallpaper.api.Reddit_Api
 import com.alaory.wallmewallpaper.settings.Reddit_settings
 
-class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
+class Reddit_posts(val MenuChange : MainActivity.MenuChange?) : Fragment(), Image_list_adapter.OnImageClick {
 
      var myrec: RecyclerView? = null;
      var PostsAdabter: Image_list_adapter? = null;
@@ -50,6 +50,8 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
 
+        if(PostsAdabter == null)
+            PostsAdabter = Image_list_adapter(Reddit_Api.reddit_global_posts,this);
 
         if(firsttime || userHitSave){
             Log.i("Reddit_posts","i have beeen created");
@@ -68,9 +70,6 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
 
         if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
             LoadMore();
-
-        if(PostsAdabter == null)
-            PostsAdabter = Image_list_adapter(Reddit_Api.reddit_global_posts,this);
 
     }
 
@@ -166,7 +165,7 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
 
 
     private fun SetRvScrollListener(){
-        scrollListener = BottonLoading.ViewLodMore(mLayoutManager as StaggeredGridLayoutManager);
+        scrollListener =  BottonLoading.ViewLodMore(mLayoutManager as StaggeredGridLayoutManager, MenuChange);
         scrollListener!!.setOnLoadMoreListener(object : BottonLoading.OnLoadMoreListener {
             override fun onLoadMore() {
                 myrec?.post {
@@ -225,6 +224,11 @@ class Reddit_posts : Fragment(), Image_list_adapter.OnImageClick {
         }catch (e: Exception){
             Log.e("Reddit_posts","error while trying to set image activity")
         }
+    }
+    override fun onDestroy() {
+        super.onDestroy();
+        Log.d("DestoryLog",this::class.java.simpleName);
+        myrec?.adapter = null;
     }
 
 

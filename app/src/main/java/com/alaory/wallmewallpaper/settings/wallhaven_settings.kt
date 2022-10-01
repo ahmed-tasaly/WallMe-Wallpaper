@@ -21,7 +21,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 
 
-class wallhaven_settings : Fragment() {
+class wallhaven_settings(val MenuChange : MainActivity.MenuChange?) : Fragment() {
 
     var TagBoxWhiteList: ChipGroup? = null;
     var TagBoxBlackList: ChipGroup? = null;
@@ -176,12 +176,12 @@ class wallhaven_settings : Fragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        MainActivity.hidenav();
+        MenuChange?.Shownav(false);
         val view =  inflater.inflate(R.layout.fragment_wallhaven_settings, container, false);
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             loadprefs(requireContext());
-            MainActivity.change_fragment(MainActivity.LastFragmentMode!!, true);
+            MenuChange?.ChangeTo(MainActivity.menu.wallhaven,true);
         }
 
 
@@ -329,13 +329,13 @@ class wallhaven_settings : Fragment() {
             wallhaven_api.currentPage = 1;
             wallhaven_api.wallhaven_homepage_posts = emptyList<Image_Info>().toMutableList();
             wallhaven_posts.userhitsave = true;
-            MainActivity.change_fragment(MainActivity.LastFragmentMode!!, true);
+            MenuChange?.ChangeTo(MainActivity.menu.wallhaven,true);
 
         }
 
         view.findViewById<Button>(R.id.cancel_button_wallhaven_settings).setOnClickListener {
             loadprefs(requireContext());
-            MainActivity.change_fragment(MainActivity.LastFragmentMode!!, true);
+            MenuChange?.ChangeTo(MainActivity.menu.wallhaven,true);
         }
 
 

@@ -58,10 +58,9 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
         adab_ImageLoader = ImageLoader.Builder(recyclerView.context!!)
             .allowRgb565(true)
             .bitmapConfig(Bitmap.Config.RGB_565)
-            .precision(Precision.INEXACT)
-            .bitmapFactoryMaxParallelism(6)
+            .bitmapFactoryMaxParallelism(2)
             .networkCachePolicy(CachePolicy.READ_ONLY)
-            .memoryCachePolicy(CachePolicy.ENABLED)
+            .memoryCachePolicy(CachePolicy.DISABLED)
             .diskCachePolicy(CachePolicy.ENABLED)
             .allowHardware(false)
             .crossfade(true)
@@ -84,6 +83,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                     .maxSizePercent(0.05)
                     .build();
             }
+            .networkObserverEnabled(false)
             .build();
 
     }
@@ -330,6 +330,13 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
     interface OnImageClick{
         fun onImageClick(Pos: Int,thumbnail: Drawable,loaded : Boolean = false);
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        Log.d("DestoryLog",this::class.java.simpleName);
+        adab_ImageLoader?.memoryCache?.clear();
+        adab_ImageLoader?.shutdown();
     }
 
 
