@@ -25,8 +25,8 @@ import com.alaory.wallmewallpaper.postPage.Reddit_posts
 import com.alaory.wallmewallpaper.adabter.list_item_adabter
 
 
-class Reddit_settings(val MenuChange : MainActivity.MenuChange?) : Fragment() {
-
+class Reddit_settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
+    val MenuChange = menuChange;
 
     companion object{
         var subreddits_list_names : MutableList<String> = listOf("amoledbackgrounds","wallpaper").toMutableList();

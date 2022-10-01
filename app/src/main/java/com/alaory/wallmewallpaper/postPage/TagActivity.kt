@@ -112,7 +112,7 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
         try{
             lastPastImageInfo = tag_post_list!!.Tag_Post_list[Pos];
             lastPastImageInfo_pos = Pos;
-            val intent = Intent(this, Image_Activity::class.java);
+            val intent = Intent(this, Image_Activity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             Image_Activity.MYDATA = tag_post_list!!.Tag_Post_list[Pos];
             Image_Activity.THUMBNAIL = thumbnail;
             Image_Activity.postmode = Image_Activity.mode.wallhaven;

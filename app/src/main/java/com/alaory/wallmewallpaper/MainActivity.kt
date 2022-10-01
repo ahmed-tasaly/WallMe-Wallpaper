@@ -19,7 +19,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.alaory.wallmewallpaper.api.Reddit_Api
+import com.alaory.wallmewallpaper.api.wallhaven_api
 import com.alaory.wallmewallpaper.databinding.ActivityMainBinding
 import com.alaory.wallmewallpaper.postPage.Reddit_posts
 import com.alaory.wallmewallpaper.postPage.favorite_list
@@ -37,18 +39,17 @@ class MainActivity : AppCompatActivity(){
     //fragmenst
 
     //set settings
-    val wallhaven_filter = wallhaven_settings(menucontroll);
-    val reddit_filter = Reddit_settings(menucontroll);
-    val settings = com.alaory.wallmewallpaper.settings.settings(menucontroll);
+    var wallhaven_filter : wallhaven_settings? = null;
+    var reddit_filter : Reddit_settings? = null;
+    var settings : com.alaory.wallmewallpaper.settings.settings? = null;
 
     //set post pages
-    var redditPosts  = Reddit_posts(menucontroll);
-    var wallhavenPosts = wallhaven_posts(menucontroll);
-    var favoriteList = favorite_list(menucontroll);
+    var redditPosts  : Reddit_posts? = null;
+    var wallhavenPosts : wallhaven_posts? = null;
+    var favoriteList : favorite_list? = null;
 
 
     //nav
-    var lastfloatingiconIcon : menu? = null;
     var filterbutton : FloatingActionButton ? = null;
     var navbox : ConstraintLayout ?  = null;
     //navigation buttons
@@ -69,10 +70,11 @@ class MainActivity : AppCompatActivity(){
     }
 
     companion object{
-
+        var LastSetMenu : menu? = null;
 
         var num_post_in_Column = 2;
         var last_orein = Configuration.ORIENTATION_PORTRAIT;
+
 
 
         fun checkorein(){
@@ -123,7 +125,7 @@ class MainActivity : AppCompatActivity(){
         super.onResume();
         BottonLoading.loctionbottom = 0;
         menucontroll?.PlayAnimation_forNav {
-            it.translationY(0f);
+            it?.translationY(0f);
         }
         HideSystemBar(window);
 
@@ -181,7 +183,7 @@ class MainActivity : AppCompatActivity(){
         fun ChangeTo(menuitem : menu,shownav: Boolean = true,changelastfragment: Boolean = false);
         fun Shownav(shownav: Boolean);
         fun hidenavbuttons(menuitem: menu,show: Boolean);
-        fun PlayAnimation_forNav(playanimation : (animate : ViewPropertyAnimator) -> Unit);
+        fun PlayAnimation_forNav(playanimation : (animate : ViewPropertyAnimator?) -> Unit);
     }
 
 
@@ -206,45 +208,39 @@ class MainActivity : AppCompatActivity(){
         checkorein();
 
 
-        //pull posts from apis
-        Reddit_Api.Update_Api_key{
-            redditPosts.LoadMore();
-            wallhavenPosts.LoadMore();
-        }//init wallhaven & reddit api to get the key and set data to array
 
 
         //set menu controller
         menucontroll = object : MenuChange{
             override fun ChangeTo(menuitem: menu, shownav: Boolean, changelastfragment: Boolean) {
                 val FragmentControll = supportFragmentManager.beginTransaction();
+                supportFragmentManager.popBackStack(null,FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 when(menuitem){
                     menu.reddit ->{
-                        FragmentControll.replace(R.id.container,redditPosts);
-                        Shownav(true);
+                        redditPosts?.let { FragmentControll.replace(R.id.container, it) };
                     }
                     menu.favorite ->{
-                        FragmentControll.replace(R.id.container,favoriteList);
-                        Shownav(true);
+                        favoriteList?.let { FragmentControll.replace(R.id.container, it) };
                     }
                     menu.wallhaven ->{
-                        FragmentControll.replace(R.id.container,wallhavenPosts);
-                        Shownav(true);
+                        wallhavenPosts?.let { FragmentControll.replace(R.id.container, it) };
                     }
                     menu.reddit_set ->{
-                        FragmentControll.replace(R.id.container, reddit_filter);
+                        reddit_filter?.let { FragmentControll.replace(R.id.container, it) };
                     }
                     menu.settings ->{
-                        FragmentControll.replace(R.id.container, settings);
+                        settings?.let { FragmentControll.replace(R.id.container, it) };
                     }
                     menu.wallhaven_set ->{
-                        FragmentControll.replace(R.id.container, wallhaven_filter);
+                        wallhaven_filter?.let { FragmentControll.replace(R.id.container, it) };
                     }
                 }
+
                 FragmentControll.commitAllowingStateLoss();
                 Shownav(shownav);
-                lastfloatingiconIcon = menuitem;
-                setfloatingIcon(lastfloatingiconIcon!!);
-                setFABcolor(lastfloatingiconIcon!!);
+                LastSetMenu = menuitem;
+                setfloatingIcon(LastSetMenu!!);
+                setFABcolor(LastSetMenu!!);
             }
 
             override fun Shownav(shownav: Boolean) {
@@ -272,15 +268,27 @@ class MainActivity : AppCompatActivity(){
                 }
             }
 
-            override fun PlayAnimation_forNav(playanimation: (animate: ViewPropertyAnimator) -> Unit) {
+            override fun PlayAnimation_forNav(playanimation: (animate: ViewPropertyAnimator?) -> Unit) {
                 navbox?.animate().apply {
-                    playanimation(this!!);
+                    playanimation(this);
                 }
 
             }
         }
 
+        //set  fragments
+        redditPosts  = Reddit_posts(menucontroll);
+        wallhavenPosts = wallhaven_posts(menucontroll);
+        favoriteList = favorite_list(menucontroll);
+        wallhaven_filter = wallhaven_settings(menucontroll);
+        reddit_filter = Reddit_settings(menucontroll);
+        settings = com.alaory.wallmewallpaper.settings.settings(menucontroll);
 
+        //pull posts from apis
+        Reddit_Api.Update_Api_key{
+            redditPosts?.LoadMore();
+            wallhavenPosts?.LoadMore();
+        }//init wallhaven & reddit api to get the key and set data to array
 
 
         //set buttom navigtion
@@ -290,8 +298,12 @@ class MainActivity : AppCompatActivity(){
         wallhaven_floatingButton = findViewById(R.id.wallhaven_list_navigation_button);
         favorite_floatingButton = findViewById(R.id.favorite_list_navigation_button);
 
+
         //set ui fragment
-        menucontroll?.ChangeTo(menu.reddit);
+        if(LastSetMenu != null)
+            menucontroll?.ChangeTo(LastSetMenu!!);
+        else
+            menucontroll?.ChangeTo(menu.reddit);
 
 
 
@@ -307,17 +319,17 @@ class MainActivity : AppCompatActivity(){
 
         if(!settingsprefs.getBoolean("reddit_source",true)){
             reddit_floatingButton!!.visibility = View.GONE;
-            lastfloatingiconIcon = menu.wallhaven;
+            LastSetMenu = menu.wallhaven;
         }
         if(!settingsprefs.getBoolean("wallhaven_source",false)){
             wallhaven_floatingButton!!.visibility = View.GONE;
-            lastfloatingiconIcon = menu.reddit;
+            LastSetMenu = menu.reddit;
             if(!settingsprefs.getBoolean("reddit_source",true))
-                lastfloatingiconIcon = menu.favorite;
+                LastSetMenu = menu.favorite;
         }
 
-        if(lastfloatingiconIcon != null){
-            menucontroll?.ChangeTo(lastfloatingiconIcon!!);
+        if(LastSetMenu != null){
+            menucontroll?.ChangeTo(LastSetMenu!!);
         }
         else{
             menucontroll?.ChangeTo(menu.reddit);
@@ -346,7 +358,18 @@ class MainActivity : AppCompatActivity(){
 
         //set floating button actions
         filterbutton?.setOnClickListener {
-            menucontroll?.ChangeTo(lastfloatingiconIcon!!)
+            when(LastSetMenu) {
+                menu.reddit ->{
+                    menucontroll?.ChangeTo(menu.reddit_set,false)
+                }
+                menu.wallhaven ->{
+                    menucontroll?.ChangeTo(menu.wallhaven_set,false)
+                }
+                menu.favorite ->{
+                    menucontroll?.ChangeTo(menu.settings,false)
+                }
+                else -> {}
+            }
         }
 
     }
@@ -383,12 +406,21 @@ class MainActivity : AppCompatActivity(){
             menu.favorite -> {
                 filterbutton!!.setImageResource(R.drawable.ic_outline_settings_24);
             }
+            else -> {}
         }
     }
 
     override fun onDestroy() {
         super.onDestroy();
         Log.d("DestoryLog",this::class.java.simpleName);
+        Reddit_Api.reddit.dispatcher.cancelAll();
+        Reddit_Api.reddit.cache!!.close();
+        Reddit_Api.reddit_global_posts.clear();
+        Reddit_Api.Subreddits = emptyArray();
+
+        wallhaven_api.wallhaven_homepage_posts.clear();
+        wallhaven_api.wallhavenRequest.dispatcher.cancelAll();
+        wallhaven_api.wallhavenRequest.cache!!.close();
     }
 
 }

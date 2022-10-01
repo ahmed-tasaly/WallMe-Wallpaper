@@ -22,8 +22,9 @@ import com.alaory.wallmewallpaper.adabter.Image_list_adapter
 import com.alaory.wallmewallpaper.api.wallhaven_api
 
 
-class wallhaven_posts(val MenuChange : MainActivity.MenuChange?) : Fragment() , Image_list_adapter.OnImageClick{
+class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment() , Image_list_adapter.OnImageClick{
 
+     val MenuChange = menuChange;
      var wallhaven_recycle : RecyclerView? = null;
      var wallhaven_adabter : Image_list_adapter? = null;
      var mLayoutManager : RecyclerView.LayoutManager? =null;
@@ -195,7 +196,7 @@ class wallhaven_posts(val MenuChange : MainActivity.MenuChange?) : Fragment() , 
         try{
             lastPastImageInfo =  wallhaven_api.wallhaven_homepage_posts[Pos];
             lastPastImageInfo_pos = Pos;
-            var intent = Intent(requireContext(), Image_Activity::class.java);
+            var intent = Intent(requireContext(), Image_Activity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             Image_Activity.MYDATA = wallhaven_api.wallhaven_homepage_posts[Pos];
             Image_Activity.THUMBNAIL = thumbnail;
             Image_Activity.postmode = Image_Activity.mode.wallhaven;

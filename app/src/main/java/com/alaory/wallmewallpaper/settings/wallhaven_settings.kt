@@ -21,8 +21,9 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 
 
-class wallhaven_settings(val MenuChange : MainActivity.MenuChange?) : Fragment() {
+class wallhaven_settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
 
+    val MenuChange = menuChange;
     var TagBoxWhiteList: ChipGroup? = null;
     var TagBoxBlackList: ChipGroup? = null;
 

@@ -22,12 +22,13 @@ import com.alaory.wallmewallpaper.adabter.Image_list_adapter
 import com.alaory.wallmewallpaper.api.Reddit_Api
 import com.alaory.wallmewallpaper.settings.Reddit_settings
 
-class Reddit_posts(val MenuChange : MainActivity.MenuChange?) : Fragment(), Image_list_adapter.OnImageClick {
+class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), Image_list_adapter.OnImageClick {
 
+    val MenuChange : MainActivity.MenuChange? = menuChange;
      var myrec: RecyclerView? = null;
      var PostsAdabter: Image_list_adapter? = null;
      var mLayoutManager : RecyclerView.LayoutManager? = null;
-    var scrollListener : BottonLoading.ViewLodMore? = null;
+     var scrollListener : BottonLoading.ViewLodMore? = null;
 
     var imageloading: ImageView? =null;
     var textloading: TextView? = null;
@@ -215,7 +216,7 @@ class Reddit_posts(val MenuChange : MainActivity.MenuChange?) : Fragment(), Imag
         try {
             lastPastImageInfo = Reddit_Api.reddit_global_posts.get(Pos);
             lastPastImageInfo_pos = Pos;
-            val intent = Intent(requireContext(), Image_Activity::class.java);
+            val intent = Intent(requireContext(), Image_Activity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             Image_Activity.MYDATA = Reddit_Api.reddit_global_posts.get(Pos);
             Image_Activity.THUMBNAIL = thumbnail;
             Image_Activity.postmode = Image_Activity.mode.reddit;

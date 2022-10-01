@@ -22,8 +22,9 @@ import com.alaory.wallmewallpaper.wallpaperChanger_Worker
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.util.concurrent.TimeUnit
 
-class settings(val MenuChange : MainActivity.MenuChange?) : Fragment() {
+class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
 
+    val MenuChange = menuChange;
     //wallpaper changer
     var wallpaper_changer : LinearLayout? = null;
     var wallpaper_changer_text : TextView? = null;

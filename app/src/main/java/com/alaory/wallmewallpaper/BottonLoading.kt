@@ -23,15 +23,15 @@ class BottonLoading {
         private var MenuChange : MainActivity.MenuChange? = null;
 
 
-        constructor(layoutManager: GridLayoutManager,MenuChange : MainActivity.MenuChange?) : this() {
+        constructor(layoutManager: GridLayoutManager,menuChange : MainActivity.MenuChange? = null) : this() {
             this.MlayoutManager = layoutManager;
             visableThreshold *= layoutManager.spanCount;
-            this.MenuChange = MenuChange;
+            this.MenuChange = menuChange;
         }
-        constructor(layoutManager: StaggeredGridLayoutManager,MenuChange : MainActivity.MenuChange?) : this() {
+        constructor(layoutManager: StaggeredGridLayoutManager,menuChange : MainActivity.MenuChange? = null) : this() {
             this.MlayoutManager = layoutManager;
             visableThreshold *= layoutManager.spanCount;
-            this.MenuChange = MenuChange;
+            this.MenuChange = menuChange;
         }
 
 
@@ -46,15 +46,15 @@ class BottonLoading {
 
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
-            MenuChange?.PlayAnimation_forNav() {
+            MenuChange?.PlayAnimation_forNav {
                 loctionbottom += if(dy < 0) dy * 2 else dy;
-                it.duration = 0;
+                it?.duration = 0;
                 if(loctionbottom > 1000){
                     loctionbottom = 1000;
                 }else if(loctionbottom < 0){
                     loctionbottom = 0;
                 }
-                it.translationY(loctionbottom.toFloat());
+                it?.translationY(loctionbottom.toFloat());
             }
 
 

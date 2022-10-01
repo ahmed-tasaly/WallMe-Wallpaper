@@ -28,7 +28,6 @@ import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.decode.VideoFrameDecoder
 import coil.disk.DiskCache
-import coil.load
 import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import com.alaory.wallmewallpaper.api.wallhaven_api
@@ -145,13 +144,13 @@ class Image_Activity(): AppCompatActivity(){
 
 
         fun Bitmap_toUri(context: Context, image: Bitmap): Uri? {
-            var bytes = ByteArrayOutputStream();
+            val bytes = ByteArrayOutputStream();
             image.compress(Bitmap.CompressFormat.PNG,100,bytes);
-            var imagepath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),"tempImage")
+            val imagepath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),"tempImage")
             if (!imagepath.mkdirs()) {
                 Log.e("Image_Activity", "Directory not created")
             }
-            var imagesaved = File(imagepath.absolutePath + "/temp.png");
+            val imagesaved = File(imagepath.absolutePath + "/temp.png");
             imagesaved.writeBytes(bytes.toByteArray());
 
 
@@ -365,7 +364,7 @@ class Image_Activity(): AppCompatActivity(){
                         wpm.clear();//if there is a live wallpaper clear it
 
                     try {
-                        val liveintent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        val liveintent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
                         if(MYDATA!!.type == UrlType.Video)
                             liveintent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, videocomponent);
                         else
@@ -769,12 +768,13 @@ class Image_Activity(): AppCompatActivity(){
         Log.d("DestoryLog","Image Acvtivity");
         Full_image = null;
         Full_video = null;
+        THUMBNAIL = null;
+
         mybitmap?.recycle();
+        TagNameList = emptyArray();
         imageloader?.let {
             it.memoryCache?.clear();
             it.shutdown();
         }
     }
-
-
 }

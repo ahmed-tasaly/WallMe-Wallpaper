@@ -100,11 +100,13 @@ class gifwallpaper : WallpaperService() {
 
 
         override fun onDestroy() {
+            super.onDestroy();
+            Log.d("DestoryLog",this::class.java.simpleName);
             callbackHandler.removeCallbacks(drawloopfun);
             gifanimated?.stop();
             gifanimated = null;
             gifdrawable = null;
-            super.onDestroy();
+
         }
     }
 }
