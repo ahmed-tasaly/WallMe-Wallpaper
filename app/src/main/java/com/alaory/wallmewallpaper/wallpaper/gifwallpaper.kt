@@ -14,7 +14,6 @@ import kotlin.math.max
 
 class gifwallpaper : WallpaperService() {
     override fun onCreateEngine(): Engine {
-
         return  gifengine();
     }
 

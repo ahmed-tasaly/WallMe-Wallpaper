@@ -45,7 +45,7 @@ class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
-        wallhaven_adabter = Image_list_adapter(wallhaven_api.wallhaven_homepage_posts,this);
+        wallhaven_adabter = Image_list_adapter(wallhaven_api.wallhavenApi!!.wallhaven_homepage_posts,this);
         if(userhitsave){
             LoadMore();
             userhitsave = false;
@@ -124,7 +124,7 @@ class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment(
         if(lastPastImageInfo != null && database.lastblockedaddedImageInfo != null){
             if(lastPastImageInfo!!.Image_name == database.lastblockedaddedImageInfo!!.Image_name){
                 wallhaven_adabter!!.notifyDataSetChanged();
-                wallhaven_api.wallhaven_homepage_posts.removeAt(lastPastImageInfo_pos);
+                wallhaven_api.wallhavenApi!!.wallhaven_homepage_posts.removeAt(lastPastImageInfo_pos);
                 lastPastImageInfo = null;
             }
         }
@@ -162,13 +162,13 @@ class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment(
             }
         }
 
-        wallhaven_api.GethomePagePosts ({
+        wallhaven_api.wallhavenApi!!.GethomePagePosts ({
             failedFirstLoading = false;
             if(isAdded){
                 requireActivity().runOnUiThread {
                     wallhaven_adabter?.removeLoadingView();
                     bottomloading?.setLoaded();
-                    wallhaven_adabter?.refresh_itemList(wallhaven_api.lastindex);
+                    wallhaven_adabter?.refresh_itemList(wallhaven_api.wallhavenApi!!.lastindex);
 
                     disableloading();
                 }
@@ -194,10 +194,10 @@ class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment(
 
     override fun onImageClick(Pos: Int, thumbnail: Drawable,loaded : Boolean) {
         try{
-            lastPastImageInfo =  wallhaven_api.wallhaven_homepage_posts[Pos];
+            lastPastImageInfo =  wallhaven_api.wallhavenApi!!.wallhaven_homepage_posts[Pos];
             lastPastImageInfo_pos = Pos;
             var intent = Intent(requireContext(), Image_Activity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            Image_Activity.MYDATA = wallhaven_api.wallhaven_homepage_posts[Pos];
+            Image_Activity.MYDATA = wallhaven_api.wallhavenApi!!.wallhaven_homepage_posts[Pos];
             Image_Activity.THUMBNAIL = thumbnail;
             Image_Activity.postmode = Image_Activity.mode.wallhaven;
             Image_Activity.loadedPreview = loaded;

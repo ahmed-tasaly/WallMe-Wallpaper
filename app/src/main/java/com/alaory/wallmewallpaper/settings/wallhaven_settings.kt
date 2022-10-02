@@ -71,11 +71,11 @@ class wallhaven_settings( menuChange : MainActivity.MenuChange? = null) : Fragme
         }
 
         fun setapidata(){
-            wallhaven_api.categories = if(categories != "") "&categories=$categories" else "";
-            wallhaven_api.sorting = if(sorting != "") "&sorting=$sorting" else "";
-            wallhaven_api.ratio = if(ratio != "") "&ratios=$ratio" else "";
-            wallhaven_api.ordering = if(ordering != "") "&order=$ordering" else "";
-            wallhaven_api.timeperiod = if(timeperiod != "") "&topRange=$timeperiod" else "";
+            wallhaven_api.wallhavenApi?.categories = if(categories != "") "&categories=$categories" else "";
+            wallhaven_api.wallhavenApi?.sorting = if(sorting != "") "&sorting=$sorting" else "";
+            wallhaven_api.wallhavenApi?.ratio = if(ratio != "") "&ratios=$ratio" else "";
+            wallhaven_api.wallhavenApi?.ordering = if(ordering != "") "&order=$ordering" else "";
+            wallhaven_api.wallhavenApi?.timeperiod = if(timeperiod != "") "&topRange=$timeperiod" else "";
 
         }
 
@@ -327,8 +327,8 @@ class wallhaven_settings( menuChange : MainActivity.MenuChange? = null) : Fragme
             saveprefs(requireContext());
             setapidata();
 
-            wallhaven_api.currentPage = 1;
-            wallhaven_api.wallhaven_homepage_posts = emptyList<Image_Info>().toMutableList();
+            wallhaven_api.wallhavenApi?.currentPage = 1;
+            wallhaven_api.wallhavenApi?.wallhaven_homepage_posts = emptyList<Image_Info>().toMutableList();
             wallhaven_posts.userhitsave = true;
             MenuChange?.ChangeTo(MainActivity.menu.wallhaven,true);
 

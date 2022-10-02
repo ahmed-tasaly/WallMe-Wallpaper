@@ -35,8 +35,6 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     var imgclick = onimageclick;
     var context: Context? = null;
 
-    val TAG = "Image_list_adapter";
-
     var adab_ImageLoader : ImageLoader? = null;
     var blockDatabase : database? = null;
     var favoriteDatabase : database? = null;
@@ -85,7 +83,6 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             }
             .networkObserverEnabled(false)
             .build();
-
     }
 
 
@@ -106,7 +103,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     private fun getImagerequest(holder: PostItemView): ImageRequest{
         val tempBitmap : Bitmap = Bitmap.createBitmap(holder.imageRatio.Width,holder.imageRatio.Height,Bitmap.Config.ARGB_8888);
         val tempDrawable = tempBitmap.toDrawable(context!!.resources);
-        val request = coil.request.ImageRequest.Builder(this.context!!)
+        val request = ImageRequest.Builder(this.context!!)
             .data(listPosts.get(holder.pos).Image_thumbnail)
             .placeholder(tempDrawable)
             .target(holder.image_main)
@@ -335,6 +332,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         Log.d("DestoryLog",this::class.java.simpleName);
+
         adab_ImageLoader?.memoryCache?.clear();
         adab_ImageLoader?.shutdown();
     }

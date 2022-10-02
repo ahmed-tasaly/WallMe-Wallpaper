@@ -68,15 +68,16 @@ class Reddit_settings( menuChange : MainActivity.MenuChange? = null) : Fragment(
             //set local settings
             if(subtemp!!.isNotEmpty())
                 parse_subreddits(subtemp!!);
+
             CheckedChipListMode = templistmode!!;
             TimePeriod = temptimeperiod!!;
             image_preview_qualiy_int = sharedprefs.getInt("image_preview",2);
             TimePeridLastInt = sharedprefs.getInt("timePeriod",5);
 
             //set reddit api settings
-            Reddit_Api.listMode = CheckedChipListMode;
-            Reddit_Api.previewQulaity = image_preview_qualiy_int;
-            Reddit_Api.timeperiod = timePreValue();
+            Reddit_Api.redditcon?.listMode = CheckedChipListMode;
+            Reddit_Api.redditcon?.previewQulaity = image_preview_qualiy_int;
+            Reddit_Api.redditcon?.timeperiod = timePreValue();
         }
 
         //return value of timePeriod in a string like year,week etc when the option top is selected
@@ -110,7 +111,7 @@ class Reddit_settings( menuChange : MainActivity.MenuChange? = null) : Fragment(
         ArrayAdapter.createFromResource(requireContext(),R.array.preview_quality,android.R.layout.simple_spinner_item).also { arrayAdapter ->
             arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             image_preview_quality.adapter = arrayAdapter;
-            image_preview_quality.setSelection(Reddit_Api.previewQulaity);
+            image_preview_quality.setSelection(Reddit_Api.redditcon!!.previewQulaity);
             Log.i("Reddit_settings","Spinner adabter set")
         }
 
@@ -168,6 +169,7 @@ class Reddit_settings( menuChange : MainActivity.MenuChange? = null) : Fragment(
                         return;
                     Log.i("subreddits_list_names",name);
                     subreddits_list_names += name;
+                    adabter.notifyDataSetChanged();
                     Toast.makeText(requireContext(),"subreddit has been added",Toast.LENGTH_SHORT).show();
                 }
 
@@ -185,7 +187,7 @@ class Reddit_settings( menuChange : MainActivity.MenuChange? = null) : Fragment(
                 }
 
                 override fun onQueryTextChange(text: String?): Boolean {
-                    Reddit_Api.search_subreddits(text!!) {
+                    Reddit_Api.redditcon?.search_subreddits(text!!) {
                         subredditList.clear()
                         subredditList += it;
                         requireActivity().runOnUiThread {
@@ -206,14 +208,14 @@ class Reddit_settings( menuChange : MainActivity.MenuChange? = null) : Fragment(
             val tempchild = child as Chip;
             tempchild.isChecked = tempchild.text == CheckedChipListMode;
             timepriote.isVisible = CheckedChipListMode == "Top";
-            Reddit_Api.timeperiod = timePreValue();
+            Reddit_Api.redditcon?.timeperiod = timePreValue();
         }
 
         //on change chip set user new chip
         listmode.setOnCheckedStateChangeListener { group, checkedIds ->
             CheckedChipListMode = group.findViewById<Chip>(checkedIds[0]).text.toString();
             timepriote.isVisible = CheckedChipListMode == "Top";
-            Reddit_Api.timeperiod = timePreValue();
+            Reddit_Api.redditcon?.timeperiod = timePreValue();
         }
 
         //time period now week month etc
@@ -245,12 +247,12 @@ class Reddit_settings( menuChange : MainActivity.MenuChange? = null) : Fragment(
 
             Reddit_posts.userHitSave = true;//save button have been clicked
 
-            Reddit_Api.listMode = CheckedChipListMode;//aka top new and hot
-            Reddit_Api.previewQulaity = image_preview_qualiy_int; // low meduim ultra etc
-            Reddit_Api.timeperiod = timePreValue();// week day month etc
+            Reddit_Api.redditcon?.listMode = CheckedChipListMode;//aka top new and hot
+            Reddit_Api.redditcon?.previewQulaity = image_preview_qualiy_int; // low meduim ultra etc
+            Reddit_Api.redditcon?.timeperiod = timePreValue();// week day month etc
 
             savepref(requireContext());
-            Reddit_Api.reddit.dispatcher.cancelAll();
+            Reddit_Api.redditcon?.reddit?.dispatcher?.cancelAll();
             MenuChange?.ChangeTo(MainActivity.menu.reddit,true);
         }
 

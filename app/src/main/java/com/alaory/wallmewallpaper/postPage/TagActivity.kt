@@ -19,7 +19,7 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
 
 
     companion object{
-        var Tag_Assing : wallhaven_api.Tag = wallhaven_api.Tag("");
+        var Tag_Assing : wallhaven_api.Tag? =null;
         var lastPastImageInfo : Image_Info? = null;
         var lastPastImageInfo_pos : Int = -1;
     }
@@ -34,7 +34,7 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
         if(lastPastImageInfo != null && database.lastblockedaddedImageInfo != null){
             if(lastPastImageInfo!!.Image_name == database.lastblockedaddedImageInfo!!.Image_name){
                 TagAdab!!.notifyDataSetChanged();
-                Reddit_Api.reddit_global_posts.removeAt(Reddit_posts.lastPastImageInfo_pos);
+                Reddit_Api.redditcon!!.reddit_global_posts.removeAt(Reddit_posts.lastPastImageInfo_pos);
                 lastPastImageInfo = null;
             }
         }
@@ -91,7 +91,7 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
 
 
     fun LoadMore(){
-        wallhaven_api.TagPosts(tag_post_list!!) {
+        wallhaven_api.wallhavenApi!!.TagPosts(tag_post_list!!) {
             if(it == 400){
                 runOnUiThread {
                     TagAdab?.removeLoadingView();
@@ -126,5 +126,7 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
         super.onDestroy();
         Log.d("DestoryLog",this::class.java.simpleName);
         Tag_recyclerView?.adapter = null;
+        Tag_Assing = null;
+        lastPastImageInfo = null;
     }
 }

@@ -18,9 +18,9 @@ import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.alaory.wallmewallpaper.api.Reddit_Api
+import com.alaory.wallmewallpaper.api.Reddit_Api_Contorller
 import com.alaory.wallmewallpaper.api.wallhaven_api
 import com.alaory.wallmewallpaper.databinding.ActivityMainBinding
 import com.alaory.wallmewallpaper.postPage.Reddit_posts
@@ -98,8 +98,10 @@ class MainActivity : AppCompatActivity(){
 
 
         fun HideSystemBar(window: Window){
-            window.decorView.apply {
-             this.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                window.setDecorFitsSystemWindows(false)
+            }else{
+                window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ){
@@ -186,6 +188,10 @@ class MainActivity : AppCompatActivity(){
         fun PlayAnimation_forNav(playanimation : (animate : ViewPropertyAnimator?) -> Unit);
     }
 
+    //init database
+    val DataBase = database(this);
+    val blockdatabase = database(this,database.ImageBlock_Table,"${database.ImageBlock_Table}.dp");
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -195,6 +201,21 @@ class MainActivity : AppCompatActivity(){
 
         this.supportActionBar!!.hide();
 
+        DataBase.onCreate(DataBase.writableDatabase);
+        blockdatabase.onCreate(blockdatabase.writableDatabase);
+
+        DataBase.update_image_info_list_from_database();
+        blockdatabase.update_image_info_list_from_database();
+
+        if(Reddit_Api.redditcon == null)
+            Reddit_Api.redditcon = Reddit_Api_Contorller();
+        if(wallhaven_api.wallhavenApi == null)
+            wallhaven_api.wallhavenApi = wallhaven_api();
+
+        Reddit_posts.firsttime = true;
+        //update settings
+        Reddit_settings.loadprefs(this);
+        wallhaven_settings.loadprefs(this);
 
 
         //set ui
@@ -276,6 +297,8 @@ class MainActivity : AppCompatActivity(){
             }
         }
 
+
+
         //set  fragments
         redditPosts  = Reddit_posts(menucontroll);
         wallhavenPosts = wallhaven_posts(menucontroll);
@@ -284,8 +307,10 @@ class MainActivity : AppCompatActivity(){
         reddit_filter = Reddit_settings(menucontroll);
         settings = com.alaory.wallmewallpaper.settings.settings(menucontroll);
 
+
+
         //pull posts from apis
-        Reddit_Api.Update_Api_key{
+        Reddit_Api.redditcon?.Update_Api_key{
             redditPosts?.LoadMore();
             wallhavenPosts?.LoadMore();
         }//init wallhaven & reddit api to get the key and set data to array
@@ -391,6 +416,7 @@ class MainActivity : AppCompatActivity(){
                 favorite_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Selected,theme));
                 favorite_floatingButton?.setImageResource(R.drawable.ic_heartfull);
             }
+            else -> {}
         }
     }
 
@@ -413,14 +439,29 @@ class MainActivity : AppCompatActivity(){
     override fun onDestroy() {
         super.onDestroy();
         Log.d("DestoryLog",this::class.java.simpleName);
-        Reddit_Api.reddit.dispatcher.cancelAll();
-        Reddit_Api.reddit.cache!!.close();
-        Reddit_Api.reddit_global_posts.clear();
-        Reddit_Api.Subreddits = emptyArray();
 
-        wallhaven_api.wallhaven_homepage_posts.clear();
-        wallhaven_api.wallhavenRequest.dispatcher.cancelAll();
-        wallhaven_api.wallhavenRequest.cache!!.close();
+        wallhaven_filter = null;
+        reddit_filter = null;
+        settings = null;
+        redditPosts = null;
+        wallhavenPosts  = null;
+        favoriteList = null;
+
+
+        Reddit_Api.redditcon?.reddit?.dispatcher?.cancelAll();
+        Reddit_Api.redditcon?.reddit?.cache?.close();
+        Reddit_Api.redditcon?.reddit_global_posts?.clear();
+        Reddit_Api.redditcon?.Subreddits = emptyArray();
+        Reddit_Api.redditcon = null;
+
+        wallhaven_api.wallhavenApi?.wallhaven_homepage_posts?.clear();
+        wallhaven_api.wallhavenApi?.wallhavenRequest?.dispatcher?.cancelAll();
+        wallhaven_api.wallhavenApi?.wallhavenRequest?.cache?.close();
+        wallhaven_api.wallhavenApi = null;
+
+
+        database.imageblock_list = emptyArray();
+        database.imageinfo_list = emptyArray();
     }
 
 }

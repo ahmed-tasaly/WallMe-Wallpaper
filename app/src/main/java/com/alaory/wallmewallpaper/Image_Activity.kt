@@ -445,7 +445,7 @@ class Image_Activity(): AppCompatActivity(){
 
         //set wallhaven post info with tag functionality
         if(postmode == mode.wallhaven){
-            wallhaven_api.imageInfo(myData!!) { statusCode ->
+            wallhaven_api.wallhavenApi!!.imageInfo(myData!!) { statusCode ->
                 if (statusCode == 200) {
                     runOnUiThread {
                         taggroup!!.isVisible = true;

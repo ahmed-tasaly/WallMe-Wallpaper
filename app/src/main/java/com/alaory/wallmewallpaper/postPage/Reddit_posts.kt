@@ -24,17 +24,19 @@ import com.alaory.wallmewallpaper.settings.Reddit_settings
 
 class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), Image_list_adapter.OnImageClick {
 
-    val MenuChange : MainActivity.MenuChange? = menuChange;
-     var myrec: RecyclerView? = null;
-     var PostsAdabter: Image_list_adapter? = null;
-     var mLayoutManager : RecyclerView.LayoutManager? = null;
-     var scrollListener : BottonLoading.ViewLodMore? = null;
+    private val MenuChange : MainActivity.MenuChange? = menuChange;
+    var myrec: RecyclerView? = null;
+    var PostsAdabter: Image_list_adapter? = null;
+    var mLayoutManager : RecyclerView.LayoutManager? = null;
+    var scrollListener : BottonLoading.ViewLodMore? = null;
 
     var imageloading: ImageView? =null;
     var textloading: TextView? = null;
     var buttonLoading: Button? =null;
 
     var failedFirstLoading = false;
+
+
 
     companion object{
          var firsttime = true;
@@ -52,18 +54,18 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
         super.onCreate(savedInstanceState);
 
         if(PostsAdabter == null)
-            PostsAdabter = Image_list_adapter(Reddit_Api.reddit_global_posts,this);
+            PostsAdabter = Image_list_adapter(Reddit_Api.redditcon!!.reddit_global_posts,this);
 
         if(firsttime || userHitSave){
             Log.i("Reddit_posts","i have beeen created");
             reddit_api = emptyArray();
-            Reddit_Api.Subreddits = emptyArray();
-            Reddit_Api.reddit_global_posts = emptyList<Image_Info>().toMutableList();
+            Reddit_Api.redditcon?.Subreddits = emptyArray();
+            Reddit_Api.redditcon?.reddit_global_posts = emptyList<Image_Info>().toMutableList();
 
             for (i in Reddit_settings.subreddits_list_names){
                 reddit_api += Reddit_Api(i);
             }
-            PostsAdabter = Image_list_adapter(Reddit_Api.reddit_global_posts,this);
+            PostsAdabter = Image_list_adapter(Reddit_Api.redditcon!!.reddit_global_posts,this);
             LoadMore();
             firsttime = false;
             userHitSave = false;
@@ -77,14 +79,14 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
 
     override fun onDetach() {
         super.onDetach()
-        PostsAdabter!!.removeLoadingView();
+        PostsAdabter?.removeLoadingView();
     }
     override fun onResume() {
         super.onResume()
         if(lastPastImageInfo != null && database.lastblockedaddedImageInfo != null){
             if(lastPastImageInfo!!.Image_name == database.lastblockedaddedImageInfo!!.Image_name){
                 PostsAdabter!!.notifyDataSetChanged();
-                Reddit_Api.reddit_global_posts.removeAt(lastPastImageInfo_pos);
+                Reddit_Api.redditcon!!.reddit_global_posts.removeAt(lastPastImageInfo_pos);
                 lastPastImageInfo = null;
             }
         }
@@ -186,7 +188,7 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
                 showloading();
             }
         }
-        Reddit_Api.get_allposts_andGive { Status ->
+        Reddit_Api.redditcon?.get_allposts_andGive { Status ->
             if(Status == 400)
                 failedFirstLoading = true;
 
@@ -204,7 +206,7 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
                 requireActivity().runOnUiThread {
                     PostsAdabter?.removeLoadingView();
                     scrollListener?.setLoaded();
-                    PostsAdabter?.refresh_itemList(Reddit_Api.reddit_global_posts.lastIndex);
+                    PostsAdabter?.refresh_itemList(Reddit_Api.redditcon!!.reddit_global_posts.lastIndex);
                     disableloading();
                 }
             }
@@ -214,10 +216,10 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
 
     override fun onImageClick(Pos: Int,thumbnail : Drawable,loaded : Boolean) {
         try {
-            lastPastImageInfo = Reddit_Api.reddit_global_posts.get(Pos);
+            lastPastImageInfo = Reddit_Api.redditcon!!.reddit_global_posts.get(Pos);
             lastPastImageInfo_pos = Pos;
             val intent = Intent(requireContext(), Image_Activity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            Image_Activity.MYDATA = Reddit_Api.reddit_global_posts.get(Pos);
+            Image_Activity.MYDATA = Reddit_Api.redditcon!!.reddit_global_posts.get(Pos);
             Image_Activity.THUMBNAIL = thumbnail;
             Image_Activity.postmode = Image_Activity.mode.reddit;
             Image_Activity.loadedPreview = loaded;
@@ -229,7 +231,12 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
     override fun onDestroy() {
         super.onDestroy();
         Log.d("DestoryLog",this::class.java.simpleName);
+
         myrec?.adapter = null;
+        myrec= null;
+        PostsAdabter= null;
+        mLayoutManager= null;
+        scrollListener = null;
     }
 
 
