@@ -54,7 +54,7 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
         super.onCreate(savedInstanceState);
 
         if(PostsAdabter == null)
-            PostsAdabter = Image_list_adapter(Reddit_Api.redditcon!!.reddit_global_posts,this);
+            PostsAdabter = Reddit_Api.redditcon?.reddit_global_posts?.let { Image_list_adapter(it,this) };
 
         if(firsttime || userHitSave){
             Log.i("Reddit_posts","i have beeen created");
@@ -65,7 +65,7 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
             for (i in Reddit_settings.subreddits_list_names){
                 reddit_api += Reddit_Api(i);
             }
-            PostsAdabter = Image_list_adapter(Reddit_Api.redditcon!!.reddit_global_posts,this);
+            PostsAdabter = Reddit_Api.redditcon?.reddit_global_posts?.let { Image_list_adapter(it,this) };
             LoadMore();
             firsttime = false;
             userHitSave = false;
@@ -231,12 +231,6 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
     override fun onDestroy() {
         super.onDestroy();
         Log.d("DestoryLog",this::class.java.simpleName);
-
-        myrec?.adapter = null;
-        myrec= null;
-        PostsAdabter= null;
-        mLayoutManager= null;
-        scrollListener = null;
     }
 
 

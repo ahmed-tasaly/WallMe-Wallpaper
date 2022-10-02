@@ -101,22 +101,29 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
 
     private fun getImagerequest(holder: PostItemView): ImageRequest{
-        val tempBitmap : Bitmap = Bitmap.createBitmap(holder.imageRatio.Width,holder.imageRatio.Height,Bitmap.Config.ARGB_8888);
+        val tempBitmap : Bitmap = Bitmap.createBitmap(holder.imageRatio.Width,holder.imageRatio.Height,Bitmap.Config.ALPHA_8);
         val tempDrawable = tempBitmap.toDrawable(context!!.resources);
         val request = ImageRequest.Builder(this.context!!)
             .data(listPosts.get(holder.pos).Image_thumbnail)
             .placeholder(tempDrawable)
             .target(holder.image_main)
+            .allowHardware(false)
             .listener(
                 onSuccess = {_,_ ->
                     holder.cricle_prograssBar.visibility = View.GONE;
                     holder.loaded = true;
+                    tempBitmap.recycle()
+
                 },
                 onCancel = {
                     holder.cricle_prograssBar.visibility = View.GONE;
+                    tempBitmap.recycle()
+
                 },
                 onError = {_,_ ->
                     holder.cricle_prograssBar.visibility = View.GONE;
+                    tempBitmap.recycle()
+
                 },
                 onStart = {
                     holder.cricle_prograssBar.visibility = View.VISIBLE;
@@ -158,9 +165,13 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             MainActivity.setImageView_asLoading(holder.cricle_prograssBar);
             holder.pos = position;
             holder.imageRatio = Image_Ratio(width,height);
+
+            //set image type to show the user
             if(currentpost.type != UrlType.Image){
                 holder.texttype.visibility = View.VISIBLE;
-                holder.texttype.setText("live");
+                holder.texttype.setText(currentpost.type.name);
+            }else{
+                holder.texttype.visibility = View.INVISIBLE;
             }
 
             adab_ImageLoader?.let {
@@ -169,10 +180,10 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
 
             holder.root_view.setOnClickListener {
+                val curnpo = currentpost;
                 holder.buttonframe.visibility = View.GONE;
                 adab_ImageLoader!!.memoryCache!!.clear();
                 imgclick.onImageClick(position,holder.image_main.drawable,holder.loaded);
-
             }
 
             holder.root_view.setOnLongClickListener {

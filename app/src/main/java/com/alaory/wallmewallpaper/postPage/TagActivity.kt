@@ -125,8 +125,5 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
     override fun onDestroy() {
         super.onDestroy();
         Log.d("DestoryLog",this::class.java.simpleName);
-        Tag_recyclerView?.adapter = null;
-        Tag_Assing = null;
-        lastPastImageInfo = null;
     }
 }

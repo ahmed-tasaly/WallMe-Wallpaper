@@ -107,6 +107,5 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
     override fun onDestroy() {
         super.onDestroy();
         Log.d("DestoryLog",this::class.java.simpleName);
-        favoriteList_recycler?.adapter = null;
     }
 }

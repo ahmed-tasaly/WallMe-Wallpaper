@@ -33,7 +33,7 @@
                     android:layout_gravity="center"
                     />
                 <TextView
-
+                    android:visibility="invisible"
                     android:id="@+id/text_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -42,7 +42,8 @@
                     android:text="i am Text"
                     android:padding="2dp"
                     android:textSize="7sp"
-                    android:textColor="@color/Selected"
+                    android:textColor="@color/black"
+                    android:background="@color/Selected"
                     />
 
         </FrameLayout>

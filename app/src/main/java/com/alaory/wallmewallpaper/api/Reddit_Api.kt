@@ -269,10 +269,13 @@ class Reddit_Api(subredditname: String) {
                                 if (filter_words(dataJson.getString("title")))
                                     continue;
 
-                                var type = UrlType.Image;
+
+
                                 var selfthumbnail = false
                                 if(dataJson.getString("thumbnail") == "self" || dataJson.getString("thumbnail") == "default")
                                     selfthumbnail = true;
+
+                                var type = UrlType.Image;
 
                                 if(dataJson.optBoolean("is_video", false))
                                     type = UrlType.Video;
@@ -324,12 +327,19 @@ class Reddit_Api(subredditname: String) {
                                     continue;
                                 }
 
+                                var source_url = dataJson.getString("url");
+                                if(type == UrlType.Video){
+                                    source_url = dataJson.getJSONObject("secure_media").getJSONObject("reddit_video").getString("fallback_url").replace("?source=fallback","");
+                                }else if(type == UrlType.Gif){
+                                    source_url = dataJson.getString("url");
+                                }
+
                                 val one_post: Image_Info;
                                 //post doesn't have a preview
                                 if (dataJson.optString("preview").isNullOrBlank()) {
                                     one_post = Image_Info(
-                                        dataJson.getString("url"),
-                                        dataJson.getString("url"),
+                                        source_url,
+                                        source_url,
                                         dataJson.getString("name"),
                                         dataJson.getString("author"),
                                         dataJson.getString("title"),
@@ -373,13 +383,7 @@ class Reddit_Api(subredditname: String) {
                                             .getInt("height")
                                     );
 
-                                    var source_url = image_source_url;
-                                    if(type == UrlType.Video){
-                                        source_url = dataJson.getJSONObject("media").getJSONObject("reddit_video").getString("fallback_url");
-                                    }
-                                    if(type == UrlType.Gif){
-                                        source_url = dataJson.getString("url");
-                                    }
+
                                     //parse json into data to use
                                     one_post = Image_Info(
                                         source_url,
@@ -419,12 +423,16 @@ class Reddit_Api(subredditname: String) {
 
     }
 
-
-    init {
-        redditcon!!.Subreddits += this;
-    }
-
     var subreddit_posts_list : Array<Image_Info> = emptyArray();
     var last_before_id = "";
     var subreddit = subredditname;
+
+    init {
+        if (redditcon != null)
+            redditcon!!.Subreddits += this;
+        else
+            Log.e(this::class.java.simpleName,"Subreddit ${this.subreddit} not added");
+    }
+
+
 }

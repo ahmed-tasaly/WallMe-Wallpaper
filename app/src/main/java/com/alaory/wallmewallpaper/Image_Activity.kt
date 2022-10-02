@@ -231,8 +231,8 @@ class Image_Activity(): AppCompatActivity(){
         //update screen orein
         MainActivity.checkorein();
 
-        myData = MYDATA!!
-        thumbnail = THUMBNAIL!!
+        myData = MYDATA
+        thumbnail = THUMBNAIL
 
 
         //set the activit as a main screen
@@ -653,6 +653,8 @@ class Image_Activity(): AppCompatActivity(){
                                     }
                                 });
 
+
+
                                 player.apply {
                                     isLooping = true;
                                     setDataSource(videoPath);
@@ -768,7 +770,6 @@ class Image_Activity(): AppCompatActivity(){
         Log.d("DestoryLog","Image Acvtivity");
         Full_image = null;
         Full_video = null;
-        THUMBNAIL = null;
 
         mybitmap?.recycle();
         TagNameList = emptyArray();

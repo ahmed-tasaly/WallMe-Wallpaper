@@ -45,7 +45,7 @@ class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
-        wallhaven_adabter = Image_list_adapter(wallhaven_api.wallhavenApi!!.wallhaven_homepage_posts,this);
+        wallhaven_adabter = wallhaven_api.wallhavenApi?.wallhaven_homepage_posts?.let { Image_list_adapter(it,this) };
         if(userhitsave){
             LoadMore();
             userhitsave = false;
@@ -116,7 +116,7 @@ class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment(
 
     override fun onDetach() {
         super.onDetach()
-        wallhaven_adabter!!.removeLoadingView();
+        wallhaven_adabter?.removeLoadingView();
     }
 
     override fun onResume() {
@@ -210,7 +210,6 @@ class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment(
     override fun onDestroy() {
         super.onDestroy();
         Log.d("DestoryLog",this::class.java.simpleName);
-        wallhaven_recycle?.adapter = null;
     }
 
 
