@@ -112,18 +112,12 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                 onSuccess = {_,_ ->
                     holder.cricle_prograssBar.visibility = View.GONE;
                     holder.loaded = true;
-                    tempBitmap.recycle()
-
                 },
                 onCancel = {
                     holder.cricle_prograssBar.visibility = View.GONE;
-                    tempBitmap.recycle()
-
                 },
                 onError = {_,_ ->
                     holder.cricle_prograssBar.visibility = View.GONE;
-                    tempBitmap.recycle()
-
                 },
                 onStart = {
                     holder.cricle_prograssBar.visibility = View.VISIBLE;

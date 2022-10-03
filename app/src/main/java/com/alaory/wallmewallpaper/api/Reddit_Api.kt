@@ -98,9 +98,18 @@ class Reddit_Api_Contorller() {
             subreddit.PostRequestNumber = PostRequestNumber;
 
             subreddit.get_subreddit_posts { posts, Status ->
-                reddit_global_posts += posts;
-                last_index = reddit_global_posts.size;
-                callback_update(Status);
+                if(Status == 400){
+                    subreddit.get_subreddit_posts { Posts, status ->
+                        reddit_global_posts += Posts;
+                        last_index = reddit_global_posts.size;
+                        callback_update(status);
+                    }
+                }else{
+                    reddit_global_posts += posts;
+                    last_index = reddit_global_posts.size;
+                    callback_update(Status);
+                }
+
             }
         }
     }
@@ -190,7 +199,16 @@ class Reddit_Api(subredditname: String) {
     //image preview quality
     var previewQulaity: Int = 1 // from 0 to 5
 
+    var subreddit_posts_list : Array<Image_Info> = emptyArray();
+    var last_before_id = "";
+    var subreddit = subredditname;
 
+    init {
+        if (redditcon != null)
+            redditcon!!.Subreddits += this;
+        else
+            Log.e(this::class.java.simpleName,"Subreddit ${this.subreddit} not added");
+    }
 
 
 
@@ -200,9 +218,9 @@ class Reddit_Api(subredditname: String) {
             val url: String;
 
             if(api_key == "NOKEY"){
-                url = "https://reddit.com/r/$subreddit/${listMode.lowercase()}.json?limit=$PostRequestNumber${ if(subreddit_posts_list.isNotEmpty()) "&after=${last_before_id}" else ""}${timeperiod.lowercase()}";
+                url = "https://reddit.com/r/$subreddit/${listMode.lowercase()}.json?limit=$PostRequestNumber${ if(last_before_id.isNotEmpty()) "&after=${last_before_id}" else ""}${timeperiod.lowercase()}";
             }else{
-                url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?limit=$PostRequestNumber${ if(subreddit_posts_list.isNotEmpty()) "&after=${last_before_id}" else ""}${timeperiod.lowercase()}";
+                url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?limit=$PostRequestNumber${ if(last_before_id.isNotEmpty()) "&after=${last_before_id}" else ""}${timeperiod.lowercase()}";
             }
 
             Log.i("Reddit_Api",url);
@@ -244,6 +262,8 @@ class Reddit_Api(subredditname: String) {
                                     .getJSONObject("data") as JSONObject;
 
                                 // check if worth adding
+
+
                                 var found: Boolean = false;
                                 last_before_id = dataJson.getString("name");
 
@@ -256,10 +276,19 @@ class Reddit_Api(subredditname: String) {
                                         found = true;
                                 }
 
+
+
                                 if (dataJson.getBoolean("over_18") || found)
                                     continue;
-                                //----------------------------------------------
 
+
+                                val lastchars = dataJson.getString("url").reversed().substring(0,5);
+                                val is_thumbnail_notvalid = dataJson.getString("thumbnail").isNullOrEmpty()
+                                val is_media_notvalid =  dataJson.getString("media") == "null"
+                                if(!lastchars.contains('.') && is_thumbnail_notvalid  && is_media_notvalid)
+                                    continue;
+                                //----------------------------------------------
+                                //post is worth adding
 
 
 
@@ -410,6 +439,7 @@ class Reddit_Api(subredditname: String) {
                             subreddit_posts_list += temp_list;
                             callback_update(temp_list,200);
                         }else{
+
                             callback_update(emptyArray(),400);
                         }
                     }
@@ -423,16 +453,7 @@ class Reddit_Api(subredditname: String) {
 
     }
 
-    var subreddit_posts_list : Array<Image_Info> = emptyArray();
-    var last_before_id = "";
-    var subreddit = subredditname;
 
-    init {
-        if (redditcon != null)
-            redditcon!!.Subreddits += this;
-        else
-            Log.e(this::class.java.simpleName,"Subreddit ${this.subreddit} not added");
-    }
 
 
 }

@@ -1,5 +1,6 @@
 package com.alaory.wallmewallpaper
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.WallpaperManager
 import android.content.ComponentName
@@ -15,6 +16,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -132,11 +134,24 @@ class Image_Activity(): AppCompatActivity(){
 
 
 
-        fun saveImage(context: Context, image: Bitmap,Name : String): String {
-            val imageByteStream = ByteArrayOutputStream();
-            image.compress(Bitmap.CompressFormat.PNG,100,imageByteStream);
-            val path = MediaStore.Images.Media.insertImage(context.contentResolver,image,Name,null);
-            return path;
+        fun saveImage(context: Context, path : String , type: UrlType ,Name : String){
+
+            when(type){
+                UrlType.Image ->{
+                    val orginalFile = File(path);
+                    orginalFile.inputStream();
+                }
+                UrlType.Video ->{
+
+                }
+                UrlType.Gif ->{
+
+                }
+            }
+
+            //val imageByteStream = ByteArrayOutputStream();
+            //image.compress(Bitmap.CompressFormat.PNG,100,imageByteStream);
+            //val path = MediaStore.Images.Media.insertImage(context.contentResolver,image,Name,null);
         }
 
 
@@ -223,6 +238,7 @@ class Image_Activity(): AppCompatActivity(){
 
 
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle);
         //activity system and app bar
@@ -413,8 +429,39 @@ class Image_Activity(): AppCompatActivity(){
                     bottomsheetfragment.isVisible = !Full_image!!.isZoomed;
                 }
             });
+
+           //set on double tap and hide bottom sheet on zoom
+           var timesinclasttocuh : Long =  System.currentTimeMillis();
+           Full_video?.let{
+               it.setOnTouchListener { view, motionEvent ->
+                   it.onTouchEvent(motionEvent);
+                   //compare time to last tap to get a double table
+                   if(motionEvent.action == 0){
+                       val currentTime =  System.currentTimeMillis();
+                       if(currentTime - timesinclasttocuh <= 300) {//check if its a double tap.. might need some adjustment
+                           if (it.zoom >= 1.01){
+                               it.zoomBy(-4f, true)
+                           }else{
+                               it.zoomBy(4f, true)
+                           }
+                       }
+
+                       Log.d("Full_video","movtion ${currentTime - timesinclasttocuh} type of")
+                       timesinclasttocuh = System.currentTimeMillis();
+                   }
+
+                   bottomsheetfragment.isVisible = it.zoom <= 1.01;
+
+                   return@setOnTouchListener true;
+               }
+           }
         }.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback(){
-           override fun onStateChanged(bottomSheet: View, newState: Int) {}
+           override fun onStateChanged(bottomSheet: View, newState: Int) {
+               if(MYDATA!!.type == UrlType.Video){
+                   bottomSheet.isVisible = false;
+                   bottomSheet.isVisible = true;
+               }
+           }
            override fun onSlide(bottomSheet: View, slideOffset: Float) {
                bottomsheetarrow!!.animate().apply {
                    duration = 0;
@@ -654,7 +701,6 @@ class Image_Activity(): AppCompatActivity(){
                                 });
 
 
-
                                 player.apply {
                                     isLooping = true;
                                     setDataSource(videoPath);
@@ -755,7 +801,7 @@ class Image_Activity(): AppCompatActivity(){
 
 
         saveWallpaperButton?.setOnClickListener {
-            saveImage(applicationContext,mybitmap!!, myData!!.Image_name);
+            //saveImage(applicationContext,mybitmap!!, myData!!.Image_name);
             Toast.makeText(this,"Image has been saved to your photos directory",Toast.LENGTH_LONG).show();
 
         };
