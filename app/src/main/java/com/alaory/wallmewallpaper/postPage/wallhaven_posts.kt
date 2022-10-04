@@ -22,8 +22,9 @@ import com.alaory.wallmewallpaper.adabter.Image_list_adapter
 import com.alaory.wallmewallpaper.api.wallhaven_api
 
 
-class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
+class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment() , Image_list_adapter.OnImageClick{
 
+     val MenuChange = menuChange;
      var wallhaven_recycle : RecyclerView? = null;
      var wallhaven_adabter : Image_list_adapter? = null;
      var mLayoutManager : RecyclerView.LayoutManager? =null;
@@ -44,7 +45,7 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
-        wallhaven_adabter = Image_list_adapter(wallhaven_api.wallhaven_homepage_posts,this);
+        wallhaven_adabter = wallhaven_api.wallhavenApi?.wallhaven_homepage_posts?.let { Image_list_adapter(it,this) };
         if(userhitsave){
             LoadMore();
             userhitsave = false;
@@ -115,7 +116,7 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
     override fun onDetach() {
         super.onDetach()
-        wallhaven_adabter!!.removeLoadingView();
+        wallhaven_adabter?.removeLoadingView();
     }
 
     override fun onResume() {
@@ -123,7 +124,7 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
         if(lastPastImageInfo != null && database.lastblockedaddedImageInfo != null){
             if(lastPastImageInfo!!.Image_name == database.lastblockedaddedImageInfo!!.Image_name){
                 wallhaven_adabter!!.notifyDataSetChanged();
-                wallhaven_api.wallhaven_homepage_posts.removeAt(lastPastImageInfo_pos);
+                wallhaven_api.wallhavenApi!!.wallhaven_homepage_posts.removeAt(lastPastImageInfo_pos);
                 lastPastImageInfo = null;
             }
         }
@@ -141,7 +142,7 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
 
     private fun SetRvScrollListener(){
-        bottomloading = BottonLoading.ViewLodMore(mLayoutManager as StaggeredGridLayoutManager);
+        bottomloading =   BottonLoading.ViewLodMore(mLayoutManager as StaggeredGridLayoutManager, MenuChange);
         bottomloading!!.setOnLoadMoreListener(object : BottonLoading.OnLoadMoreListener {
             override fun onLoadMore() {
                 wallhaven_recycle?.post {
@@ -161,13 +162,13 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
             }
         }
 
-        wallhaven_api.GethomePagePosts ({
+        wallhaven_api.wallhavenApi!!.GethomePagePosts ({
             failedFirstLoading = false;
             if(isAdded){
                 requireActivity().runOnUiThread {
                     wallhaven_adabter?.removeLoadingView();
                     bottomloading?.setLoaded();
-                    wallhaven_adabter?.refresh_itemList(wallhaven_api.lastindex);
+                    wallhaven_adabter?.refresh_itemList(wallhaven_api.wallhavenApi!!.lastindex);
 
                     disableloading();
                 }
@@ -193,10 +194,10 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
 
     override fun onImageClick(Pos: Int, thumbnail: Drawable,loaded : Boolean) {
         try{
-            lastPastImageInfo =  wallhaven_api.wallhaven_homepage_posts[Pos];
+            lastPastImageInfo =  wallhaven_api.wallhavenApi!!.wallhaven_homepage_posts[Pos];
             lastPastImageInfo_pos = Pos;
-            var intent = Intent(requireContext(), Image_Activity::class.java);
-            Image_Activity.MYDATA = wallhaven_api.wallhaven_homepage_posts[Pos];
+            var intent = Intent(requireContext(), Image_Activity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            Image_Activity.MYDATA = wallhaven_api.wallhavenApi!!.wallhaven_homepage_posts[Pos];
             Image_Activity.THUMBNAIL = thumbnail;
             Image_Activity.postmode = Image_Activity.mode.wallhaven;
             Image_Activity.loadedPreview = loaded;
@@ -206,6 +207,10 @@ class wallhaven_posts : Fragment() , Image_list_adapter.OnImageClick{
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy();
+        Log.d("DestoryLog",this::class.java.simpleName);
+    }
 
 
 }

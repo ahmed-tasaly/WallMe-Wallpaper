@@ -6,7 +6,9 @@
     android:layoutDirection="ltr"
     android:layout_width="match_parent"
     android:paddingTop="50dp"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:elevation="2dp"
+    >
 
 
     <androidx.constraintlayout.widget.ConstraintLayout

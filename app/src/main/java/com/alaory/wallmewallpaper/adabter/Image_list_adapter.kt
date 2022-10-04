@@ -8,10 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.Toast
+import android.widget.*
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -38,8 +35,6 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     var imgclick = onimageclick;
     var context: Context? = null;
 
-    val TAG = "Image_list_adapter";
-
     var adab_ImageLoader : ImageLoader? = null;
     var blockDatabase : database? = null;
     var favoriteDatabase : database? = null;
@@ -61,10 +56,9 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
         adab_ImageLoader = ImageLoader.Builder(recyclerView.context!!)
             .allowRgb565(true)
             .bitmapConfig(Bitmap.Config.RGB_565)
-            .precision(Precision.INEXACT)
-            .bitmapFactoryMaxParallelism(6)
+            .bitmapFactoryMaxParallelism(2)
             .networkCachePolicy(CachePolicy.READ_ONLY)
-            .memoryCachePolicy(CachePolicy.ENABLED)
+            .memoryCachePolicy(CachePolicy.DISABLED)
             .diskCachePolicy(CachePolicy.ENABLED)
             .allowHardware(false)
             .crossfade(true)
@@ -87,8 +81,8 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                     .maxSizePercent(0.05)
                     .build();
             }
+            .networkObserverEnabled(false)
             .build();
-
     }
 
 
@@ -107,12 +101,13 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
 
     private fun getImagerequest(holder: PostItemView): ImageRequest{
-        val tempBitmap : Bitmap = Bitmap.createBitmap(holder.imageRatio.Width,holder.imageRatio.Height,Bitmap.Config.ARGB_8888);
+        val tempBitmap : Bitmap = Bitmap.createBitmap(holder.imageRatio.Width,holder.imageRatio.Height,Bitmap.Config.ALPHA_8);
         val tempDrawable = tempBitmap.toDrawable(context!!.resources);
-        val request = coil.request.ImageRequest.Builder(this.context!!)
+        val request = ImageRequest.Builder(this.context!!)
             .data(listPosts.get(holder.pos).Image_thumbnail)
             .placeholder(tempDrawable)
             .target(holder.image_main)
+            .allowHardware(false)
             .listener(
                 onSuccess = {_,_ ->
                     holder.cricle_prograssBar.visibility = View.GONE;
@@ -153,7 +148,8 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
             var width = 1;
             var height = 1;
-            listPosts.get(position).imageRatio?.let {
+            val currentpost = listPosts.get(position);
+            currentpost.imageRatio?.let {
                 val imageRatio = it;
                 val ratio = imageRatio.Width.toFloat() / imageRatio.Height.toFloat()
                 width = (50 * ratio).toInt() ;
@@ -164,13 +160,23 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             holder.pos = position;
             holder.imageRatio = Image_Ratio(width,height);
 
+            //set image type to show the user
+            if(currentpost.type != UrlType.Image){
+                holder.texttype.visibility = View.VISIBLE;
+                holder.texttype.setText(currentpost.type.name);
+            }else{
+                holder.texttype.visibility = View.INVISIBLE;
+            }
+
             adab_ImageLoader?.let {
                 it.enqueue(getImagerequest(holder));
             }
 
 
             holder.root_view.setOnClickListener {
+                val curnpo = currentpost;
                 holder.buttonframe.visibility = View.GONE;
+                adab_ImageLoader!!.memoryCache!!.clear();
                 imgclick.onImageClick(position,holder.image_main.drawable,holder.loaded);
             }
 
@@ -183,7 +189,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                 }else{
                     var found = false;
                     for(i in database.imageinfo_list){
-                        if(i.Image_name == listPosts.get(position).Image_name){
+                        if(i.Image_name == currentpost.Image_name){
                             found = true;
                         }
                     }
@@ -277,6 +283,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
         var favoriteButton = itemView.findViewById(R.id.favorite_scrollable_floatingbutton) as FloatingActionButton;
         var blockButton = itemView.findViewById(R.id.block_scrollable_floatingbutton) as FloatingActionButton;
         var buttonframe = itemView.findViewById(R.id.frame_scrollable_floatingbutton) as FrameLayout
+        var texttype = itemView.findViewById(R.id.text_type) as TextView;
     }
 
     class LoadingViewHolder(view: View): RecyclerView.ViewHolder(view){
@@ -325,6 +332,14 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
     interface OnImageClick{
         fun onImageClick(Pos: Int,thumbnail: Drawable,loaded : Boolean = false);
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        Log.d("DestoryLog",this::class.java.simpleName);
+
+        adab_ImageLoader?.memoryCache?.clear();
+        adab_ImageLoader?.shutdown();
     }
 
 

@@ -14,7 +14,6 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.work.*
 import com.alaory.wallmewallpaper.MainActivity
@@ -23,8 +22,9 @@ import com.alaory.wallmewallpaper.wallpaperChanger_Worker
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.util.concurrent.TimeUnit
 
-class settings : Fragment() {
+class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
 
+    val MenuChange = menuChange;
     //wallpaper changer
     var wallpaper_changer : LinearLayout? = null;
     var wallpaper_changer_text : TextView? = null;
@@ -80,12 +80,12 @@ class settings : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val layout = inflater.inflate(R.layout.fragment_settings, container, false);
-        MainActivity.hidenav();
+        MenuChange?.Shownav(false);
 
         loadprefs(requireContext());
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
-            MainActivity.change_fragment(MainActivity.LastFragmentMode!!, true);
+            MenuChange?.ChangeTo(MainActivity.menu.favorite,true);
         }
 
 
@@ -212,7 +212,7 @@ class settings : Fragment() {
                         .setMessage("I've disabled this source by default because it may contain disturbing or sketchy images")
                         .setPositiveButton("enable",object : DialogInterface.OnClickListener{
                             override fun onClick(p0: DialogInterface?, p1: Int) {
-                                MainActivity.wallhaven_floatingButton!!.visibility = View.VISIBLE;
+                               MenuChange?.hidenavbuttons(MainActivity.menu.wallhaven,true);
                             }
                         })
                         .setNegativeButton("disable",object : DialogInterface.OnClickListener{
@@ -224,7 +224,7 @@ class settings : Fragment() {
                         .create()
                         .show()
                 }else{
-                    MainActivity.wallhaven_floatingButton!!.visibility = View.GONE;
+                    MenuChange?.hidenavbuttons(MainActivity.menu.wallhaven,false);
                 }
             }
         }
@@ -234,9 +234,9 @@ class settings : Fragment() {
                 val prefs = p0.context.getSharedPreferences("settings",Context.MODE_PRIVATE);
                 prefs.edit().putBoolean("reddit_source",ischecked).apply();
                 if(ischecked){
-                    MainActivity.reddit_floatingButton!!.visibility = View.VISIBLE;
+                    MenuChange?.hidenavbuttons(MainActivity.menu.reddit,true);
                 }else{
-                    MainActivity.reddit_floatingButton!!.visibility = View.GONE;
+                    MenuChange?.hidenavbuttons(MainActivity.menu.reddit,false);
                 }
             }
         }

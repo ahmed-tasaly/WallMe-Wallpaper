@@ -19,8 +19,9 @@ import com.alaory.wallmewallpaper.*
 import com.alaory.wallmewallpaper.adabter.Image_list_adapter
 
 
-class favorite_list() : Fragment(), Image_list_adapter.OnImageClick {
+class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), Image_list_adapter.OnImageClick {
 
+    val MenuChange : MainActivity.MenuChange? = menuChange;
     var favoriteList_adabter: Image_list_adapter? = null;
     var favoriteList_recycler: RecyclerView? = null;
     var mlayout : RecyclerView.LayoutManager? = null;
@@ -31,7 +32,9 @@ class favorite_list() : Fragment(), Image_list_adapter.OnImageClick {
         super.onCreate(savedInstanceState)
         favoriteList_adabter = Image_list_adapter(database.imageinfo_list.toMutableList(),this);
         BottonLoading.loctionbottom = 0;
-        BottonLoading.updatebottom_navtigation(0);
+        MenuChange?.PlayAnimation_forNav {
+            it?.translationY(0f);
+        }
     }
 
     override fun onResume() {
@@ -90,7 +93,7 @@ class favorite_list() : Fragment(), Image_list_adapter.OnImageClick {
 
     override fun onImageClick(Pos: Int, thumbnail: Drawable,loaded : Boolean) {
         try {
-            val intent = Intent(requireContext(), Image_Activity::class.java);
+            val intent = Intent(requireContext(), Image_Activity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             Image_Activity.THUMBNAIL = thumbnail;
             Image_Activity.MYDATA = database.imageinfo_list[Pos];
             Image_Activity.postmode = Image_Activity.mode.reddit;
@@ -99,5 +102,10 @@ class favorite_list() : Fragment(), Image_list_adapter.OnImageClick {
         }catch (e : Exception){
             Log.e(TAG,e.toString());
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy();
+        Log.d("DestoryLog",this::class.java.simpleName);
     }
 }

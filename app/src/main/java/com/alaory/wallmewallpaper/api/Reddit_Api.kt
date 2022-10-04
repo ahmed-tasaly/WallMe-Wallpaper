@@ -10,88 +10,173 @@ import org.json.JSONTokener
 import java.io.IOException
 
 
+class Reddit_Api_Contorller() {
+    //reddit rquest token
+    var api_key = "NOKEY";
+
+    //number of posts to load
+    var PostRequestNumber = 25;
+
+    //token time left
+    var time_left = 0;
+
+    //okhttp client
+    var reddit = OkHttpClient();
+
+    //list of all subreddits posts
+    var reddit_global_posts: MutableList<Image_Info> = emptyList<Image_Info>().toMutableList();
+
+    //list of subreddits that have been made
+    var Subreddits: Array<Reddit_Api> = emptyArray();
+
+    //global post last index list
+    var last_index: Int = 0;
+
+    //image preview quality
+    var previewQulaity: Int = 1 // from 0 to 5
+
+    //list mode
+    var listMode = "Top";
+
+    //time period
+    var timeperiod = "&t=all";
+
+    val TAG = "Reddit_Api";
+
+
+    fun Update_Api_key(callback_update: () -> Unit = {}) {
+        Log.i("Reddit_Api", "Function called");
+        try {
+            if (BuildConfig.API_KEY_Base.trim() == "") {
+                callback_update();
+                return;
+            }
+        } catch (e: Exception) {
+            callback_update();
+            return;
+        }
+
+        val Myrequest = Request.Builder()
+            .url("https://www.reddit.com/api/v1/access_token?grant_type=https%3A%2F%2Foauth.reddit.com%2Fgrants%2Finstalled_client&device_id=DO_NOT_TRACK_THIS_DEVICE")
+            .post(RequestBody.create("application/x-www-form-urlencoded".toMediaTypeOrNull(), "="))
+            .addHeader("Authorization", "Basic ${BuildConfig.API_KEY_Base}")
+            .addHeader("content-type", "application/x-www-form-urlencoded")
+            .build()
+
+        reddit.newCall(Myrequest).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.i("Reddit_Api", "TOKEN error $e");
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                try {
+                    val respond_json =
+                        JSONTokener(response.body!!.string()).nextValue() as JSONObject;
+                    api_key = respond_json.getString("access_token");
+                    time_left = respond_json.getInt("expires_in");
+                    Log.i("Reddit_Api", "you got $api_key with time $time_left");
+                    callback_update();
+                } catch (e: Exception) {
+                    Log.e(TAG, "TOKEN FAILED: ${e.toString()}");
+                    callback_update();
+                }
+
+            }
+        });
+
+
+    }
+
+
+    fun get_allposts_andGive(callback_update: (Status: Int) -> Unit = {}) {
+        for (subreddit in Subreddits) {
+            subreddit.listMode = listMode;
+            subreddit.api_key = api_key;
+            subreddit.reddit = reddit;
+            subreddit.previewQulaity = previewQulaity;
+            subreddit.timeperiod = timeperiod;
+            subreddit.PostRequestNumber = PostRequestNumber;
+
+            subreddit.get_subreddit_posts { posts, Status ->
+                if(Status == 400){
+                    subreddit.get_subreddit_posts { Posts, status ->
+                        reddit_global_posts += Posts;
+                        last_index = reddit_global_posts.size;
+                        callback_update(status);
+                    }
+                }else{
+                    reddit_global_posts += posts;
+                    last_index = reddit_global_posts.size;
+                    callback_update(Status);
+                }
+
+            }
+        }
+    }
+
+
+    fun search_subreddits(query: String, callback: (listnames: Array<String>) -> Unit) {
+        var baseurl = "https://www.reddit.com/search.json?q=$query&type=sr";
+
+        var searchRequest: Request = Request.Builder()
+            .tag("SubredditsList")
+            .url(baseurl)
+            .build();
+
+
+
+        for (call in reddit.dispatcher.runningCalls()) {
+            call.request().tag()?.let {
+                if (it.equals("SubredditsList")) {
+                    call.cancel();
+                    Log.e("SubredditsList", "cancles")
+                }
+            }
+        }
+
+        reddit.newCall(searchRequest).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e(TAG, e.toString());
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                var subredditsNames: Array<String> = emptyArray();
+                try {
+                    val subredditlist = JSONObject(response.body!!.string()).getJSONObject("data")
+                        .getJSONArray("children");
+                    for (i in 0 until subredditlist.length()) {
+                        val displayname = subredditlist.getJSONObject(i).getJSONObject("data")
+                            .getString("display_name").lowercase();
+                        if (Reddit_Api.filter_words(displayname) || subredditlist.getJSONObject(i)
+                                .getJSONObject("data").optBoolean("over18", true)
+                        )
+                            continue;
+                        subredditsNames += subredditlist.getJSONObject(i).getJSONObject("data")
+                            .getString("display_name");
+                    }
+
+                    callback(subredditsNames);
+                } catch (e: Exception) {
+                    Log.e(TAG, e.toString());
+                }
+            }
+        })
+    }
+}
+
+
+
+
 
 class Reddit_Api(subredditname: String) {
 
 
     companion object{
-        //reddit rquest token
-        var api_key = "NOKEY";
-        //number of posts to load
-        var PostRequestNumber = 25;
-        //token time left
-        var time_left = 0;
-        //okhttp client
-        var reddit = OkHttpClient();
-        //list of all subreddits posts
-        var reddit_global_posts : MutableList<Image_Info> = emptyList<Image_Info>().toMutableList();
-        //list of subreddits that have been made
-        var Subreddits : Array<Reddit_Api> = emptyArray();
-        //global post last index list
-        var last_index : Int = 0;
-        //image preview quality
-        var previewQulaity: Int = 1 // from 0 to 5
-        //list mode
-        var listMode = "Top";
-        //time period
-        var timeperiod = "&t=all";
-
-        val TAG = "Reddit_Api";
-        fun Update_Api_key(callback_update: () -> Unit = {}) {
-            Log.i("Reddit_Api", "Function called");
-            try{
-                if(BuildConfig.API_KEY_Base.trim() == ""){
-                    callback_update();
-                    return;
-                }
-            }catch (e : Exception){
-                callback_update();
-                return;
-            }
-
-            val Myrequest = Request.Builder()
-                .url("https://www.reddit.com/api/v1/access_token?grant_type=https%3A%2F%2Foauth.reddit.com%2Fgrants%2Finstalled_client&device_id=DO_NOT_TRACK_THIS_DEVICE")
-                .post(RequestBody.create("application/x-www-form-urlencoded".toMediaTypeOrNull(),"="))
-                .addHeader("Authorization", "Basic ${BuildConfig.API_KEY_Base}")
-                .addHeader("content-type", "application/x-www-form-urlencoded")
-                .build()
-
-            reddit.newCall(Myrequest).enqueue(object : Callback{
-                override fun onFailure(call: Call, e: IOException) {
-                    Log.i("Reddit_Api","TOKEN error $e");
-                }
-                override fun onResponse(call: Call, response: Response) {
-                    try {
-                        val respond_json = JSONTokener(response.body!!.string()).nextValue() as JSONObject;
-                        api_key = respond_json.getString("access_token");
-                        time_left = respond_json.getInt("expires_in");
-                        Log.i("Reddit_Api", "you got $api_key with time $time_left");
-                        callback_update();
-                    }catch (e: Exception){
-                        Log.e(TAG,"TOKEN FAILED: ${e.toString()}");
-                        callback_update();
-                    }
-
-                }
-            });
-
-
-        }
-
-
-        fun get_allposts_andGive(callback_update: (Status: Int) -> Unit = {}){
-            for (subreddit in 0 until Subreddits.size){
-                Subreddits.get(subreddit).get_subreddit_posts{ posts, Status ->
-                    reddit_global_posts += posts;
-                    last_index = reddit_global_posts.size;
-                    callback_update(Status);
-                }
-            }
-        }
+        var redditcon :  Reddit_Api_Contorller? = null;
 
         fun filter_words(word : String): Boolean{
             val word = word.lowercase();
-            val filterWords: Array<String> = arrayOf("nsfw","adult","gender","gay","cross","bible","chris","lgbt","lgb","sex","rainbow","pride","furry")
+            val filterWords: Array<String> = arrayOf("nsfw","adult","gender","gay","cross","bible","chris","lgbt","lgb","sex","rainbow","pride","furry","jerk")
 
             for(i in filterWords)
                 if(word.contains(i))
@@ -99,54 +184,31 @@ class Reddit_Api(subredditname: String) {
 
             return false;
         }
-
-
-        fun search_subreddits(query : String,callback: (listnames: Array<String>) -> Unit){
-            var baseurl = "https://www.reddit.com/search.json?q=$query&type=sr";
-
-            var searchRequest: Request = Request.Builder()
-                .tag("SubredditsList")
-                .url(baseurl)
-                .build();
-
-
-
-            for(call in reddit.dispatcher.runningCalls()){
-                call.request().tag()?.let {
-                    if(it.equals("SubredditsList")){
-                        call.cancel();
-                        Log.e("SubredditsList","cancles")
-                    }
-                }
-            }
-
-            reddit.newCall(searchRequest).enqueue(object : Callback{
-                override fun onFailure(call: Call, e: IOException) {
-                    Log.e(TAG,e.toString());
-                }
-
-                override fun onResponse(call: Call, response: Response) {
-                    var subredditsNames : Array<String> = emptyArray();
-                    try{
-                        val subredditlist = JSONObject(response.body!!.string()).getJSONObject("data").getJSONArray("children");
-                        for(i in 0 until  subredditlist.length()){
-                            val displayname = subredditlist.getJSONObject(i).getJSONObject("data").getString("display_name").lowercase();
-                            if(filter_words(displayname) || subredditlist.getJSONObject(i).getJSONObject("data").optBoolean("over18",true))
-                                continue;
-                            subredditsNames += subredditlist.getJSONObject(i).getJSONObject("data").getString("display_name");
-                        }
-
-                        callback(subredditsNames);
-                    }catch (e :Exception){
-                        Log.e(TAG,e.toString());
-                    }
-                }
-            })
-        }
-
     }
 
+    //list mode
+    var listMode = "Top";
+    //time period
+    var timeperiod = "&t=all";
+    //reddit rquest token
+    var api_key = "NOKEY";
+    //number of posts to load
+    var PostRequestNumber = 25;
+    //okhttp client
+    var reddit = OkHttpClient();
+    //image preview quality
+    var previewQulaity: Int = 1 // from 0 to 5
 
+    var subreddit_posts_list : Array<Image_Info> = emptyArray();
+    var last_before_id = "";
+    var subreddit = subredditname;
+
+    init {
+        if (redditcon != null)
+            redditcon!!.Subreddits += this;
+        else
+            Log.e(this::class.java.simpleName,"Subreddit ${this.subreddit} not added");
+    }
 
 
 
@@ -156,9 +218,9 @@ class Reddit_Api(subredditname: String) {
             val url: String;
 
             if(api_key == "NOKEY"){
-                url = "https://reddit.com/r/$subreddit/${listMode.lowercase()}.json?limit=$PostRequestNumber${ if(subreddit_posts_list.isNotEmpty()) "&after=${last_before_id}" else ""}${timeperiod.lowercase()}";
+                url = "https://reddit.com/r/$subreddit/${listMode.lowercase()}.json?limit=$PostRequestNumber${ if(last_before_id.isNotEmpty()) "&after=${last_before_id}" else ""}${timeperiod.lowercase()}";
             }else{
-                url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?limit=$PostRequestNumber${ if(subreddit_posts_list.isNotEmpty()) "&after=${last_before_id}" else ""}${timeperiod.lowercase()}";
+                url = "https://oauth.reddit.com/r/$subreddit/${listMode.lowercase()}?limit=$PostRequestNumber${ if(last_before_id.isNotEmpty()) "&after=${last_before_id}" else ""}${timeperiod.lowercase()}";
             }
 
             Log.i("Reddit_Api",url);
@@ -200,6 +262,8 @@ class Reddit_Api(subredditname: String) {
                                     .getJSONObject("data") as JSONObject;
 
                                 // check if worth adding
+
+
                                 var found: Boolean = false;
                                 last_before_id = dataJson.getString("name");
 
@@ -212,10 +276,20 @@ class Reddit_Api(subredditname: String) {
                                         found = true;
                                 }
 
+
+
                                 if (dataJson.getBoolean("over_18") || found)
                                     continue;
-                                //----------------------------------------------
 
+                                val testurl = dataJson.getString("url");
+                                val lastchars = dataJson.getString("url").reversed().substring(0,5);
+                                val is_thumbnail_notvalid = dataJson.getString("thumbnail").isNullOrEmpty()
+                                val is_media_notvalid =  dataJson.getString("media") == "null"
+                                val is_media_metadata_notvalid : JSONObject? = dataJson.optJSONObject("media_metadata");
+                                if((!lastchars.contains('.') && is_thumbnail_notvalid  && is_media_notvalid && is_media_metadata_notvalid == null) || lastchars.get(0) == '/')
+                                    continue;
+                                //----------------------------------------------
+                                //post is worth adding
 
 
 
@@ -225,10 +299,13 @@ class Reddit_Api(subredditname: String) {
                                 if (filter_words(dataJson.getString("title")))
                                     continue;
 
-                                var type = UrlType.Image;
+
+
                                 var selfthumbnail = false
                                 if(dataJson.getString("thumbnail") == "self" || dataJson.getString("thumbnail") == "default")
                                     selfthumbnail = true;
+
+                                var type = UrlType.Image;
 
                                 if(dataJson.optBoolean("is_video", false))
                                     type = UrlType.Video;
@@ -280,12 +357,22 @@ class Reddit_Api(subredditname: String) {
                                     continue;
                                 }
 
+                                var source_url = dataJson.getString("url");
+                                if(type == UrlType.Video){
+                                    source_url = dataJson.getJSONObject("secure_media").getJSONObject("reddit_video").getString("fallback_url").replace("?source=fallback","");
+                                }else if(type == UrlType.Gif){
+                                    source_url = dataJson.getString("url");
+                                    if(source_url.last() == 'v'){
+                                        source_url = source_url.removeRange(source_url.lastIndex,source_url.lastIndex+1);
+                                    }
+                                }
+
                                 val one_post: Image_Info;
                                 //post doesn't have a preview
                                 if (dataJson.optString("preview").isNullOrBlank()) {
                                     one_post = Image_Info(
-                                        dataJson.getString("url"),
-                                        dataJson.getString("url"),
+                                        source_url,
+                                        source_url,
                                         dataJson.getString("name"),
                                         dataJson.getString("author"),
                                         dataJson.getString("title"),
@@ -329,10 +416,7 @@ class Reddit_Api(subredditname: String) {
                                             .getInt("height")
                                     );
 
-                                    var source_url = image_source_url;
-                                    if(type == UrlType.Video){
-                                        source_url = dataJson.getJSONObject("media").getJSONObject("reddit_video").getString("fallback_url");
-                                    }
+
                                     //parse json into data to use
                                     one_post = Image_Info(
                                         source_url,
@@ -359,6 +443,7 @@ class Reddit_Api(subredditname: String) {
                             subreddit_posts_list += temp_list;
                             callback_update(temp_list,200);
                         }else{
+
                             callback_update(emptyArray(),400);
                         }
                     }
@@ -372,12 +457,7 @@ class Reddit_Api(subredditname: String) {
 
     }
 
-    init {
-        Subreddits += this;
-    }
 
 
-    var subreddit_posts_list : Array<Image_Info> = emptyArray();
-    var last_before_id = "";
-    var subreddit = subredditname;
+
 }
