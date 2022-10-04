@@ -13,16 +13,15 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.values
 import androidx.core.view.isVisible
 import androidx.palette.graphics.Palette
 import coil.ImageLoader
@@ -49,9 +48,9 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.internal.toHexString
 import okio.Path.Companion.toPath
-import java.io.ByteArrayOutputStream
-import java.io.File
-import kotlin.math.absoluteValue
+import com.alaory.wallmewallpaper.wallpaper.setWallpaper
+import com.alaory.wallmewallpaper.wallpaper.saveImage
+
 
 class Image_Activity(): AppCompatActivity(){
     //image info
@@ -130,92 +129,6 @@ class Image_Activity(): AppCompatActivity(){
         //wallhaven tags
         var TagNameList : Array<String> = emptyArray();
 
-
-
-
-
-        fun saveImage(context: Context, path : String , type: UrlType ,Name : String){
-
-            when(type){
-                UrlType.Image ->{
-                    val orginalFile = File(path);
-                    orginalFile.inputStream();
-                }
-                UrlType.Video ->{
-
-                }
-                UrlType.Gif ->{
-
-                }
-            }
-
-            //val imageByteStream = ByteArrayOutputStream();
-            //image.compress(Bitmap.CompressFormat.PNG,100,imageByteStream);
-            //val path = MediaStore.Images.Media.insertImage(context.contentResolver,image,Name,null);
-        }
-
-
-
-
-
-        fun Bitmap_toUri(context: Context, image: Bitmap): Uri? {
-            val bytes = ByteArrayOutputStream();
-            image.compress(Bitmap.CompressFormat.PNG,100,bytes);
-            val imagepath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),"tempImage")
-            if (!imagepath.mkdirs()) {
-                Log.e("Image_Activity", "Directory not created")
-            }
-            val imagesaved = File(imagepath.absolutePath + "/temp.png");
-            imagesaved.writeBytes(bytes.toByteArray());
-
-
-            return Uri.fromFile(imagepath);
-        }
-
-
-
-        fun setWallpaper(context: Context,wallBitmap: Bitmap ,rectF: RectF,setLockScreen: setmode){
-            //set the wallpaper
-
-                try{
-                    val screenWidth = context.resources.displayMetrics.widthPixels;
-                    val screenHeight = context.resources.displayMetrics.heightPixels;
-
-                    val wallpapermanager = WallpaperManager.getInstance(context);
-                    wallpapermanager.suggestDesiredDimensions(screenWidth,screenHeight);
-
-                    if(!wallpapermanager.isWallpaperSupported){
-                        Toast.makeText(context,"wallpaper is not supported. idk how",Toast.LENGTH_LONG).show();
-                        return;
-                    }
-
-
-                    val WallPaperBitmap : Bitmap = Bitmap.createBitmap(
-                        wallBitmap,
-                        (wallBitmap.width * rectF.left).toInt(),
-                        (wallBitmap.height * rectF.top).toInt(),
-                        (wallBitmap.width * (rectF.right - rectF.left).absoluteValue).toInt(),
-                        (wallBitmap.height * (rectF.bottom - rectF.top).absoluteValue).toInt()
-                    );
-
-
-                    when(setLockScreen){
-                        setmode.HomeScreen -> {
-                            wallpapermanager.setBitmap(WallPaperBitmap,null,true,WallpaperManager.FLAG_SYSTEM);
-                        }
-                        setmode.LockScreen -> {
-                           wallpapermanager.setBitmap(WallPaperBitmap,null,true,WallpaperManager.FLAG_LOCK);
-                        }
-                        else -> {}
-                    }
-
-
-
-                }catch (e:Exception){
-                    Log.e("Image_Activity",e.toString())
-                }
-
-        }
 
     }
 
@@ -307,7 +220,7 @@ class Image_Activity(): AppCompatActivity(){
             blockimage = Views.findViewById(R.id.block_bottomsheet_floatingbutton);
             bottomsheetarrow = Views.findViewById<ImageButton>(R.id.pullbottom);
 
-            if(isOnDatabase())
+            if(isOnDatabase())//check if image is in favorite list database
                 setfavorite!!.setImageResource(R.drawable.ic_heartfull);
 
             //pull buttonimage
@@ -450,6 +363,8 @@ class Image_Activity(): AppCompatActivity(){
                        timesinclasttocuh = System.currentTimeMillis();
                    }
 
+                   val matirx = it.engine.matrix.values();
+                   Log.d("Full_video","engine matrix ${it.engine.matrix.toShortString()} ")
                    bottomsheetfragment.isVisible = it.zoom <= 1.01;
 
                    return@setOnTouchListener true;
@@ -528,13 +443,16 @@ class Image_Activity(): AppCompatActivity(){
 
         //------------------------------------------------------------------
 
+
         //set loading
         val loaderlistener = object : progressRespondBody.progressListener{
             override fun Update(byteread: Long, contentLength: Long, done: Boolean) {
+                val byteread_decimal = String.format("%.2f",byteread.toFloat()/1000000);
+                val bytesize_decimal = String.format("%.2f",contentLength.toFloat()/1000000);
                 runOnUiThread {
-                    counter_image!!.setText("${100*byteread/contentLength}%");
+                    counter_image!!.setText("$byteread_decimal/$bytesize_decimal Mbp");
                     counter_image!!.isVisible =
-                        !(100*byteread/contentLength == (100).toLong());
+                        100*byteread/contentLength != (100).toLong();
                 }
 
                 Log.i("progressListener_image","done: ${100*byteread / contentLength}");
@@ -556,12 +474,12 @@ class Image_Activity(): AppCompatActivity(){
 
                         var BottomSheetSwatch : Palette.Swatch? = null;
 
-                        if(pal.darkMutedSwatch != null){
+                        if(pal.mutedSwatch != null){
+                            BottomSheetSwatch = pal.mutedSwatch;
+                        }else if(pal.darkMutedSwatch != null){
                             BottomSheetSwatch = pal.darkMutedSwatch;
-                        }else if(pal.darkVibrantSwatch != null){
-                            BottomSheetSwatch = pal.darkVibrantSwatch;
                         }else{
-                            BottomSheetSwatch = pal.lightVibrantSwatch;
+                            BottomSheetSwatch = pal.lightMutedSwatch;
                         }
 
                         val endBackground = ResourcesCompat.getDrawable(resources,R.drawable.bottomsheetshape,theme);
@@ -582,15 +500,15 @@ class Image_Activity(): AppCompatActivity(){
                         var buttoncolor = 0;
                         var buttonIconcolor = 0;
 
-                        if(pal.mutedSwatch != null){
-                            buttoncolor = pal.mutedSwatch!!.rgb;
-                            buttonIconcolor = pal.mutedSwatch!!.bodyTextColor;
-                        }else if(pal.lightMutedSwatch != null){
-                            buttoncolor = pal.lightMutedSwatch!!.rgb;
-                            buttonIconcolor = pal.lightMutedSwatch!!.bodyTextColor;
-                        }else{
+                        if(pal.vibrantSwatch != null){
                             buttoncolor = pal.vibrantSwatch!!.rgb;
                             buttonIconcolor = pal.vibrantSwatch!!.bodyTextColor;
+                        }else if(pal.darkVibrantSwatch != null){
+                            buttoncolor = pal.darkVibrantSwatch!!.rgb;
+                            buttonIconcolor = pal.darkVibrantSwatch!!.bodyTextColor;
+                        }else{
+                            buttoncolor = pal.lightVibrantSwatch!!.rgb;
+                            buttonIconcolor = pal.lightVibrantSwatch!!.bodyTextColor;
                         }
 
 
@@ -618,12 +536,6 @@ class Image_Activity(): AppCompatActivity(){
         }
             //set Image Loader
             imageloader = ImageLoader.Builder(this)
-                .diskCache {
-                    DiskCache.Builder()
-                        //.directory(this.cacheDir.resolve("imagesaved"))
-                        .directory(this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.path.toPath())
-                        .build()
-                }
                 .memoryCachePolicy(CachePolicy.DISABLED)
                 .networkCachePolicy(CachePolicy.READ_ONLY)
                 .crossfade(true)
@@ -638,6 +550,12 @@ class Image_Activity(): AppCompatActivity(){
                             add(GifDecoder.Factory())
                         }
                     }
+                }
+                .diskCache {
+                    DiskCache.Builder()
+                        .directory(this.cacheDir.resolve("imagesaved"))
+                        //.directory(this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.path.toPath())
+                        .build()
                 }
                 .okHttpClient {
                     OkHttpClient().newBuilder()
@@ -803,7 +721,6 @@ class Image_Activity(): AppCompatActivity(){
         saveWallpaperButton?.setOnClickListener {
             //saveImage(applicationContext,mybitmap!!, myData!!.Image_name);
             Toast.makeText(this,"Image has been saved to your photos directory",Toast.LENGTH_LONG).show();
-
         };
 
         Log.d("Image_Activity","Info url ${myData?.Image_url} name ${myData?.Image_name} thumbnail ${myData?.Image_thumbnail}");

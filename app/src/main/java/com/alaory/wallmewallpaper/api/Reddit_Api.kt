@@ -281,11 +281,12 @@ class Reddit_Api(subredditname: String) {
                                 if (dataJson.getBoolean("over_18") || found)
                                     continue;
 
-
+                                val testurl = dataJson.getString("url");
                                 val lastchars = dataJson.getString("url").reversed().substring(0,5);
                                 val is_thumbnail_notvalid = dataJson.getString("thumbnail").isNullOrEmpty()
                                 val is_media_notvalid =  dataJson.getString("media") == "null"
-                                if(!lastchars.contains('.') && is_thumbnail_notvalid  && is_media_notvalid)
+                                val is_media_metadata_notvalid : JSONObject? = dataJson.optJSONObject("media_metadata");
+                                if((!lastchars.contains('.') && is_thumbnail_notvalid  && is_media_notvalid && is_media_metadata_notvalid == null) || lastchars.get(0) == '/')
                                     continue;
                                 //----------------------------------------------
                                 //post is worth adding
@@ -361,6 +362,9 @@ class Reddit_Api(subredditname: String) {
                                     source_url = dataJson.getJSONObject("secure_media").getJSONObject("reddit_video").getString("fallback_url").replace("?source=fallback","");
                                 }else if(type == UrlType.Gif){
                                     source_url = dataJson.getString("url");
+                                    if(source_url.last() == 'v'){
+                                        source_url = source_url.removeRange(source_url.lastIndex,source_url.lastIndex+1);
+                                    }
                                 }
 
                                 val one_post: Image_Info;
