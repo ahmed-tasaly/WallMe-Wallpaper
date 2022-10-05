@@ -34,8 +34,7 @@ import coil.request.CachePolicy
 import com.alaory.wallmewallpaper.api.wallhaven_api
 import com.alaory.wallmewallpaper.interpreter.progressRespondBody
 import com.alaory.wallmewallpaper.postPage.TagActivity
-import com.alaory.wallmewallpaper.wallpaper.gifwallpaper
-import com.alaory.wallmewallpaper.wallpaper.livewallpaper
+import com.alaory.wallmewallpaper.wallpaper.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -48,11 +47,10 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.internal.toHexString
 import okio.Path.Companion.toPath
-import com.alaory.wallmewallpaper.wallpaper.setWallpaper
-import com.alaory.wallmewallpaper.wallpaper.saveImage
 
 
 class Image_Activity(): AppCompatActivity(){
+
     //image info
     private var titlePost: TextView? = null;
     private var auther_post: TextView? = null;
@@ -104,6 +102,7 @@ class Image_Activity(): AppCompatActivity(){
     }
 
 
+    var MediaPath : String? = null;
 
 
     private  var cricle_prograssBar : ImageView? = null;
@@ -283,6 +282,7 @@ class Image_Activity(): AppCompatActivity(){
 
                 //if video call video sevice
                 if(MYDATA!!.type != UrlType.Image){
+                    getSharedPreferences("LiveWallpaper",Context.MODE_PRIVATE).edit().putString("Video_Path",MediaPath).apply();
 
                     val wpm = WallpaperManager.getInstance(it.context);
                     val wpminfo = wpm.wallpaperInfo;
@@ -596,8 +596,7 @@ class Image_Activity(): AppCompatActivity(){
 
                         override fun onSuccess(result: Drawable) {
                             super.onSuccess(result);
-                            val videoPath = imageloader!!.diskCache!![MemoryCache.Key(MYDATA!!.Image_url).key]!!.data.toString();
-                            getSharedPreferences("LiveWallpaper",Context.MODE_PRIVATE).edit().putString("Video_Path",videoPath).apply();
+                            MediaPath = imageloader!!.diskCache!![MemoryCache.Key(MYDATA!!.Image_url).key]!!.data.toString();
                             if(myData!!.type == UrlType.Image  || myData!!.type == UrlType.Gif) {
                                 mybitmap = result.toBitmap();
                                 Full_image!!.setImageDrawable(result);
@@ -621,7 +620,7 @@ class Image_Activity(): AppCompatActivity(){
 
                                 player.apply {
                                     isLooping = true;
-                                    setDataSource(videoPath);
+                                    setDataSource(MediaPath);
                                     setOnPreparedListener {
                                         Full_video!!.visibility = View.VISIBLE;
                                         Full_image!!.visibility = View.INVISIBLE;
@@ -719,8 +718,11 @@ class Image_Activity(): AppCompatActivity(){
 
 
         saveWallpaperButton?.setOnClickListener {
-            //saveImage(applicationContext,mybitmap!!, myData!!.Image_name);
-            Toast.makeText(this,"Image has been saved to your photos directory",Toast.LENGTH_LONG).show();
+            if(loaded) {
+                saveMedia(this, MediaPath!!, MYDATA!!.type, MYDATA!!.Image_name);
+            }else{
+                Toast.makeText(this,"Please Wait for the Wallpaper to load",Toast.LENGTH_LONG).show();
+            }
         };
 
         Log.d("Image_Activity","Info url ${myData?.Image_url} name ${myData?.Image_name} thumbnail ${myData?.Image_thumbnail}");

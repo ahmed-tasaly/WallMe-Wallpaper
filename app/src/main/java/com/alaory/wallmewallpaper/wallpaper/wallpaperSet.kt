@@ -1,17 +1,23 @@
 package com.alaory.wallmewallpaper.wallpaper
 
 import android.app.WallpaperManager
+import android.content.ContentUris
+import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.RectF
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import com.alaory.wallmewallpaper.Image_Activity
 import com.alaory.wallmewallpaper.UrlType
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 import kotlin.math.absoluteValue
 
 fun setWallpaper(context: Context, wallBitmap: Bitmap, rectF: RectF, setLockScreen: Image_Activity.setmode){
@@ -74,18 +80,67 @@ fun Bitmap_toUri(context: Context, image: Bitmap): Uri? {
 }
 
 
-fun saveImage(context: Context, path : String, type: UrlType, Name : String){
+fun saveMedia(context: Context, path : String, type: UrlType, Name : String){
+    val resolver = context.contentResolver;
 
     when(type){
         UrlType.Image ->{
-            val orginalFile = File(path);
-            orginalFile.inputStream();
+            //get image path
+            val image = File(path);
+
+            //set image info
+            val ImageValues = ContentValues();
+            ImageValues.put(MediaStore.Images.Media.DISPLAY_NAME,Name);
+            ImageValues.put(MediaStore.Images.Media.MIME_TYPE,"image/png");
+            ImageValues.put(MediaStore.Images.Media.TITLE,Name);
+            ImageValues.put(MediaStore.Images.Media.DATE_ADDED,System.currentTimeMillis()/1000);
+
+            //create media for the image
+            val OutFileDes = resolver.insert( MediaStore.Images.Media.EXTERNAL_CONTENT_URI,ImageValues);
+
+            //open media into a file
+            val outfile = OutFileDes?.let { resolver.openFileDescriptor(it,"w") };
+            //Use File to write to the media
+            val writeout = FileOutputStream(outfile?.fileDescriptor);
+            writeout.write(image.inputStream().readBytes());
+            writeout.close();
+            //repeat for all
+            Toast.makeText(context,"Image has been saved to your Picture directory",Toast.LENGTH_LONG).show();
         }
         UrlType.Video ->{
+            val video = File(path);
 
+            val videoValues = ContentValues();
+            videoValues.put(MediaStore.Video.Media.DISPLAY_NAME,Name);
+            videoValues.put(MediaStore.Video.Media.TITLE,Name);
+            videoValues.put(MediaStore.Video.Media.DATE_ADDED,System.currentTimeMillis()/1000);
+            videoValues.put(MediaStore.Video.Media.MIME_TYPE,"video/mp4");
+
+
+            val OutVideoDes = resolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,videoValues);
+            val outVideo = OutVideoDes?.let { resolver.openFileDescriptor(it,"w")};
+            val filevideo = FileOutputStream(outVideo?.fileDescriptor);
+
+            filevideo.write(video.inputStream().readBytes());
+            filevideo.close();
+            Toast.makeText(context,"Video has been saved to your Movie directory",Toast.LENGTH_LONG).show();
         }
         UrlType.Gif ->{
+            val gif = File(path);
 
+            val gifValues = ContentValues();
+            gifValues.put(MediaStore.Images.Media.DISPLAY_NAME,Name);
+            gifValues.put(MediaStore.Images.Media.TITLE,Name);
+            gifValues.put(MediaStore.Images.Media.DATE_ADDED,System.currentTimeMillis()/1000);
+            gifValues.put(MediaStore.Images.Media.MIME_TYPE,"image/gif");
+
+            val OutgifDes = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,gifValues);
+            val outgif = OutgifDes?.let { resolver.openFileDescriptor(it,"w")};
+            val filegif = FileOutputStream(outgif?.fileDescriptor);
+
+            filegif.write(gif.inputStream().readBytes());
+            filegif.close();
+            Toast.makeText(context,"Gif has been saved to your Picture directory",Toast.LENGTH_LONG).show();
         }
     }
 
