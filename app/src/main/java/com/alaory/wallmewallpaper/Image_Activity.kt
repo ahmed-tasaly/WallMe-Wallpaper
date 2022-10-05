@@ -12,7 +12,6 @@ import android.graphics.drawable.*
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -46,7 +45,7 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.internal.toHexString
-import okio.Path.Companion.toPath
+
 
 
 class Image_Activity(): AppCompatActivity(){
@@ -95,11 +94,7 @@ class Image_Activity(): AppCompatActivity(){
         reddit
     }
 
-    enum class setmode{
-        HomeScreen,
-        LockScreen,
-        Both
-    }
+
 
 
     var MediaPath : String? = null;

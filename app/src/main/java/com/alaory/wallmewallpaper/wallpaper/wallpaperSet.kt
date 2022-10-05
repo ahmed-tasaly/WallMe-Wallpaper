@@ -20,9 +20,14 @@ import java.io.File
 import java.io.FileOutputStream
 import kotlin.math.absoluteValue
 
-fun setWallpaper(context: Context, wallBitmap: Bitmap, rectF: RectF, setLockScreen: Image_Activity.setmode){
-    //set the wallpaper
+enum class setmode{
+    HomeScreen,
+    LockScreen,
+    Both
+}
 
+fun setWallpaper(context: Context, wallBitmap: Bitmap, rectF: RectF, setScreen: setmode){
+    //set the wallpaper
     try{
         val screenWidth = context.resources.displayMetrics.widthPixels;
         val screenHeight = context.resources.displayMetrics.heightPixels;
@@ -45,11 +50,11 @@ fun setWallpaper(context: Context, wallBitmap: Bitmap, rectF: RectF, setLockScre
         );
 
 
-        when(setLockScreen){
-            Image_Activity.setmode.HomeScreen -> {
+        when(setScreen){
+            setmode.HomeScreen -> {
                 wallpapermanager.setBitmap(WallPaperBitmap,null,true, WallpaperManager.FLAG_SYSTEM);
             }
-            Image_Activity.setmode.LockScreen -> {
+            setmode.LockScreen -> {
                 wallpapermanager.setBitmap(WallPaperBitmap,null,true, WallpaperManager.FLAG_LOCK);
             }
             else -> {}
@@ -62,23 +67,6 @@ fun setWallpaper(context: Context, wallBitmap: Bitmap, rectF: RectF, setLockScre
     }
 
 }
-
-
-
-fun Bitmap_toUri(context: Context, image: Bitmap): Uri? {
-    val bytes = ByteArrayOutputStream();
-    image.compress(Bitmap.CompressFormat.PNG,100,bytes);
-    val imagepath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),"tempImage")
-    if (!imagepath.mkdirs()) {
-        Log.e("Image_Activity", "Directory not created")
-    }
-    val imagesaved = File(imagepath.absolutePath + "/temp.png");
-    imagesaved.writeBytes(bytes.toByteArray());
-
-
-    return Uri.fromFile(imagepath);
-}
-
 
 fun saveMedia(context: Context, path : String, type: UrlType, Name : String){
     val resolver = context.contentResolver;
@@ -107,6 +95,7 @@ fun saveMedia(context: Context, path : String, type: UrlType, Name : String){
             //repeat for all
             Toast.makeText(context,"Image has been saved to your Picture directory",Toast.LENGTH_LONG).show();
         }
+
         UrlType.Video ->{
             val video = File(path);
 
@@ -125,6 +114,7 @@ fun saveMedia(context: Context, path : String, type: UrlType, Name : String){
             filevideo.close();
             Toast.makeText(context,"Video has been saved to your Movie directory",Toast.LENGTH_LONG).show();
         }
+
         UrlType.Gif ->{
             val gif = File(path);
 
@@ -133,6 +123,7 @@ fun saveMedia(context: Context, path : String, type: UrlType, Name : String){
             gifValues.put(MediaStore.Images.Media.TITLE,Name);
             gifValues.put(MediaStore.Images.Media.DATE_ADDED,System.currentTimeMillis()/1000);
             gifValues.put(MediaStore.Images.Media.MIME_TYPE,"image/gif");
+
 
             val OutgifDes = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,gifValues);
             val outgif = OutgifDes?.let { resolver.openFileDescriptor(it,"w")};
@@ -143,8 +134,4 @@ fun saveMedia(context: Context, path : String, type: UrlType, Name : String){
             Toast.makeText(context,"Gif has been saved to your Picture directory",Toast.LENGTH_LONG).show();
         }
     }
-
-    //val imageByteStream = ByteArrayOutputStream();
-    //image.compress(Bitmap.CompressFormat.PNG,100,imageByteStream);
-    //val path = MediaStore.Images.Media.insertImage(context.contentResolver,image,Name,null);
 }
