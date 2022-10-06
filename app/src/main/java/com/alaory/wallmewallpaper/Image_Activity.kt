@@ -73,6 +73,7 @@ class Image_Activity(): AppCompatActivity(){
     private var saveWallpaperButton : FloatingActionButton? = null;
     private var setfavorite : FloatingActionButton? = null;
     private var blockimage : FloatingActionButton? = null;
+    private var backbutton : ImageButton? = null;
 
     //bottom buttons
     private var setwallpaper_bottom_button: Button? = null;
@@ -109,14 +110,10 @@ class Image_Activity(): AppCompatActivity(){
     var imageloader: ImageLoader? =null;
 
     companion object{
-        val TAG = "Image_Activity";
         //the clicked data by the user
          var MYDATA : Image_Info? = null;
          var THUMBNAIL: Drawable? = null;
          var loadedPreview : Boolean = false;
-        //save bitmap to file and load it as a uri
-
-
 
         //mode
         var postmode = mode.reddit;
@@ -139,7 +136,7 @@ class Image_Activity(): AppCompatActivity(){
 
     override fun onResume() {
         super.onResume()
-        MainActivity.HideSystemBar(window);
+        wallmewallpaper.HideSystemBar(window);
     }
 
 
@@ -150,9 +147,9 @@ class Image_Activity(): AppCompatActivity(){
         super.onCreate(bundle);
         //activity system and app bar
         this.supportActionBar!!.hide();
-        MainActivity.HideSystemBar(window);
+        wallmewallpaper.HideSystemBar(window);
         //update screen orein
-        MainActivity.checkorein();
+        wallmewallpaper.checkorein();
 
         myData = MYDATA
         thumbnail = THUMBNAIL
@@ -177,15 +174,18 @@ class Image_Activity(): AppCompatActivity(){
         container_bottom_button!!.animate().translationY(200f);//for animation
         //bottom sheet
         val bottomsheetfragment = findViewById<FrameLayout>(R.id.ImageInfo_BottomSheet);
+
+
         //set the ui elements
         Full_image = findViewById(R.id.full_image);
         Full_video = findViewById(R.id.full_video);
+        backbutton = findViewById(R.id.backbutton);
 
 
 
         counter_image = findViewById(R.id.counter_prograssBar_FullImage);
         cricle_prograssBar = findViewById(R.id.cricle_prograssBar_FullImage);
-        MainActivity.setImageView_asLoading(cricle_prograssBar);
+        wallmewallpaper.setImageView_asLoading(cricle_prograssBar);
 
 
 
@@ -275,32 +275,49 @@ class Image_Activity(): AppCompatActivity(){
                 }
 
 
-                //if video call video sevice
+                //if video or a gif call video sevice and set vars
                 if(MYDATA!!.type != UrlType.Image){
-                    getSharedPreferences("LiveWallpaper",Context.MODE_PRIVATE).edit().putString("Video_Path",MediaPath).apply();
+                    var screenRect : RectF? = null;
+                    if(Full_image!!.isVisible){
+                        screenRect = Full_image!!.zoomedRect;
+                    }else{
+                        screenRect = RectF(
+                            Full_video!!.engine.matrix.values()[2],//left
+                            Full_video!!.engine.matrix.values()[5], //top
+                        0f,0f
+                        )
+                    }
+
+                    val pref = getSharedPreferences("LiveWallpaper",Context.MODE_PRIVATE);
+
+                    pref.edit().putString("Video_Path",MediaPath).apply();
+                    pref.edit().putString("Media_Type", MYDATA!!.type.name.lowercase()).apply();
+                    //save screen rect
+                    pref.edit().putFloat("left",screenRect.left).apply();
+                    pref.edit().putFloat("top",screenRect.top).apply();
+                    pref.edit().putFloat("right",screenRect.right).apply();
+                    pref.edit().putFloat("bottom",screenRect.bottom).apply();
+
 
                     val wpm = WallpaperManager.getInstance(it.context);
                     val wpminfo = wpm.wallpaperInfo;
                     val videocomponent =ComponentName(applicationContext,livewallpaper::class.java);
-                    val gifcomponent = ComponentName(applicationContext,gifwallpaper::class.java);
-
-                    if(wpminfo !=null && (wpminfo.component == videocomponent  || wpminfo.component == gifcomponent))
-                        wpm.clear();//if there is a live wallpaper clear it
-
-                    try {
-                        val liveintent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
-                        if(MYDATA!!.type == UrlType.Video)
-                            liveintent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, videocomponent);
-                        else
-                            liveintent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, gifcomponent);
 
 
-                        startActivity(liveintent);
-                    }catch (e :Exception){
-
+                    if(wpminfo !=null && wpminfo.component == videocomponent){
+                        wpm.clear(WallpaperManager.FLAG_SYSTEM);//if there is a live wallpaper clear it
                     }
+
+                    val liveintent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
+                    liveintent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, videocomponent);
+
+                    startActivity(liveintent);
+
                     return@setOnClickListener;
                 }
+
+
+
 
                 // normal wallpaper
                 //hide bottom sheet and replace it with set wallpaper button
@@ -332,9 +349,18 @@ class Image_Activity(): AppCompatActivity(){
                 }
 
             }
+
+           //on backbutton click
+           backbutton!!.setOnClickListener {
+               finish();
+           }
+
+           //on image touch
             Full_image!!.setOnTouchImageViewListener ( object : OnTouchImageViewListener{
                 override fun onMove() {
-                    bottomsheetfragment.isVisible = !Full_image!!.isZoomed;
+                    val show = !Full_image!!.isZoomed;
+                    bottomsheetfragment.isVisible = show;
+                    backbutton!!.isVisible = show;
                 }
             });
 
@@ -358,10 +384,9 @@ class Image_Activity(): AppCompatActivity(){
                        timesinclasttocuh = System.currentTimeMillis();
                    }
 
-                   val matirx = it.engine.matrix.values();
-                   Log.d("Full_video","engine matrix ${it.engine.matrix.toShortString()} ")
-                   bottomsheetfragment.isVisible = it.zoom <= 1.01;
-
+                   val show = it.zoom <= 1.01;
+                   bottomsheetfragment.isVisible = show;
+                   backbutton!!.isVisible = show;
                    return@setOnTouchListener true;
                }
            }
@@ -489,7 +514,6 @@ class Image_Activity(): AppCompatActivity(){
                         //set text color
                         BottomSheetSwatch?.bodyTextColor?.let { titlePost!!.setTextColor(it) };
                         BottomSheetSwatch?.titleTextColor?.let { auther_post!!.setTextColor(it) };
-                        //BottomSheetSwatch?.population?.let { url_post!!.setTextColor(it) };
 
                         //bottons color
                         var buttoncolor = 0;
@@ -612,7 +636,6 @@ class Image_Activity(): AppCompatActivity(){
                                     }
                                 });
 
-
                                 player.apply {
                                     isLooping = true;
                                     setDataSource(MediaPath);
@@ -730,6 +753,10 @@ class Image_Activity(): AppCompatActivity(){
         Log.d("DestoryLog","Image Acvtivity");
         Full_image = null;
         Full_video = null;
+
+        MYDATA = null;
+        THUMBNAIL = null;
+        loadedPreview = false;
 
         mybitmap?.recycle();
         TagNameList = emptyArray();

@@ -71,7 +71,7 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
             userHitSave = false;
         }
 
-        if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
+        if(Resources.getSystem().configuration.orientation !=  wallmewallpaper.last_orein)
             LoadMore();
 
     }
@@ -146,10 +146,10 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
             hideloading();
         }
 
-        MainActivity.setImageView_asLoading(imageloading);
+        wallmewallpaper.setImageView_asLoading(imageloading);
 
         //for screen rotaion
-        if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
+        if(Resources.getSystem().configuration.orientation !=  wallmewallpaper.last_orein)
             LoadMore();
 
         return layoutfragment;
@@ -159,7 +159,7 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
 
 
     private fun SetRVLayoutManager(){
-        mLayoutManager = StaggeredGridLayoutManager(MainActivity.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
+        mLayoutManager = StaggeredGridLayoutManager( wallmewallpaper.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
         myrec!!.layoutManager = mLayoutManager;
         myrec!!.setHasFixedSize(true);
         myrec?.adapter = PostsAdabter;

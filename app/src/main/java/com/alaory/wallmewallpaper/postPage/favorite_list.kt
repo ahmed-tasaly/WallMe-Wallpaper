@@ -78,7 +78,7 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
         return mainview;
     }
     private fun setLayout(){
-        mlayout = StaggeredGridLayoutManager(MainActivity.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
+        mlayout = StaggeredGridLayoutManager( wallmewallpaper.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
         favoriteList_recycler!!.adapter = favoriteList_adabter;
         favoriteList_recycler!!.layoutManager = mlayout;
         favoriteList_recycler!!.setHasFixedSize(true);

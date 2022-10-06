@@ -2,6 +2,7 @@ package com.alaory.wallmewallpaper.adabter
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +15,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import coil.ImageLoader
+import coil.clear
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.decode.VideoFrameDecoder
@@ -101,8 +103,9 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
 
     private fun getImagerequest(holder: PostItemView): ImageRequest{
-        val tempBitmap : Bitmap = Bitmap.createBitmap(holder.imageRatio.Width,holder.imageRatio.Height,Bitmap.Config.ALPHA_8);
-        val tempDrawable = tempBitmap.toDrawable(context!!.resources);
+        var tempBitmap : Bitmap? = Bitmap.createBitmap(holder.imageRatio.Width,holder.imageRatio.Height,Bitmap.Config.ALPHA_8);
+        var tempDrawable: BitmapDrawable? = tempBitmap?.toDrawable(context!!.resources);
+
         val request = ImageRequest.Builder(this.context!!)
             .data(listPosts.get(holder.pos).Image_thumbnail)
             .placeholder(tempDrawable)
@@ -112,12 +115,16 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                 onSuccess = {_,_ ->
                     holder.cricle_prograssBar.visibility = View.GONE;
                     holder.loaded = true;
+                    tempDrawable = null;
+                    tempBitmap = null;
                 },
                 onCancel = {
                     holder.cricle_prograssBar.visibility = View.GONE;
                 },
                 onError = {_,_ ->
                     holder.cricle_prograssBar.visibility = View.GONE;
+                    tempDrawable = null;
+                    tempBitmap = null;
                 },
                 onStart = {
                     holder.cricle_prograssBar.visibility = View.VISIBLE;
@@ -134,9 +141,18 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             val holder = holder as PostItemView;
             if(holder.buttonframe.isVisible)
                 holder.buttonframe.visibility = View.GONE;
+            holder.cricle_prograssBar.setImageResource(0);
+            holder.image_main.setImageResource(0);
         }
     }
 
+    override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        if(holder.itemViewType == VIEW_TYPE_ITEM) {
+            val holder = holder as PostItemView;
+            wallmewallpaper.setImageView_asLoading(holder.cricle_prograssBar);
+        }
+    }
 
 
 
@@ -156,7 +172,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                 height = 50;
             }
 
-            MainActivity.setImageView_asLoading(holder.cricle_prograssBar);
+
             holder.pos = position;
             holder.imageRatio = Image_Ratio(width,height);
 
@@ -174,7 +190,6 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
 
             holder.root_view.setOnClickListener {
-                val curnpo = currentpost;
                 holder.buttonframe.visibility = View.GONE;
                 adab_ImageLoader!!.memoryCache!!.clear();
                 imgclick.onImageClick(position,holder.image_main.drawable,holder.loaded);
@@ -213,7 +228,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
         }else if(holder.itemViewType == VIEW_TYPE_LOADING){
             val holder = holder as LoadingViewHolder;
             val layoutparams = holder.itemView.layoutParams as StaggeredGridLayoutManager.LayoutParams;
-            MainActivity.setImageView_asLoading(holder.cricle_prograssBar);
+            wallmewallpaper.setImageView_asLoading(holder.cricle_prograssBar);
             layoutparams.isFullSpan = true;
         }
 

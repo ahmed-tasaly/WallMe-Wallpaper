@@ -176,7 +176,7 @@ class Reddit_Api(subredditname: String) {
 
         fun filter_words(word : String): Boolean{
             val word = word.lowercase();
-            val filterWords: Array<String> = arrayOf("nsfw","adult","gender","gay","cross","bible","chris","lgbt","lgb","sex","rainbow","pride","furry","jerk")
+            val filterWords: Array<String> = arrayOf("hentai","nsfw","adult","gender","gay","cross","bible","chris","lgbt","lgb","sex","rainbow","pride","furry","jerk")
 
             for(i in filterWords)
                 if(word.contains(i))

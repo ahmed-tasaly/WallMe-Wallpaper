@@ -31,19 +31,6 @@
                 android:resource="@xml/livewallpaper_info"
                 />
         </service>
-        <service android:name=".wallpaper.gifwallpaper"
-            android:enabled="true"
-            android:permission="android.permission.BIND_WALLPAPER"
-            android:exported="true"
-            >
-            <intent-filter>
-                <action android:name="android.service.wallpaper.WallpaperService"/>
-            </intent-filter>
-            <meta-data
-                android:name="android.service.wallpaper"
-                android:resource="@xml/livewallpaper_info"
-                />
-        </service>
         <activity
             android:name=".postPage.TagActivity"
             android:exported="false"

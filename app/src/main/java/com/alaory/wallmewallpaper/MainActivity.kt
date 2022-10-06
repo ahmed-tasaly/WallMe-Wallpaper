@@ -70,58 +70,8 @@ class MainActivity : AppCompatActivity(){
     }
 
     companion object{
-        var LastSetMenu : menu? = null;
-
-        var num_post_in_Column = 2;
-        var last_orein = Configuration.ORIENTATION_PORTRAIT;
-
-
-
-        fun checkorein(){
-            when(Resources.getSystem().configuration.orientation){
-                Configuration.ORIENTATION_PORTRAIT ->{
-                    num_post_in_Column = 2;
-                    last_orein = Configuration.ORIENTATION_PORTRAIT;
-                }
-                Configuration.ORIENTATION_LANDSCAPE -> {
-                    num_post_in_Column = 4;
-                    last_orein = Configuration.ORIENTATION_LANDSCAPE;
-                }
-                Configuration.ORIENTATION_UNDEFINED -> {
-                    num_post_in_Column = 2;
-                    last_orein = Configuration.ORIENTATION_UNDEFINED;
-                }
-                else -> {}
-            }
-        }
-
-
-
-        fun HideSystemBar(window: Window){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                window.setDecorFitsSystemWindows(false)
-            }else{
-                window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-            }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ){
-                window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-            }
-        }
-
-        fun setImageView_asLoading(imageView: ImageView?){
-            imageView!!.setImageResource(R.drawable.loading_anim);
-            val animati : AnimatedVectorDrawable =  imageView.drawable as AnimatedVectorDrawable;
-            animati.registerAnimationCallback(object  : Animatable2.AnimationCallback(){
-                override fun onAnimationEnd(drawable: Drawable?) {
-                    super.onAnimationEnd(drawable)
-                    (drawable as AnimatedVectorDrawable).start();
-                }
-            })
-            animati.start();
-        }
+        var LastSetMenu : MainActivity.menu? = null;
     }
-
 
     override fun onResume() {
         super.onResume();
@@ -129,7 +79,7 @@ class MainActivity : AppCompatActivity(){
         menucontroll?.PlayAnimation_forNav {
             it?.translationY(0f);
         }
-        HideSystemBar(window);
+        wallmewallpaper.HideSystemBar(window);
 
     }
 
@@ -197,7 +147,7 @@ class MainActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
 
-        HideSystemBar(window);
+        wallmewallpaper.HideSystemBar(window);
 
         this.supportActionBar!!.hide();
 
@@ -226,7 +176,7 @@ class MainActivity : AppCompatActivity(){
         firstTimeOPen = getSharedPreferences("main", MODE_PRIVATE).getBoolean("firstTimeOPen",true);
 
         //update screen orientation data
-        checkorein();
+        wallmewallpaper.checkorein();
 
 
 
@@ -324,6 +274,28 @@ class MainActivity : AppCompatActivity(){
         favorite_floatingButton = findViewById(R.id.favorite_list_navigation_button);
 
 
+        if(firstTimeOPen){
+            showstartdialog();
+        }
+
+        val settingsprefs = this.getSharedPreferences("settings", MODE_PRIVATE);
+
+        //check if reddit source is enabled and should show
+        if(!settingsprefs.getBoolean("reddit_source",true)){
+            reddit_floatingButton!!.visibility = View.GONE;
+            if(LastSetMenu == null)
+                LastSetMenu = menu.wallhaven;
+        }
+        //check if wallhaven source is enabled and should show
+        if(!settingsprefs.getBoolean("wallhaven_source",false)){
+            wallhaven_floatingButton!!.visibility = View.GONE;
+            if(LastSetMenu == null)
+                LastSetMenu = menu.reddit;
+
+            if(!settingsprefs.getBoolean("reddit_source",true))
+                LastSetMenu = menu.favorite;
+        }
+
         //set ui fragment
         if(LastSetMenu != null)
             menucontroll?.ChangeTo(LastSetMenu!!);
@@ -331,34 +303,6 @@ class MainActivity : AppCompatActivity(){
             menucontroll?.ChangeTo(menu.reddit);
 
 
-
-
-        if(firstTimeOPen){
-            showstartdialog();
-        }
-
-
-
-
-        val settingsprefs = this.getSharedPreferences("settings", MODE_PRIVATE);
-
-        if(!settingsprefs.getBoolean("reddit_source",true)){
-            reddit_floatingButton!!.visibility = View.GONE;
-            LastSetMenu = menu.wallhaven;
-        }
-        if(!settingsprefs.getBoolean("wallhaven_source",false)){
-            wallhaven_floatingButton!!.visibility = View.GONE;
-            LastSetMenu = menu.reddit;
-            if(!settingsprefs.getBoolean("reddit_source",true))
-                LastSetMenu = menu.favorite;
-        }
-
-        if(LastSetMenu != null){
-            menucontroll?.ChangeTo(LastSetMenu!!);
-        }
-        else{
-            menucontroll?.ChangeTo(menu.reddit);
-        }
 
 
 

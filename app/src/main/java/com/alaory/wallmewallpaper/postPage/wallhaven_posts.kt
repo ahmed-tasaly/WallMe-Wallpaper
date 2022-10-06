@@ -105,9 +105,9 @@ class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment(
             hideloading();
         }
 
-        MainActivity.setImageView_asLoading(imageloading!!);
+        wallmewallpaper.setImageView_asLoading(imageloading!!);
 
-        if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
+        if(Resources.getSystem().configuration.orientation !=  wallmewallpaper.last_orein)
             LoadMore();
 
         return layoutfragment;
@@ -131,7 +131,7 @@ class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment(
     }
 
     private fun SetRVLayoutManager(){
-        mLayoutManager = StaggeredGridLayoutManager(MainActivity.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
+        mLayoutManager = StaggeredGridLayoutManager( wallmewallpaper.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
         //(mLayoutManager as StaggeredGridLayoutManager).gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS;
         wallhaven_recycle!!.layoutManager = mLayoutManager;
         wallhaven_recycle!!.setHasFixedSize(true);
