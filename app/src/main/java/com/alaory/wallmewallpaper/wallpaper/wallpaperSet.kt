@@ -18,6 +18,7 @@ import com.alaory.wallmewallpaper.UrlType
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import kotlin.concurrent.thread
 import kotlin.math.absoluteValue
 
 enum class setmode{
@@ -40,27 +41,26 @@ fun setWallpaper(context: Context, wallBitmap: Bitmap, rectF: RectF, setScreen: 
             return;
         }
 
+        thread {
+            val WallPaperBitmap : Bitmap = Bitmap.createBitmap(
+                wallBitmap,
+                (wallBitmap.width * rectF.left).toInt(),
+                (wallBitmap.height * rectF.top).toInt(),
+                (wallBitmap.width * (rectF.right - rectF.left).absoluteValue).toInt(),
+                (wallBitmap.height * (rectF.bottom - rectF.top).absoluteValue).toInt()
+            );
 
-        val WallPaperBitmap : Bitmap = Bitmap.createBitmap(
-            wallBitmap,
-            (wallBitmap.width * rectF.left).toInt(),
-            (wallBitmap.height * rectF.top).toInt(),
-            (wallBitmap.width * (rectF.right - rectF.left).absoluteValue).toInt(),
-            (wallBitmap.height * (rectF.bottom - rectF.top).absoluteValue).toInt()
-        );
 
-
-        when(setScreen){
-            setmode.HomeScreen -> {
-                wallpapermanager.setBitmap(WallPaperBitmap,null,true, WallpaperManager.FLAG_SYSTEM);
+            when(setScreen){
+                setmode.HomeScreen -> {
+                    wallpapermanager.setBitmap(WallPaperBitmap,null,true, WallpaperManager.FLAG_SYSTEM);
+                }
+                setmode.LockScreen -> {
+                    wallpapermanager.setBitmap(WallPaperBitmap,null,true, WallpaperManager.FLAG_LOCK);
+                }
+                else -> {}
             }
-            setmode.LockScreen -> {
-                wallpapermanager.setBitmap(WallPaperBitmap,null,true, WallpaperManager.FLAG_LOCK);
-            }
-            else -> {}
-        }
-
-
+        }.start()
 
     }catch (e:Exception){
         Log.e("Image_Activity",e.toString())

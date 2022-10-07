@@ -2,6 +2,7 @@ package com.alaory.wallmewallpaper.postPage
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -44,6 +45,12 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
             textmain!!.visibility = View.VISIBLE;
             textmain!!.text = "Empty 'woosh' ;)"
         }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig);
+        wallmewallpaper.checkorein();
+        setLayout();
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

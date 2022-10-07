@@ -1,6 +1,7 @@
 package com.alaory.wallmewallpaper.postPage
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -38,6 +39,13 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
                 lastPastImageInfo = null;
             }
         }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig);
+        wallmewallpaper.checkorein();
+        setLayoutForRv();
+        setScrollListenerForRv();
     }
 
 

@@ -2,6 +2,8 @@ package com.alaory.wallmewallpaper
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.WallpaperColors
+import android.app.WallpaperInfo
 import android.app.WallpaperManager
 import android.content.ComponentName
 import android.content.Context
@@ -12,6 +14,7 @@ import android.graphics.drawable.*
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
+import android.service.wallpaper.WallpaperService
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -44,6 +47,7 @@ import com.otaliastudios.zoom.ZoomSurfaceView
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
+import okhttp3.internal.threadName
 import okhttp3.internal.toHexString
 
 
@@ -87,13 +91,12 @@ class Image_Activity(): AppCompatActivity(){
      var blocked = false;
 
 
-     var myData : Image_Info? = null;
-     var thumbnail: Drawable? = null;
 
     enum class mode{
         wallhaven,
         reddit
     }
+
 
 
 
@@ -108,6 +111,10 @@ class Image_Activity(): AppCompatActivity(){
 
     //image loader
     var imageloader: ImageLoader? =null;
+
+    //local data
+    var myDataLocal : Image_Info? = null;
+    var thumbnail: Drawable? = null;
 
     companion object{
         //the clicked data by the user
@@ -127,7 +134,7 @@ class Image_Activity(): AppCompatActivity(){
     private fun isOnDatabase(): Boolean{
         var found = false;
         for(i in database.imageinfo_list){
-            if(i.Image_name == myData!!.Image_name)
+            if(i.Image_name == myDataLocal?.Image_name)
                 found = true;
         }
         return found;
@@ -144,15 +151,17 @@ class Image_Activity(): AppCompatActivity(){
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(bundle: Bundle?) {
+        if(myDataLocal == null){
+            myDataLocal = MYDATA;
+            thumbnail = THUMBNAIL;
+        }
+        Log.d("Image_Activity","Info url ${myDataLocal?.Image_url} name ${myDataLocal?.Image_name} thumbnail ${myDataLocal?.Image_thumbnail}");
         super.onCreate(bundle);
         //activity system and app bar
         this.supportActionBar!!.hide();
         wallmewallpaper.HideSystemBar(window);
         //update screen orein
         wallmewallpaper.checkorein();
-
-        myData = MYDATA
-        thumbnail = THUMBNAIL
 
 
         //set the activit as a main screen
@@ -227,7 +236,7 @@ class Image_Activity(): AppCompatActivity(){
 
             url_post?.let{
                 it.setOnClickListener {
-                    val linkuri = Uri.parse("https://${MYDATA!!.post_url}");
+                    val linkuri = Uri.parse("https://${myDataLocal!!.post_url}");
                     this@Image_Activity.startActivity(Intent(Intent.ACTION_VIEW,linkuri));
                 }
             }
@@ -239,11 +248,11 @@ class Image_Activity(): AppCompatActivity(){
                     }
                     if(!blocked){
                         blocked = true;
-                        tempblockdatavase.add_image_info_to_database(myData!!);
+                        tempblockdatavase.add_image_info_to_database(myDataLocal!!);
                         Toast.makeText(this@Image_Activity,"added to block list",Toast.LENGTH_SHORT).show();
                     }else{
                         Toast.makeText(this@Image_Activity,"removed from the block list",Toast.LENGTH_SHORT).show();
-                        tempblockdatavase.remove_image_info_from_database(myData!!);
+                        tempblockdatavase.remove_image_info_from_database(myDataLocal!!);
                     }
                 }
             }
@@ -253,12 +262,12 @@ class Image_Activity(): AppCompatActivity(){
                 val button = it as FloatingActionButton;
 
                 if(!found){
-                    tempdatabase.add_image_info_to_database(myData!!);
+                    tempdatabase.add_image_info_to_database(myDataLocal!!);
                     button.setImageResource(R.drawable.ic_heartfull);
-                    Log.d(Image_Activity::class.java.simpleName, myData!!.Image_name);
+                    Log.d(Image_Activity::class.java.simpleName, myDataLocal!!.Image_name);
                 }
                 else{
-                    tempdatabase.remove_image_info_from_database(myData!!);
+                    tempdatabase.remove_image_info_from_database(myDataLocal!!);
                     button.setImageResource(R.drawable.ic_favorite);
                 }
 
@@ -276,7 +285,7 @@ class Image_Activity(): AppCompatActivity(){
 
 
                 //if video or a gif call video sevice and set vars
-                if(MYDATA!!.type != UrlType.Image){
+                if(myDataLocal!!.type != UrlType.Image){
                     var screenRect : RectF? = null;
                     if(Full_image!!.isVisible){
                         screenRect = Full_image!!.zoomedRect;
@@ -291,7 +300,7 @@ class Image_Activity(): AppCompatActivity(){
                     val pref = getSharedPreferences("LiveWallpaper",Context.MODE_PRIVATE);
 
                     pref.edit().putString("Video_Path",MediaPath).apply();
-                    pref.edit().putString("Media_Type", MYDATA!!.type.name.lowercase()).apply();
+                    pref.edit().putString("Media_Type", myDataLocal!!.type.name.lowercase()).apply();
                     //save screen rect
                     pref.edit().putFloat("left",screenRect.left).apply();
                     pref.edit().putFloat("top",screenRect.top).apply();
@@ -308,8 +317,10 @@ class Image_Activity(): AppCompatActivity(){
                         wpm.clear(WallpaperManager.FLAG_SYSTEM);//if there is a live wallpaper clear it
                     }
 
-                    val liveintent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
+
+                    val liveintent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER).addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     liveintent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, videocomponent);
+
 
                     startActivity(liveintent);
 
@@ -392,7 +403,7 @@ class Image_Activity(): AppCompatActivity(){
            }
         }.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback(){
            override fun onStateChanged(bottomSheet: View, newState: Int) {
-               if(MYDATA!!.type == UrlType.Video){
+               if(myDataLocal?.type == UrlType.Video){
                    bottomSheet.isVisible = false;
                    bottomSheet.isVisible = true;
                }
@@ -412,12 +423,12 @@ class Image_Activity(): AppCompatActivity(){
 
 
         //set text for image info
-        if(myData?.Image_title!!.isNotEmpty())
-            titlePost!!.setText(myData?.Image_title);
+        if(myDataLocal?.Image_title!!.isNotEmpty())
+            titlePost!!.setText(myDataLocal?.Image_title);
         else
             titlePost!!.visibility = View.GONE;
 
-        auther_post!!.setText("posted by: ${myData?.Image_auther}");
+        auther_post!!.setText("posted by: ${myDataLocal?.Image_auther}");
         counter_image!!.isVisible = false;
 
 
@@ -427,11 +438,11 @@ class Image_Activity(): AppCompatActivity(){
 
         //set wallhaven post info with tag functionality
         if(postmode == mode.wallhaven){
-            wallhaven_api.wallhavenApi!!.imageInfo(myData!!) { statusCode ->
+            wallhaven_api.wallhavenApi!!.imageInfo(myDataLocal!!) { statusCode ->
                 if (statusCode == 200) {
                     runOnUiThread {
                         taggroup!!.isVisible = true;
-                        auther_post!!.setText("posted by: ${myData?.Image_auther}");
+                        auther_post!!.setText("posted by: ${myDataLocal?.Image_auther}");
                         for (i in 0 until TagNameList.size) {
                             if(i > 15)
                                 break; //max number of tags on the bottom sheet
@@ -492,14 +503,14 @@ class Image_Activity(): AppCompatActivity(){
                                 "muted ${pal.mutedSwatch?.rgb?.toHexString()} " +
                                 "darkMuted ${pal.darkMutedSwatch?.rgb?.toHexString()} ")
 
-                        var BottomSheetSwatch : Palette.Swatch? = null;
+                        var BottomSheetSwatch : Palette.Swatch? = null
 
                         if(pal.mutedSwatch != null){
                             BottomSheetSwatch = pal.mutedSwatch;
-                        }else if(pal.darkMutedSwatch != null){
-                            BottomSheetSwatch = pal.darkMutedSwatch;
-                        }else{
+                        }else if(pal.lightMutedSwatch != null){
                             BottomSheetSwatch = pal.lightMutedSwatch;
+                        }else{
+                            BottomSheetSwatch = pal.darkMutedSwatch;
                         }
 
                         val endBackground = ResourcesCompat.getDrawable(resources,R.drawable.bottomsheetshape,theme);
@@ -519,30 +530,34 @@ class Image_Activity(): AppCompatActivity(){
                         var buttoncolor = 0;
                         var buttonIconcolor = 0;
 
-                        if(pal.vibrantSwatch != null){
-                            buttoncolor = pal.vibrantSwatch!!.rgb;
-                            buttonIconcolor = pal.vibrantSwatch!!.bodyTextColor;
-                        }else if(pal.darkVibrantSwatch != null){
+                        if(pal.darkVibrantSwatch != null){
                             buttoncolor = pal.darkVibrantSwatch!!.rgb;
                             buttonIconcolor = pal.darkVibrantSwatch!!.bodyTextColor;
-                        }else{
+                        }else if(pal.vibrantSwatch != null){
+                            buttoncolor = pal.vibrantSwatch!!.rgb;
+                            buttonIconcolor = pal.vibrantSwatch!!.bodyTextColor;
+                        }else if(pal.lightVibrantSwatch != null){
                             buttoncolor = pal.lightVibrantSwatch!!.rgb;
                             buttonIconcolor = pal.lightVibrantSwatch!!.bodyTextColor;
+                        }else{
+                            buttoncolor = pal.lightMutedSwatch!!.rgb;
+                            buttonIconcolor = pal.lightMutedSwatch!!.bodyTextColor;
                         }
 
+                        val buttonwidgetcolor = ColorStateList.valueOf(buttoncolor);
+                        val buttoniconcolor =  ColorStateList.valueOf(buttonIconcolor);
 
+                        setWallPaperButton?.backgroundTintList = buttonwidgetcolor;
+                        setWallPaperButton?.imageTintList = buttoniconcolor;
 
-                        setWallPaperButton?.backgroundTintList = ColorStateList.valueOf(buttoncolor);
-                        setWallPaperButton?.imageTintList = ColorStateList.valueOf(buttonIconcolor);
+                        setfavorite?.backgroundTintList = buttonwidgetcolor;
+                        setfavorite?.imageTintList = buttoniconcolor;
 
-                        setfavorite?.backgroundTintList = ColorStateList.valueOf(buttoncolor);
-                        setfavorite?.imageTintList = ColorStateList.valueOf(buttonIconcolor);
+                        saveWallpaperButton?.backgroundTintList = buttonwidgetcolor;
+                        saveWallpaperButton?.imageTintList = buttoniconcolor;
 
-                        saveWallpaperButton?.backgroundTintList = ColorStateList.valueOf(buttoncolor);
-                        saveWallpaperButton?.imageTintList = ColorStateList.valueOf(buttonIconcolor);
-
-                        blockimage?.backgroundTintList = ColorStateList.valueOf(buttoncolor);
-                        blockimage?.imageTintList = ColorStateList.valueOf(buttonIconcolor);
+                        blockimage?.backgroundTintList = buttonwidgetcolor;
+                        blockimage?.imageTintList = buttoniconcolor;
 
 
                     }catch (e: Exception){
@@ -560,7 +575,7 @@ class Image_Activity(): AppCompatActivity(){
                 .crossfade(true)
                 .allowHardware(false)
                 .components {
-                    if(MYDATA!!.type == UrlType.Video){
+                    if(myDataLocal!!.type == UrlType.Video){
                         add(VideoFrameDecoder.Factory())
                     }else{
                         if (android.os.Build.VERSION.SDK_INT >= 28) {
@@ -594,7 +609,7 @@ class Image_Activity(): AppCompatActivity(){
             //load local bitmap and ui imageview data and do it in a callback
             imageloader?.let {
                 it.enqueue(coil.request.ImageRequest.Builder(this)
-                    .data(myData?.Image_url)
+                    .data(myDataLocal?.Image_url)
                     .placeholder(thumbnail)
                     .fallback(com.google.android.material.R.drawable.ic_mtrl_chip_close_circle)
                     .target(object : coil.target.Target {
@@ -615,17 +630,17 @@ class Image_Activity(): AppCompatActivity(){
 
                         override fun onSuccess(result: Drawable) {
                             super.onSuccess(result);
-                            MediaPath = imageloader!!.diskCache!![MemoryCache.Key(MYDATA!!.Image_url).key]!!.data.toString();
-                            if(myData!!.type == UrlType.Image  || myData!!.type == UrlType.Gif) {
+                            MediaPath = imageloader!!.diskCache!![MemoryCache.Key(myDataLocal!!.Image_url).key]!!.data.toString();
+                            SetBottomSheetColorsLambda(result.toBitmap());
+                            if(myDataLocal!!.type == UrlType.Image  || myDataLocal!!.type == UrlType.Gif) {
                                 mybitmap = result.toBitmap();
                                 Full_image!!.setImageDrawable(result);
                                 (result as? Animatable)?.start();
-                                SetBottomSheetColorsLambda(mybitmap!!);
-                                myData!!.imageRatio =
+                                myDataLocal!!.imageRatio =
                                     Image_Ratio(mybitmap!!.width, mybitmap!!.height);
                             }else{
                                 val player = MediaPlayer();
-                                Full_video!!.setContentSize(MYDATA!!.imageRatio.Width.toFloat(),MYDATA!!.imageRatio.Height.toFloat());
+                                Full_video!!.setContentSize(myDataLocal!!.imageRatio.Width.toFloat(),myDataLocal!!.imageRatio.Height.toFloat());
                                 Full_video!!.addCallback(object  : ZoomSurfaceView.Callback{
                                     override fun onZoomSurfaceCreated(view: ZoomSurfaceView) {
                                         player.setSurface(Full_video!!.surface);
@@ -737,13 +752,12 @@ class Image_Activity(): AppCompatActivity(){
 
         saveWallpaperButton?.setOnClickListener {
             if(loaded) {
-                saveMedia(this, MediaPath!!, MYDATA!!.type, MYDATA!!.Image_name);
+                saveMedia(this, MediaPath!!, myDataLocal!!.type, myDataLocal!!.Image_name);
             }else{
                 Toast.makeText(this,"Please Wait for the Wallpaper to load",Toast.LENGTH_LONG).show();
             }
         };
 
-        Log.d("Image_Activity","Info url ${myData?.Image_url} name ${myData?.Image_name} thumbnail ${myData?.Image_thumbnail}");
         //------------------------------------------------------------------------------
 
     }
@@ -754,8 +768,8 @@ class Image_Activity(): AppCompatActivity(){
         Full_image = null;
         Full_video = null;
 
-        MYDATA = null;
-        THUMBNAIL = null;
+        myDataLocal = null;
+        thumbnail = null;
         loadedPreview = false;
 
         mybitmap?.recycle();

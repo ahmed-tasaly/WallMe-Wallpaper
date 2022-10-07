@@ -15,7 +15,7 @@
         android:id="@+id/bottom_sheet_body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_margin="20dp"
         android:background="@drawable/bottomsheetshape"
         >
             <ImageButton
@@ -34,12 +34,14 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginHorizontal="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
                 android:layout_marginTop="50dp"
-                android:layout_marginBottom="16dp"
                 android:layout_width="match_parent"
                 android:paddingBottom="20dp"
-                android:layout_height="wrap_content">
+                android:layout_marginHorizontal="5dp"
+                android:layout_height="wrap_content"
+                >
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/button_box_bottomsheet"
@@ -143,8 +145,9 @@
                     android:layout_gravity="center_vertical"
                     android:paddingBottom="20dp"
                     android:layout_marginStart="20dp"
+                    android:ellipsize="end"
                     android:text="Title"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
 

@@ -2,6 +2,7 @@ package com.alaory.wallmewallpaper.postPage
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -42,6 +43,12 @@ class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment(
         var lastPastImageInfo_pos : Int = -1;
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig);
+        wallmewallpaper.checkorein();
+        SetRVLayoutManager();
+        SetRvScrollListener();
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
