@@ -1,0 +1,5 @@
+release: 
+    -fixed a couple of memory leaks
+    -now you can set gif wallpapers offset
+    -Reddit API imporvement
+    -minor bug fixes

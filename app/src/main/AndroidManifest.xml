@@ -18,20 +18,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Wallpaper"
         tools:ignore="DataExtractionRules">
+
         <service android:name=".wallpaper.livewallpaper"
-            android:enabled="true"
-            android:permission="android.permission.BIND_WALLPAPER"
-            android:exported="true"
-            >
-            <intent-filter>
-                <action android:name="android.service.wallpaper.WallpaperService"/>
-            </intent-filter>
-            <meta-data
-                android:name="android.service.wallpaper"
-                android:resource="@xml/livewallpaper_info"
-                />
-        </service>
-        <service android:name=".wallpaper.gifwallpaper"
             android:enabled="true"
             android:permission="android.permission.BIND_WALLPAPER"
             android:exported="true"
@@ -53,10 +41,13 @@
             android:name=".Image_Activity"
             android:exported="true"
             android:parentActivityName=".MainActivity"
-             />
+            android:configChanges="orientation|screenSize"
+
+            />
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:configChanges="orientation|screenSize"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -2,6 +2,7 @@ package com.alaory.wallmewallpaper.postPage
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -46,6 +47,12 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
         }
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig);
+        wallmewallpaper.checkorein();
+        setLayout();
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
@@ -78,7 +85,7 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
         return mainview;
     }
     private fun setLayout(){
-        mlayout = StaggeredGridLayoutManager(MainActivity.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
+        mlayout = StaggeredGridLayoutManager( wallmewallpaper.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
         favoriteList_recycler!!.adapter = favoriteList_adabter;
         favoriteList_recycler!!.layoutManager = mlayout;
         favoriteList_recycler!!.setHasFixedSize(true);

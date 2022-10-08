@@ -1,6 +1,7 @@
 package com.alaory.wallmewallpaper.postPage
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -30,7 +31,7 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
 
     override fun onResume() {
         super.onResume()
-        MainActivity.HideSystemBar(window);
+        wallmewallpaper.HideSystemBar(window);
         if(lastPastImageInfo != null && database.lastblockedaddedImageInfo != null){
             if(lastPastImageInfo!!.Image_name == database.lastblockedaddedImageInfo!!.Image_name){
                 TagAdab!!.notifyDataSetChanged();
@@ -40,16 +41,23 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
         }
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig);
+        wallmewallpaper.checkorein();
+        setLayoutForRv();
+        setScrollListenerForRv();
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tag);
 
-        MainActivity.HideSystemBar(window);
+        wallmewallpaper.HideSystemBar(window);
 
         this.supportActionBar!!.hide();
 
-        MainActivity.checkorein();
+        wallmewallpaper.checkorein();
 
         //set local data
         tag_post_list = Tag_Assing;
@@ -70,7 +78,7 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
 
 
     private fun setLayoutForRv(){
-        MlaoutManager = StaggeredGridLayoutManager(MainActivity.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
+        MlaoutManager = StaggeredGridLayoutManager( wallmewallpaper.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
         Tag_recyclerView!!.layoutManager = MlaoutManager;
         Tag_recyclerView!!.setHasFixedSize(false);
         Tag_recyclerView!!.adapter = TagAdab;

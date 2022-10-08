@@ -2,6 +2,7 @@ package com.alaory.wallmewallpaper.postPage
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -42,6 +43,12 @@ class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment(
         var lastPastImageInfo_pos : Int = -1;
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig);
+        wallmewallpaper.checkorein();
+        SetRVLayoutManager();
+        SetRvScrollListener();
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -105,9 +112,9 @@ class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment(
             hideloading();
         }
 
-        MainActivity.setImageView_asLoading(imageloading!!);
+        wallmewallpaper.setImageView_asLoading(imageloading!!);
 
-        if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
+        if(Resources.getSystem().configuration.orientation !=  wallmewallpaper.last_orein)
             LoadMore();
 
         return layoutfragment;
@@ -131,7 +138,7 @@ class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment(
     }
 
     private fun SetRVLayoutManager(){
-        mLayoutManager = StaggeredGridLayoutManager(MainActivity.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
+        mLayoutManager = StaggeredGridLayoutManager( wallmewallpaper.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
         //(mLayoutManager as StaggeredGridLayoutManager).gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS;
         wallhaven_recycle!!.layoutManager = mLayoutManager;
         wallhaven_recycle!!.setHasFixedSize(true);

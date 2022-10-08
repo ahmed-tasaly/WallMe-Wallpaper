@@ -2,6 +2,7 @@ package com.alaory.wallmewallpaper.postPage
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -49,6 +50,12 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
     var reddit_api : Array<Reddit_Api> = emptyArray();
 
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig);
+        wallmewallpaper.checkorein();
+        SetRVLayoutManager();
+        SetRvScrollListener();
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -71,7 +78,7 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
             userHitSave = false;
         }
 
-        if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
+        if(Resources.getSystem().configuration.orientation !=  wallmewallpaper.last_orein)
             LoadMore();
 
     }
@@ -146,10 +153,10 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
             hideloading();
         }
 
-        MainActivity.setImageView_asLoading(imageloading);
+        wallmewallpaper.setImageView_asLoading(imageloading);
 
         //for screen rotaion
-        if(Resources.getSystem().configuration.orientation != MainActivity.last_orein)
+        if(Resources.getSystem().configuration.orientation !=  wallmewallpaper.last_orein)
             LoadMore();
 
         return layoutfragment;
@@ -159,7 +166,7 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
 
 
     private fun SetRVLayoutManager(){
-        mLayoutManager = StaggeredGridLayoutManager(MainActivity.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
+        mLayoutManager = StaggeredGridLayoutManager( wallmewallpaper.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
         myrec!!.layoutManager = mLayoutManager;
         myrec!!.setHasFixedSize(true);
         myrec?.adapter = PostsAdabter;

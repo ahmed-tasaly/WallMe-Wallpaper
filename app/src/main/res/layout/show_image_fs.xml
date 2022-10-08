@@ -19,6 +19,7 @@
             android:layout_gravity="center"
             android:id="@+id/image_fs">
 
+
             <com.ortiz.touchview.TouchImageView
                 android:id="@+id/full_image"
                 android:layout_width="match_parent"
@@ -76,8 +77,23 @@
                     />
 
 
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <ImageButton
+                android:id="@+id/backbutton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/arrow_out_ic"
+                android:background="@color/transparent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginVertical="40dp"
+                android:padding="7dp"
+                android:elevation="10dp"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
