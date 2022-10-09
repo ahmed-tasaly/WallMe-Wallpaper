@@ -3,15 +3,13 @@ package com.alaory.wallmewallpaper.wallpaper
 
 
 import android.graphics.Movie
-import android.graphics.drawable.Animatable
-import android.graphics.drawable.AnimatedImageDrawable
-import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Handler
 import android.service.wallpaper.WallpaperService
 import android.util.Log
 import android.view.SurfaceHolder
+
 import kotlin.math.max
 
 class livewallpaper : WallpaperService() {
@@ -46,6 +44,7 @@ class livewallpaper : WallpaperService() {
 
         override fun onSurfaceCreated(holder: SurfaceHolder?) {
             super.onSurfaceCreated(holder);
+
             player = MediaPlayer().apply {
                 isLooping = true;
                 setSurface(holder!!.surface);

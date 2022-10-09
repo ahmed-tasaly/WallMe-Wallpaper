@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity(){
             .setNeutralButton("alright i'll be safe take care",object :DialogInterface.OnClickListener{
                 override fun onClick(p0: DialogInterface?, p1: Int) {
                     firstTimeOPen = false;
-                    getSharedPreferences("main", MODE_PRIVATE).edit().putBoolean("firstTimeOPen",firstTimeOPen).apply();
+                    getSharedPreferences("main", MODE_PRIVATE).edit().putBoolean("FirstTimeOpen",firstTimeOPen).apply();
                 }
             })
             .create()
@@ -176,7 +176,7 @@ class MainActivity : AppCompatActivity(){
         setContentView(binding!!.root);
 
         //check prefs
-        firstTimeOPen = getSharedPreferences("main", MODE_PRIVATE).getBoolean("firstTimeOPen",true);
+        firstTimeOPen = getSharedPreferences("main", MODE_PRIVATE).getBoolean("FirstTimeOpen",true);
 
         //update screen orientation data
         wallmewallpaper.checkorein();
