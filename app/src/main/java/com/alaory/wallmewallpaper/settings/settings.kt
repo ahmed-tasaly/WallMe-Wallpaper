@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit
 class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
 
     val MenuChange = menuChange;
+    var backbutton : ImageButton? =null;
     //wallpaper changer
     var wallpaper_changer : LinearLayout? = null;
     var wallpaper_changer_text : TextView? = null;
@@ -88,6 +89,7 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
             MenuChange?.ChangeTo(MainActivity.menu.favorite,true);
         }
 
+        backbutton = layout.findViewById(R.id.backArrow_button);
 
         wallpaper_changer = layout.findViewById(R.id.wallpaper_changer_settings_button);
         wallpaper_changer_text = layout.findViewById(R.id.wallpaper_changer_settings_button_text);
@@ -154,6 +156,12 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
                    wallpaper_changer_text?.setText("Start wallpaper changer");
                     WorkManager.getInstance(requireContext()).cancelAllWorkByTag(WorkerTag);
                 }
+            }
+        }
+
+        backbutton?.let {
+            it.setOnClickListener {
+                MenuChange?.ChangeTo(MainActivity.menu.favorite,true);
             }
         }
 

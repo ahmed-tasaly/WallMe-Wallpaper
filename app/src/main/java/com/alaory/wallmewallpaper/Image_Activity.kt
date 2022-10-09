@@ -194,7 +194,9 @@ class Image_Activity(): AppCompatActivity(){
 
         counter_image = findViewById(R.id.counter_prograssBar_FullImage);
         cricle_prograssBar = findViewById(R.id.cricle_prograssBar_FullImage);
-        wallmewallpaper.setImageView_asLoading(cricle_prograssBar);
+        val loadingdraw = ResourcesCompat.getDrawable(this.applicationContext.resources,R.drawable.loading_anim,this.theme) as AnimatedVectorDrawable;
+        loadingdraw.start();
+        cricle_prograssBar!!.setImageDrawable(loadingdraw);
 
 
 
@@ -587,6 +589,7 @@ class Image_Activity(): AppCompatActivity(){
                 }
                 .diskCache {
                     DiskCache.Builder()
+                        .maxSizeBytes(1024 * 1024 * 500)//saved images
                         .directory(this.cacheDir.resolve("imagesaved"))
                         //.directory(this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.path.toPath())
                         .build()

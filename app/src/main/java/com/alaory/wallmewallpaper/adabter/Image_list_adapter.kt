@@ -2,6 +2,7 @@ package com.alaory.wallmewallpaper.adabter
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.Log
@@ -10,12 +11,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.*
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import coil.ImageLoader
-import coil.clear
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.decode.VideoFrameDecoder
@@ -23,7 +24,7 @@ import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import coil.request.ImageRequest
-import coil.size.Precision
+import coil.util.DebugLogger
 import com.alaory.wallmewallpaper.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -44,6 +45,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     var lastLongpressedItem : PostItemView? = null;
 
 
+
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
 
@@ -55,15 +57,19 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
 
         this.context = recyclerView.context;
+
+
+
         adab_ImageLoader = ImageLoader.Builder(recyclerView.context!!)
             .allowRgb565(true)
             .bitmapConfig(Bitmap.Config.RGB_565)
             .bitmapFactoryMaxParallelism(2)
-            .networkCachePolicy(CachePolicy.READ_ONLY)
+            .networkCachePolicy(CachePolicy.ENABLED)
             .memoryCachePolicy(CachePolicy.DISABLED)
-            .diskCachePolicy(CachePolicy.ENABLED)
+            .diskCachePolicy(CachePolicy.DISABLED)
             .allowHardware(false)
             .crossfade(true)
+            .logger(DebugLogger())
             .components {
                 add(VideoFrameDecoder.Factory())
                 if (android.os.Build.VERSION.SDK_INT >= 28) {
@@ -74,13 +80,15 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             }
             .memoryCache {
                 MemoryCache.Builder(recyclerView.context!!)
-                    .maxSizePercent(0.15)
+                    .maxSizePercent(0.5)
+                    .strongReferencesEnabled(false)
+                    .weakReferencesEnabled(true)
                     .build()
             }
             .diskCache {
                 DiskCache.Builder()
                     .directory( recyclerView.context!!.cacheDir.resolve("imagePreview"))
-                    .maxSizePercent(0.05)
+                    .maxSizePercent(0.1)
                     .build();
             }
             .networkObserverEnabled(false)
@@ -114,15 +122,19 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             .listener(
                 onSuccess = {_,_ ->
                     holder.cricle_prograssBar.visibility = View.GONE;
+                    holder.cricle_prograssBar.setImageDrawable(null);
                     holder.loaded = true;
                     tempDrawable = null;
                     tempBitmap = null;
+
                 },
                 onCancel = {
                     holder.cricle_prograssBar.visibility = View.GONE;
+                    holder.cricle_prograssBar.setImageDrawable(null);
                 },
                 onError = {_,_ ->
                     holder.cricle_prograssBar.visibility = View.GONE;
+                    holder.cricle_prograssBar.setImageDrawable(null);
                     tempDrawable = null;
                     tempBitmap = null;
                 },
@@ -141,16 +153,33 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             val holder = holder as PostItemView;
             if(holder.buttonframe.isVisible)
                 holder.buttonframe.visibility = View.GONE;
-            holder.cricle_prograssBar.setImageResource(0);
-            holder.image_main.setImageResource(0);
+            holder.cricle_prograssBar.setImageDrawable(null);
+            holder.image_main.setImageDrawable(null);
+            holder.root_view.setOnClickListener(null);
+        }else{
+            val holder = holder as LoadingViewHolder;
+            holder.cricle_prograssBar.setImageDrawable(null);
         }
     }
 
     override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
         super.onViewAttachedToWindow(holder)
+        var loadingdraw : AnimatedVectorDrawable? = null;
         if(holder.itemViewType == VIEW_TYPE_ITEM) {
             val holder = holder as PostItemView;
-            wallmewallpaper.setImageView_asLoading(holder.cricle_prograssBar);
+            loadingdraw = ResourcesCompat.getDrawable(this.context!!.applicationContext!!.resources,R.drawable.loading_anim,this.context!!.applicationContext.theme) as AnimatedVectorDrawable;
+            holder.cricle_prograssBar.setImageDrawable(loadingdraw);
+            loadingdraw.start();
+            holder.root_view.setOnClickListener {
+                holder.buttonframe.visibility = View.GONE;
+                adab_ImageLoader!!.memoryCache!!.clear();
+                imgclick.onImageClick(holder.layoutPosition,holder.image_main.drawable,holder.loaded);
+            }
+        }else{
+            val holder = holder as LoadingViewHolder;
+            loadingdraw = ResourcesCompat.getDrawable(this.context!!.applicationContext!!.resources,R.drawable.loading_anim,this.context!!.applicationContext.theme) as AnimatedVectorDrawable;
+            holder.cricle_prograssBar.setImageDrawable(loadingdraw);
+            loadingdraw.start();
         }
     }
 
@@ -189,12 +218,6 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             }
 
 
-            holder.root_view.setOnClickListener {
-                holder.buttonframe.visibility = View.GONE;
-                adab_ImageLoader!!.memoryCache!!.clear();
-                imgclick.onImageClick(position,holder.image_main.drawable,holder.loaded);
-            }
-
             holder.root_view.setOnLongClickListener {
                 lastLongpressedItem?.buttonframe?.visibility = View.GONE;
                 lastLongpressedItem = holder;
@@ -228,7 +251,6 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
         }else if(holder.itemViewType == VIEW_TYPE_LOADING){
             val holder = holder as LoadingViewHolder;
             val layoutparams = holder.itemView.layoutParams as StaggeredGridLayoutManager.LayoutParams;
-            wallmewallpaper.setImageView_asLoading(holder.cricle_prograssBar);
             layoutparams.isFullSpan = true;
         }
 

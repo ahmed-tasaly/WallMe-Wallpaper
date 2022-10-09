@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +17,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.alaory.wallmewallpaper.*
@@ -112,7 +114,9 @@ class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment(
             hideloading();
         }
 
-        wallmewallpaper.setImageView_asLoading(imageloading!!);
+        val loadingdraw = ResourcesCompat.getDrawable(this.resources,R.drawable.loading_anim,requireContext().theme) as AnimatedVectorDrawable;
+        loadingdraw.start();
+        imageloading!!.setImageDrawable(loadingdraw);
 
         if(Resources.getSystem().configuration.orientation !=  wallmewallpaper.last_orein)
             LoadMore();

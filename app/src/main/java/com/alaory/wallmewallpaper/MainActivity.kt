@@ -15,6 +15,7 @@ import android.view.ViewPropertyAnimator
 import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -86,7 +87,8 @@ class MainActivity : AppCompatActivity(){
     fun showstartdialog(){
         AlertDialog.Builder(this,R.style.Dialog_first)
             .setTitle("WAIT CAUTION")
-            .setMessage("I am NOT in control nor affiliated of the app content you may see some disturbing or harmful content so please be careful.")
+            .setMessage("I am NOT in control nor affiliated of the app content you may see some disturbing , harmful or sketchy content so please be careful.\n" +
+                    "Tip you can long press a post to block it")
             .setNeutralButton("alright i'll be safe take care",object :DialogInterface.OnClickListener{
                 override fun onClick(p0: DialogInterface?, p1: Int) {
                     firstTimeOPen = false;
@@ -169,6 +171,7 @@ class MainActivity : AppCompatActivity(){
 
 
         //set ui
+
         binding = ActivityMainBinding.inflate(layoutInflater);
         setContentView(binding!!.root);
 

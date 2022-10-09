@@ -17,6 +17,7 @@
     <ImageButton
         android:id="@+id/list_item_add"
         android:layout_margin="20dp"
+        android:padding="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintRight_toRightOf="parent"
@@ -29,6 +30,7 @@
         android:visibility="gone"
         android:id="@+id/list_item_add_new"
         android:layout_margin="20dp"
+        android:padding="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -42,6 +44,7 @@
         android:visibility="gone"
         android:id="@+id/list_item_remove"
         android:layout_margin="20dp"
+        android:padding="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintRight_toLeftOf="@+id/list_item_add"

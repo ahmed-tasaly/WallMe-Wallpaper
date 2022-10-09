@@ -59,17 +59,7 @@ class wallmewallpaper : Application() {
             }
         }
 
-        fun setImageView_asLoading(imageView: ImageView?){
-            imageView?.setImageResource(R.drawable.loading_anim);
-            val animati : AnimatedVectorDrawable =  imageView?.drawable as AnimatedVectorDrawable;
-            animati.registerAnimationCallback(object  : Animatable2.AnimationCallback(){
-                override fun onAnimationEnd(drawable: Drawable?) {
-                    super.onAnimationEnd(drawable)
-                    (drawable as AnimatedVectorDrawable).start();
-                }
-            })
-            animati.start();
-        }
+
     }
 
     override fun onCreate() {

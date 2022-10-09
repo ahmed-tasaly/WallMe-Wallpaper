@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -13,9 +14,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.alaory.wallmewallpaper.*
@@ -36,7 +39,6 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
     var buttonLoading: Button? =null;
 
     var failedFirstLoading = false;
-
 
 
     companion object{
@@ -140,7 +142,6 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
         SetRVLayoutManager();
         SetRvScrollListener();
 
-
         imageloading =layoutfragment.findViewById(R.id.loading_recyclye);
         textloading = layoutfragment.findViewById(R.id.loading_text);
         buttonLoading = layoutfragment.findViewById(R.id.load_failer_button);
@@ -153,7 +154,9 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
             hideloading();
         }
 
-        wallmewallpaper.setImageView_asLoading(imageloading);
+        val loadingdraw = ResourcesCompat.getDrawable(this.resources,R.drawable.loading_anim,requireContext().theme) as AnimatedVectorDrawable;
+        loadingdraw.start();
+        imageloading!!.setImageDrawable(loadingdraw);
 
         //for screen rotaion
         if(Resources.getSystem().configuration.orientation !=  wallmewallpaper.last_orein)
