@@ -6,9 +6,9 @@
 
 <img src="./Images/newlogo_512.png" width=200 style="border-radius:20%"/>
 
-[<h4 align="center">Support me </h4>](https://www.patreon.com/Alaory)
+[Support me](https://www.patreon.com/Alaory)
 
-[<h4 align="center">Discussions</h4>](https://github.com/Alaory/WallMe-Wallpaper/discussions)
+[Discussions](https://github.com/Alaory/WallMe-Wallpaper/discussions)
 
 
 
@@ -86,18 +86,14 @@ since the app is still in development the ui may change :)
 - [x] add progress bar when downloading an image
 - [x] add landscape and portrait mode 
 - [x] add auto wallpaper changer with the user configuration //still work in progress.
+- [x] add support for gif wallpapers
+- [x] add support for video wallpapers
 - [ ] add functionality to the auto wallpaper changer to change the wallpaper based on android theme (dark/light).
 - [ ] add user's posts page
 - [ ] add the ability to add images from the device to the favorite page
-- [x] add support for gif wallpapers
-- [x] add support for video wallpapers
 - [ ] add more UI I SAID MORE
 - [ ] more plans coming
 - [ ] go to sleep
-
-
-
-
 
 
 
