@@ -134,7 +134,7 @@ class Image_Activity(): AppCompatActivity(){
     private fun isOnDatabase(): Boolean{
         var found = false;
         for(i in database.imageinfo_list){
-            if(i.Image_name == myDataLocal?.Image_name)
+            if(i.Image_url == myDataLocal?.Image_url)
                 found = true;
         }
         return found;

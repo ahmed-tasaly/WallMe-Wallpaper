@@ -87,8 +87,8 @@ class MainActivity : AppCompatActivity(){
     fun showstartdialog(){
         AlertDialog.Builder(this,R.style.Dialog_first)
             .setTitle("WAIT CAUTION")
-            .setMessage("I am NOT in control nor affiliated of the app content you may see some disturbing , harmful or sketchy content so please be careful.\n" +
-                    "Tip you can long press a post to block it")
+            .setMessage("I am NOT in control nor affiliated of the app content you may see some disturbing,harmful,nsfw or sketchy content so please be careful.\n" +
+                    "tip: you can long press a post to block it")
             .setNeutralButton("alright i'll be safe take care",object :DialogInterface.OnClickListener{
                 override fun onClick(p0: DialogInterface?, p1: Int) {
                     firstTimeOPen = false;
@@ -409,6 +409,7 @@ class MainActivity : AppCompatActivity(){
 
         database.imageblock_list = emptyArray();
         database.imageinfo_list = emptyArray();
+        Runtime.getRuntime().exit(1);
     }
 
 }

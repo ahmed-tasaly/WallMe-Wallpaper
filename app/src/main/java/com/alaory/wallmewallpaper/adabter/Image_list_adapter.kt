@@ -63,10 +63,10 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
         adab_ImageLoader = ImageLoader.Builder(recyclerView.context!!)
             .allowRgb565(true)
             .bitmapConfig(Bitmap.Config.RGB_565)
-            .bitmapFactoryMaxParallelism(2)
+            .bitmapFactoryMaxParallelism(4)
             .networkCachePolicy(CachePolicy.ENABLED)
-            .memoryCachePolicy(CachePolicy.DISABLED)
-            .diskCachePolicy(CachePolicy.DISABLED)
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .diskCachePolicy(CachePolicy.ENABLED)
             .allowHardware(false)
             .crossfade(true)
             .logger(DebugLogger())
@@ -80,9 +80,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             }
             .memoryCache {
                 MemoryCache.Builder(recyclerView.context!!)
-                    .maxSizePercent(0.5)
-                    .strongReferencesEnabled(false)
-                    .weakReferencesEnabled(true)
+                    .maxSizePercent(0.15)
                     .build()
             }
             .diskCache {
@@ -227,7 +225,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                 }else{
                     var found = false;
                     for(i in database.imageinfo_list){
-                        if(i.Image_name == currentpost.Image_name){
+                        if(i.Image_url == currentpost.Image_url){
                             found = true;
                         }
                     }
@@ -273,7 +271,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
         var found = false;
         val position = holder.layoutPosition;
         for(i in database.imageinfo_list){
-            if(i.Image_name == listPosts.get(position).Image_name){
+            if(i.Image_url == listPosts.get(position).Image_url){
                 found = true;
             }
         }

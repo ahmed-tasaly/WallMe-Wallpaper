@@ -50,11 +50,14 @@ class livewallpaper : WallpaperService() {
                 setSurface(holder!!.surface);
                 val prefs = this@livewallpaper.getSharedPreferences("LiveWallpaper",0);
                 val videoPath = prefs.getString("Video_Path","")!!.toString();
-                val left = prefs.getFloat("left",0f);
-                val top = prefs.getFloat("top",0f);
 
                 if(videoPath == "")
                     return;
+
+                val left = prefs.getFloat("left",0f);
+                val top = prefs.getFloat("top",0f);
+
+
                 setDataSource(videoPath);
                 setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
                 prepare();

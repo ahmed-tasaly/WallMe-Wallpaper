@@ -176,7 +176,17 @@ class Reddit_Api(subredditname: String) {
 
         fun filter_words(word : String): Boolean{
             val word = word.lowercase();
-            val filterWords: Array<String> = arrayOf("hentai","nsfw","adult","gender","gay","cross","bible","chris","lgbt","lgb","sex","rainbow","pride","furry","jerk")
+            val filterWords: Array<String> = arrayOf("hentai","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","lgb","sex","rainbow","pride","furry","jerk")
+
+            for(i in filterWords)
+                if(word.contains(i))
+                    return true
+
+            return false;
+        }
+        fun has_good_words(word : String): Boolean{
+            val word = word.lowercase();
+            val filterWords: Array<String> = arrayOf("anime","wallpaper","amoled","background","vertical","gif","video","live","animated","art")
 
             for(i in filterWords)
                 if(word.contains(i))
