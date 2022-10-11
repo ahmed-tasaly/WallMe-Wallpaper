@@ -102,5 +102,6 @@ since the app is still in development the ui may change :)
     - coil 
     - okhttp
     - TouchImageView
+    - zoomlayout
 
 
