@@ -507,12 +507,14 @@ class Image_Activity(): AppCompatActivity(){
 
                         var BottomSheetSwatch : Palette.Swatch? = null
 
-                        if(pal.mutedSwatch != null){
-                            BottomSheetSwatch = pal.mutedSwatch;
+                        if(pal.darkMutedSwatch != null){
+                            BottomSheetSwatch = pal.darkMutedSwatch;
                         }else if(pal.lightMutedSwatch != null){
                             BottomSheetSwatch = pal.lightMutedSwatch;
+                        }else if(pal.mutedSwatch != null){
+                            BottomSheetSwatch = pal.mutedSwatch;
                         }else{
-                            BottomSheetSwatch = pal.darkMutedSwatch;
+                            BottomSheetSwatch = pal.darkVibrantSwatch;
                         }
 
                         val endBackground = ResourcesCompat.getDrawable(resources,R.drawable.bottomsheetshape,theme);
@@ -755,7 +757,7 @@ class Image_Activity(): AppCompatActivity(){
 
         saveWallpaperButton?.setOnClickListener {
             if(loaded) {
-                saveMedia(this, MediaPath!!, myDataLocal!!.type, myDataLocal!!.Image_name);
+                saveMedia(this, MediaPath!!, myDataLocal!!.type, myDataLocal!!);
             }else{
                 Toast.makeText(this,"Please Wait for the Wallpaper to load",Toast.LENGTH_LONG).show();
             }

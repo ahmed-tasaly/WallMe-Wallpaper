@@ -14,6 +14,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import com.alaory.wallmewallpaper.Image_Activity
+import com.alaory.wallmewallpaper.Image_Info
 import com.alaory.wallmewallpaper.UrlType
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -68,7 +69,7 @@ fun setWallpaper(context: Context, wallBitmap: Bitmap, rectF: RectF, setScreen: 
 
 }
 
-fun saveMedia(context: Context, path : String, type: UrlType, Name : String){
+fun saveMedia(context: Context, path : String, type: UrlType, Name : Image_Info){
     val resolver = context.contentResolver;
 
     when(type){
@@ -78,16 +79,20 @@ fun saveMedia(context: Context, path : String, type: UrlType, Name : String){
 
             //set image info
             val ImageValues = ContentValues();
-            ImageValues.put(MediaStore.Images.Media.DISPLAY_NAME,Name);
+            ImageValues.put(MediaStore.Images.Media.DISPLAY_NAME,Name.Image_name);
             ImageValues.put(MediaStore.Images.Media.MIME_TYPE,"image/png");
-            ImageValues.put(MediaStore.Images.Media.TITLE,Name);
+            ImageValues.put(MediaStore.Images.Media.TITLE,Name.Image_name);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                ImageValues.put(MediaStore.Images.Media.AUTHOR,Name.Image_auther);
+                ImageValues.put(MediaStore.Images.Media.OWNER_PACKAGE_NAME,Name.Image_auther);
+            };
             ImageValues.put(MediaStore.Images.Media.DATE_ADDED,System.currentTimeMillis()/1000);
 
             //create media for the image
             val OutFileDes = resolver.insert( MediaStore.Images.Media.EXTERNAL_CONTENT_URI,ImageValues);
 
             //open media into a file
-            val outfile = OutFileDes?.let { resolver.openFileDescriptor(it,"w") };
+            val outfile = OutFileDes?.let { resolver.openFileDescriptor(it,"w") }
             //Use File to write to the media
             val writeout = FileOutputStream(outfile?.fileDescriptor);
             writeout.write(image.inputStream().readBytes());
@@ -100,8 +105,12 @@ fun saveMedia(context: Context, path : String, type: UrlType, Name : String){
             val video = File(path);
 
             val videoValues = ContentValues();
-            videoValues.put(MediaStore.Video.Media.DISPLAY_NAME,Name);
-            videoValues.put(MediaStore.Video.Media.TITLE,Name);
+            videoValues.put(MediaStore.Video.Media.DISPLAY_NAME,Name.Image_name);
+            videoValues.put(MediaStore.Video.Media.TITLE,Name.Image_name);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                videoValues.put(MediaStore.Video.Media.AUTHOR,Name.Image_auther);
+                videoValues.put(MediaStore.Video.Media.OWNER_PACKAGE_NAME,Name.Image_auther);
+            };
             videoValues.put(MediaStore.Video.Media.DATE_ADDED,System.currentTimeMillis()/1000);
             videoValues.put(MediaStore.Video.Media.MIME_TYPE,"video/mp4");
 
@@ -119,8 +128,12 @@ fun saveMedia(context: Context, path : String, type: UrlType, Name : String){
             val gif = File(path);
 
             val gifValues = ContentValues();
-            gifValues.put(MediaStore.Images.Media.DISPLAY_NAME,Name);
-            gifValues.put(MediaStore.Images.Media.TITLE,Name);
+            gifValues.put(MediaStore.Images.Media.DISPLAY_NAME,Name.Image_name);
+            gifValues.put(MediaStore.Images.Media.TITLE,Name.Image_name);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                gifValues.put(MediaStore.Images.Media.AUTHOR,Name.Image_auther);
+                gifValues.put(MediaStore.Images.Media.OWNER_PACKAGE_NAME,Name.Image_auther);
+            };
             gifValues.put(MediaStore.Images.Media.DATE_ADDED,System.currentTimeMillis()/1000);
             gifValues.put(MediaStore.Images.Media.MIME_TYPE,"image/gif");
 

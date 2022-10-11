@@ -176,7 +176,7 @@ class Reddit_Api(subredditname: String) {
 
         fun filter_words(word : String): Boolean{
             val word = word.lowercase();
-            val filterWords: Array<String> = arrayOf("hentai","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","lgb","sex","rainbow","pride","furry","jerk")
+            val filterWords: Array<String> = arrayOf("hentai","dick","pussy","cunt","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","lgb","sex","rainbow","pride","furry","jerk")
 
             for(i in filterWords)
                 if(word.contains(i))
@@ -268,7 +268,7 @@ class Reddit_Api(subredditname: String) {
 
                         for (i in 0 until children_json.length()) {
                             try {
-                                val dataJson = children_json.getJSONObject(i)
+                                var dataJson = children_json.getJSONObject(i)
                                     .getJSONObject("data") as JSONObject;
 
                                 // check if worth adding
@@ -276,6 +276,13 @@ class Reddit_Api(subredditname: String) {
 
                                 var found: Boolean = false;
                                 last_before_id = dataJson.getString("name");
+
+                                //check if its an embedded  from a diff subreddit
+                                if(dataJson.optJSONArray("crosspost_parent_list") != null){
+                                    Log.d("embedded",dataJson.getJSONArray("crosspost_parent_list").length().toString())
+                                    if(dataJson.getJSONArray("crosspost_parent_list").length() > 0)
+                                        dataJson = dataJson.getJSONArray("crosspost_parent_list").getJSONObject(0);
+                                }
 
                                 for (j in 0 until subreddit_posts_list.size) {
                                     if (dataJson.getString("name") == subreddit_posts_list.get(j).Image_name)
