@@ -1,6 +1,7 @@
 package com.alaory.wallmewallpaper
 
 import android.app.Application
+import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.drawable.Animatable2
@@ -48,21 +49,27 @@ class wallmewallpaper : Application() {
 
 
         fun HideSystemBar(window: Window){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                window.setDecorFitsSystemWindows(false)
-            }else{
-                window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-            }
+            if(doFullscreen) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    window.setDecorFitsSystemWindows(false)
+                } else {
+                    window.decorView.systemUiVisibility =
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+                }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ){
-                window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    window.attributes.layoutInDisplayCutoutMode =
+                        WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+                }
             }
         }
 
+        var doFullscreen = true;
 
     }
 
     override fun onCreate() {
         super.onCreate();
+        doFullscreen = this.getSharedPreferences("settings", Context.MODE_PRIVATE).getBoolean("fullscreenapp",true);
     }
 }

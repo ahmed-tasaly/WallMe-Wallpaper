@@ -2,8 +2,6 @@ package com.alaory.wallmewallpaper
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.app.WallpaperColors
-import android.app.WallpaperInfo
 import android.app.WallpaperManager
 import android.content.ComponentName
 import android.content.Context
@@ -14,7 +12,6 @@ import android.graphics.drawable.*
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
-import android.service.wallpaper.WallpaperService
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -47,10 +44,7 @@ import com.otaliastudios.zoom.ZoomSurfaceView
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
-import okhttp3.internal.threadName
 import okhttp3.internal.toHexString
-
-
 
 class Image_Activity(): AppCompatActivity(){
 
@@ -580,7 +574,7 @@ class Image_Activity(): AppCompatActivity(){
                 .allowHardware(false)
                 .components {
                     if(myDataLocal!!.type == UrlType.Video){
-                        add(VideoFrameDecoder.Factory())
+                        add(VideoFrameDecoder.Factory())//need to replace doesnt work on andorid 7
                     }else{
                         if (android.os.Build.VERSION.SDK_INT >= 28) {
                             add(ImageDecoderDecoder.Factory())
@@ -636,6 +630,7 @@ class Image_Activity(): AppCompatActivity(){
                         override fun onSuccess(result: Drawable) {
                             super.onSuccess(result);
                             MediaPath = imageloader!!.diskCache!![MemoryCache.Key(myDataLocal!!.Image_url).key]!!.data.toString();
+                            loaded = true;
                             SetBottomSheetColorsLambda(result.toBitmap());
                             if(myDataLocal!!.type == UrlType.Image  || myDataLocal!!.type == UrlType.Gif) {
                                 mybitmap = result.toBitmap();
@@ -668,7 +663,6 @@ class Image_Activity(): AppCompatActivity(){
                                     start();
                                 }
                             }
-                            loaded = true;
                         }
                     })
                     .listener(

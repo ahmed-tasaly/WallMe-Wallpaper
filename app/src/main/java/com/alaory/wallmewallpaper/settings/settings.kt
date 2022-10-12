@@ -34,6 +34,9 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
     var wallhaven_source : SwitchMaterial? = null;
     var reddit_source : SwitchMaterial? = null;
 
+    //screen
+    var fullscreenapp : SwitchMaterial? = null;
+
     //cache
     var clearCache : LinearLayout? = null;
     var clearImages : LinearLayout? = null;
@@ -47,7 +50,7 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
 
     var editbox : EditText? = null;
     var timecount : Spinner? = null;
-    var screen : Spinner? = null;
+    var screenFlag : Spinner? = null;
 
     val JOBID = 212;
 
@@ -97,6 +100,8 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
         wallhaven_source = layout.findViewById(R.id.Switch_wallhaven_settings);
         reddit_source = layout.findViewById(R.id.Switch_reddit_settings);
 
+        fullscreenapp = layout.findViewById(R.id.fullscreenapp_settings)
+
         clearCache = layout.findViewById(R.id.clear_cache_settings);
         clearImages = layout.findViewById(R.id.clear_saved_images_settings);
 
@@ -106,7 +111,7 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
 
         editbox = layout.findViewById(R.id.editTextTime);
         timecount = layout.findViewById(R.id.wallpaper_changer_time_spinner);
-        screen = layout.findViewById(R.id.wallpaper_changer_time_spinner_forScreen);
+        screenFlag = layout.findViewById(R.id.wallpaper_changer_time_spinner_forScreen);
 
         val worklistinfo = WorkManager.getInstance(requireContext()).getWorkInfosByTag(WorkerTag)
         for (i in worklistinfo.get())
@@ -196,8 +201,16 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
             }
         }
 
+        fullscreenapp?.let {
+            it.isChecked = requireContext().getSharedPreferences("settings",Context.MODE_PRIVATE).getBoolean("fullscreenapp",true);
+            it.setOnCheckedChangeListener { p0, ischecked ->
+                val prefs = p0.context.getSharedPreferences("settings",Context.MODE_PRIVATE);
+                prefs.edit().putBoolean("fullscreenapp",ischecked).apply();
+            }
+        }
 
-        screen?.let {
+
+        screenFlag?.let {
             it.setSelection(screenSelection);
             it.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
                 override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, selection: Long) {

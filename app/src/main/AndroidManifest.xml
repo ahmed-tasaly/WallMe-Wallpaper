@@ -17,6 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Wallpaper"
+        android:requestLegacyExternalStorage="true"
         tools:ignore="DataExtractionRules">
 
         <service android:name=".wallpaper.livewallpaper"
