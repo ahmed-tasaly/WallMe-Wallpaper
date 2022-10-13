@@ -203,7 +203,7 @@ class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment(
 
 
 
-    override fun onImageClick(Pos: Int, thumbnail: Drawable,loaded : Boolean) {
+    override fun onImageClick(Pos: Int, thumbnail: Drawable?,loaded : Boolean) {
         try{
             lastPastImageInfo =  wallhaven_api.wallhavenApi!!.wallhaven_homepage_posts[Pos];
             lastPastImageInfo_pos = Pos;

@@ -116,7 +116,7 @@ class TagActivity : AppCompatActivity(), Image_list_adapter.OnImageClick {
     }
 
 
-    override fun onImageClick(Pos: Int, thumbnail: Drawable,loaded : Boolean) {
+    override fun onImageClick(Pos: Int, thumbnail: Drawable?,loaded : Boolean) {
         try{
             lastPastImageInfo = tag_post_list!!.Tag_Post_list[Pos];
             lastPastImageInfo_pos = Pos;

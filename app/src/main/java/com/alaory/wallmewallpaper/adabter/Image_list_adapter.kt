@@ -69,7 +69,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             .diskCachePolicy(CachePolicy.ENABLED)
             .allowHardware(false)
             .crossfade(true)
-            .logger(DebugLogger())
+            //.logger(DebugLogger())
             .components {
                 add(VideoFrameDecoder.Factory())
                 if (android.os.Build.VERSION.SDK_INT >= 28) {
@@ -115,7 +115,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
         val request = ImageRequest.Builder(this.context!!)
             .data(listPosts.get(holder.pos).Image_thumbnail)
             .placeholder(tempDrawable)
-            .target(holder.image_main)
+            .target(holder.image_main!!)
             .allowHardware(false)
             .listener(
                 onSuccess = {_,_ ->
@@ -130,7 +130,9 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                     holder.cricle_prograssBar.visibility = View.GONE;
                     holder.cricle_prograssBar.setImageDrawable(null);
                 },
-                onError = {_,_ ->
+                onError = {errres,imgreq ->
+
+
                     holder.cricle_prograssBar.visibility = View.GONE;
                     holder.cricle_prograssBar.setImageDrawable(null);
                     tempDrawable = null;
@@ -152,7 +154,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             if(holder.buttonframe.isVisible)
                 holder.buttonframe.visibility = View.GONE;
             holder.cricle_prograssBar.setImageDrawable(null);
-            holder.image_main.setImageDrawable(null);
+            holder.image_main?.setImageDrawable(null);
             holder.root_view.setOnClickListener(null);
         }else{
             val holder = holder as LoadingViewHolder;
@@ -171,7 +173,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             holder.root_view.setOnClickListener {
                 holder.buttonframe.visibility = View.GONE;
                 adab_ImageLoader!!.memoryCache!!.clear();
-                imgclick.onImageClick(holder.layoutPosition,holder.image_main.drawable,holder.loaded);
+                imgclick.onImageClick(holder.layoutPosition,holder.image_main?.drawable,holder.loaded);
             }
         }else{
             val holder = holder as LoadingViewHolder;
@@ -313,7 +315,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
         var loaded = false;
         var imageRatio = Image_Ratio(1,1);
         var root_view = itemView.findViewById(R.id.root_imageView) as LinearLayout;
-        var image_main = itemView.findViewById(R.id.image_main) as ImageView;
+        var image_main = itemView.findViewById(R.id.image_main) as? ImageView;
         var cricle_prograssBar = itemView.findViewById(R.id.cricle_prograssBar) as ImageView;
         var favoriteButton = itemView.findViewById(R.id.favorite_scrollable_floatingbutton) as FloatingActionButton;
         var blockButton = itemView.findViewById(R.id.block_scrollable_floatingbutton) as FloatingActionButton;
@@ -337,9 +339,14 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     }
 
     fun removeItem(position : Int){
+        if(position == -1)
+            return;
         this.notifyItemRemoved(position);
         listPosts.removeAt(position);
-        this.notifyItemRangeChanged(position,listPosts.size);
+        if(position -1 >= 0)
+            this.notifyItemRangeChanged(position-1,listPosts.size);
+        else
+            this.notifyItemRangeChanged(position,listPosts.size);
     }
 
 
@@ -366,7 +373,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
 
     interface OnImageClick{
-        fun onImageClick(Pos: Int,thumbnail: Drawable,loaded : Boolean = false);
+        fun onImageClick(Pos: Int,thumbnail: Drawable?,loaded : Boolean = false);
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {

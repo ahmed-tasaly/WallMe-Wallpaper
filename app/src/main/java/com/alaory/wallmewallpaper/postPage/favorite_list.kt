@@ -98,7 +98,7 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
     }
 
 
-    override fun onImageClick(Pos: Int, thumbnail: Drawable,loaded : Boolean) {
+    override fun onImageClick(Pos: Int, thumbnail: Drawable?,loaded : Boolean) {
         try {
             val intent = Intent(requireContext(), Image_Activity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             Image_Activity.THUMBNAIL = thumbnail;

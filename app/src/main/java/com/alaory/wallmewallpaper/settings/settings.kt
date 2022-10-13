@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment
 import androidx.work.*
 import com.alaory.wallmewallpaper.MainActivity
 import com.alaory.wallmewallpaper.R
+import com.alaory.wallmewallpaper.wallmewallpaper
 import com.alaory.wallmewallpaper.wallpaperChanger_Worker
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.util.concurrent.TimeUnit
@@ -206,6 +207,7 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
             it.setOnCheckedChangeListener { p0, ischecked ->
                 val prefs = p0.context.getSharedPreferences("settings",Context.MODE_PRIVATE);
                 prefs.edit().putBoolean("fullscreenapp",ischecked).apply();
+                wallmewallpaper.doFullscreen = ischecked;
             }
         }
 

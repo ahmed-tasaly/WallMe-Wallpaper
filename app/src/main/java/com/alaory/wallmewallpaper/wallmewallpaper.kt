@@ -13,6 +13,9 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import com.alaory.wallmewallpaper.api.Reddit_Api
 import com.alaory.wallmewallpaper.api.Reddit_Api_Contorller
 import com.alaory.wallmewallpaper.api.wallhaven_api
@@ -49,18 +52,17 @@ class wallmewallpaper : Application() {
 
 
         fun HideSystemBar(window: Window){
-            if(doFullscreen) {
+            if(doFullscreen || true) {//not now :(
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     window.setDecorFitsSystemWindows(false)
                 } else {
-                    window.decorView.systemUiVisibility =
-                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+                    window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
                 }
-
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     window.attributes.layoutInDisplayCutoutMode =
                         WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
                 }
+            }else{
             }
         }
 

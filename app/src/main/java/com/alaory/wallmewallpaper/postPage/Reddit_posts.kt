@@ -224,7 +224,7 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
     }
 
 
-    override fun onImageClick(Pos: Int,thumbnail : Drawable,loaded : Boolean) {
+    override fun onImageClick(Pos: Int,thumbnail : Drawable?,loaded : Boolean) {
         try {
             lastPastImageInfo = Reddit_Api.redditcon!!.reddit_global_posts.get(Pos);
             lastPastImageInfo_pos = Pos;

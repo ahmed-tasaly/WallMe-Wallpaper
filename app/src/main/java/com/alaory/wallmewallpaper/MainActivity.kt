@@ -171,7 +171,6 @@ class MainActivity : AppCompatActivity(){
 
 
         //set ui
-
         binding = ActivityMainBinding.inflate(layoutInflater);
         setContentView(binding!!.root);
 
@@ -180,8 +179,6 @@ class MainActivity : AppCompatActivity(){
 
         //update screen orientation data
         wallmewallpaper.checkorein();
-
-
 
 
         //set menu controller

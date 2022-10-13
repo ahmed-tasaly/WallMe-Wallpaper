@@ -168,8 +168,6 @@ class Image_Activity(): AppCompatActivity(){
 
         //-----------------------------------------------------------------
 
-
-
         //bottom buttons
         setwallpaper_bottom_button = findViewById(R.id.bottombutton_setwallpaper);
         goback_bottom_button = findViewById(R.id.bottombutton_goback);
@@ -177,7 +175,6 @@ class Image_Activity(): AppCompatActivity(){
         container_bottom_button!!.animate().translationY(200f);//for animation
         //bottom sheet
         val bottomsheetfragment = findViewById<FrameLayout>(R.id.ImageInfo_BottomSheet);
-
 
         //set the ui elements
         Full_image = findViewById(R.id.full_image);
@@ -195,8 +192,6 @@ class Image_Activity(): AppCompatActivity(){
 
 
        BottomSheetBehavior.from(bottomsheetfragment).apply {
-
-
 
             this.state = BottomSheetBehavior.STATE_COLLAPSED;
             this.isHideable = false;

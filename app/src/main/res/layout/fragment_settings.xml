@@ -256,6 +256,7 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:visibility="gone"
         android:id="@+id/screensize_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
