@@ -564,7 +564,6 @@ class Image_Activity(): AppCompatActivity(){
             //set Image Loader
             imageloader = ImageLoader.Builder(this)
                 .memoryCachePolicy(CachePolicy.DISABLED)
-                .networkCachePolicy(CachePolicy.READ_ONLY)
                 .crossfade(true)
                 .allowHardware(false)
                 .components {
@@ -635,7 +634,6 @@ class Image_Activity(): AppCompatActivity(){
                                     Image_Ratio(mybitmap!!.width, mybitmap!!.height);
                             }else{
                                 val player = MediaPlayer();
-                                Full_video!!.setContentSize(myDataLocal!!.imageRatio.Width.toFloat(),myDataLocal!!.imageRatio.Height.toFloat());
                                 Full_video!!.addCallback(object  : ZoomSurfaceView.Callback{
                                     override fun onZoomSurfaceCreated(view: ZoomSurfaceView) {
                                         player.setSurface(Full_video!!.surface);
@@ -646,7 +644,12 @@ class Image_Activity(): AppCompatActivity(){
                                     }
                                 });
 
+
                                 player.apply {
+                                    this.setOnVideoSizeChangedListener { mediaPlayer, i, i2 ->
+                                        Full_video!!.setContentSize(i.toFloat(),i2.toFloat());
+                                    }
+
                                     isLooping = true;
                                     setDataSource(MediaPath);
                                     setOnPreparedListener {

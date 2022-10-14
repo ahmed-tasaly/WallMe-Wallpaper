@@ -1,0 +1,6 @@
+release 2.31:
+    -fixed video being stretched
+    -fixed some video posts not showing
+    -sitting a video or a gif wallpaper should consume less memory usage
+    -fixed posts getting unloaded 
+    -made the app safer

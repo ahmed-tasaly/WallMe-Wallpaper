@@ -43,6 +43,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:transformation="centerCrop"
                 app:transformationGravity="auto"
+                app:alignment="center"
                 tools:srcCompat="@tools:sample/avatars"
                 />
 
