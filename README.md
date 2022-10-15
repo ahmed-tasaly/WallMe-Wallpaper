@@ -71,8 +71,9 @@ Wallhaven source:
 <img src="./Images/img3.jpg" alt="drawing" width=100/>
 <img src="./Images/img4.jpg" alt="drawing" width=100/>
 
-<img src="./Images/gif1.gif" alt="drawing" width="10%"/>
-<img src="./Images/gif2.gif" alt="drawing" width="10%"/>
+<img width=100 src="./Images/gif1.gif">
+<img width=100 src="./Images/gif2.gif">
+
 
 since the app is still in development the ui may change :)
 
