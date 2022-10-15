@@ -66,13 +66,13 @@ Wallhaven source:
 <div align=center>
 
 <img src="./Images/phone2a.jpg" alt="drawing" width=100/>
-<img src="./Images/phone10.jpg" alt="drawing" width=100/>
-<img src="./Images/phone11.jpg" alt="drawing" width=100/>
-<img src="./Images/phone5.jpg" alt="drawing" width=100/>
-<img src="./Images/phone6.jpg" alt="drawing" width=100/>
-<img src="./Images/phone8.jpg" alt="drawing" width=100/>
-<img src="./Images/phone9.jpg" alt="drawing" width=100/>
+<img src="./Images/img1.jpg" alt="drawing" width=100/>
+<img src="./Images/img2.jpg" alt="drawing" width=100/>
+<img src="./Images/img3.jpg" alt="drawing" width=100/>
+<img src="./Images/img4.jpg" alt="drawing" width=100/>
 
+<img src="./Images/gif1.gif" alt="drawing" width=100/>
+<img src="./Images/gif2.gif" alt="drawing" width=100/>
 
 since the app is still in development the ui may change :)
 
