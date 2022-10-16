@@ -63,7 +63,7 @@ class wallmewallpaper : Application() {
                         WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
                 }
             }else{
-                ViewCompat.
+
             }
         }
 

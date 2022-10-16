@@ -6,11 +6,13 @@ import android.app.WallpaperManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.*
 import android.graphics.drawable.*
 import android.media.MediaPlayer
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,6 +20,7 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.values
@@ -45,6 +48,7 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.internal.toHexString
+import java.util.jar.Manifest
 
 class Image_Activity(): AppCompatActivity(){
 
@@ -748,10 +752,23 @@ class Image_Activity(): AppCompatActivity(){
 
 
         saveWallpaperButton?.setOnClickListener {
-            if(loaded) {
-                saveMedia(this, MediaPath!!, myDataLocal!!.type, myDataLocal!!);
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
+                if(checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    var accessstorage = 1;
+                    requestPermissions(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), accessstorage)
+                }else{
+                    if(loaded) {
+                        saveMedia(this, MediaPath!!, myDataLocal!!.type, myDataLocal!!);
+                    }else{
+                        Toast.makeText(this,"Please Wait for the Wallpaper to load",Toast.LENGTH_LONG).show();
+                    }
+                }
             }else{
-                Toast.makeText(this,"Please Wait for the Wallpaper to load",Toast.LENGTH_LONG).show();
+                if(loaded) {
+                    saveMedia(this, MediaPath!!, myDataLocal!!.type, myDataLocal!!);
+                }else{
+                    Toast.makeText(this,"Please Wait for the Wallpaper to load",Toast.LENGTH_LONG).show();
+                }
             }
         };
 
