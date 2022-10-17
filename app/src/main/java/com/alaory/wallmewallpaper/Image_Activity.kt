@@ -14,6 +14,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -48,6 +49,8 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.internal.toHexString
+import okio.Path
+import okio.Path.Companion.toPath
 import java.util.jar.Manifest
 
 class Image_Activity(): AppCompatActivity(){
@@ -119,6 +122,7 @@ class Image_Activity(): AppCompatActivity(){
          var MYDATA : Image_Info? = null;
          var THUMBNAIL: Drawable? = null;
          var loadedPreview : Boolean = false;
+         var save_local_external : Boolean = false;
 
         //mode
         var postmode = mode.reddit;
@@ -565,6 +569,12 @@ class Image_Activity(): AppCompatActivity(){
 
             }
         }
+            var path: Path?;
+            if (save_local_external){
+                path = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.path.toPath()
+            }else{
+                path = this.cacheDir.resolve("imagesaved").path.toPath();
+            }
             //set Image Loader
             imageloader = ImageLoader.Builder(this)
                 .memoryCachePolicy(CachePolicy.DISABLED)
@@ -584,8 +594,7 @@ class Image_Activity(): AppCompatActivity(){
                 .diskCache {
                     DiskCache.Builder()
                         .maxSizeBytes(1024 * 1024 * 500)//saved images
-                        .directory(this.cacheDir.resolve("imagesaved"))
-                        //.directory(this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.path.toPath())
+                        .directory(path)
                         .build()
                 }
                 .okHttpClient {

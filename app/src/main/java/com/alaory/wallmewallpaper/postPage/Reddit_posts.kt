@@ -231,6 +231,7 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
             val intent = Intent(requireContext(), Image_Activity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             Image_Activity.MYDATA = Reddit_Api.redditcon!!.reddit_global_posts.get(Pos);
             Image_Activity.THUMBNAIL = thumbnail;
+            Image_Activity.save_local_external = false;
             Image_Activity.postmode = Image_Activity.mode.reddit;
             Image_Activity.loadedPreview = loaded;
             startActivity(intent);

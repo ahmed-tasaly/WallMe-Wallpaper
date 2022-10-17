@@ -210,6 +210,7 @@ class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment(
             var intent = Intent(requireContext(), Image_Activity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             Image_Activity.MYDATA = wallhaven_api.wallhavenApi!!.wallhaven_homepage_posts[Pos];
             Image_Activity.THUMBNAIL = thumbnail;
+            Image_Activity.save_local_external = false;
             Image_Activity.postmode = Image_Activity.mode.wallhaven;
             Image_Activity.loadedPreview = loaded;
             startActivity(intent);

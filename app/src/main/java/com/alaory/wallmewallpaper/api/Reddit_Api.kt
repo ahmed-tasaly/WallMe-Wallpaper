@@ -148,7 +148,7 @@ class Reddit_Api_Contorller() {
                         val displayname = subredditlist.getJSONObject(i).getJSONObject("data")
                             .getString("display_name").lowercase();
                         if (Reddit_Api.filter_words(displayname) || subredditlist.getJSONObject(i)
-                                .getJSONObject("data").optBoolean("over18", true)
+                                .getJSONObject("data").optBoolean("over18", true) || Reddit_Api.ban_subreddits(displayname.lowercase())
                         )
                             continue;
                         subredditsNames += subredditlist.getJSONObject(i).getJSONObject("data")
@@ -176,7 +176,17 @@ class Reddit_Api(subredditname: String) {
 
         fun filter_words(word : String): Boolean{
             val word = word.lowercase();
-            val filterWords: Array<String> = arrayOf("hentai","dick","pussy","cunt","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","lgb","sex","rainbow","pride","furry","jerk")
+            val filterWords: Array<String> = arrayOf("hentai","cursed","semen","pornhub","dick","pussy","cunt","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","lgb","sex","rainbow","pride","furry","jerk")
+
+            for(i in filterWords)
+                if(word.contains(i))
+                    return true
+
+            return false;
+        }
+        fun ban_subreddits(subname : String): Boolean{
+            val word = subname.lowercase();
+            val filterWords: Array<String> = arrayOf("deadbedrooms","4chan","teenagers","showerthoughts","politics","relationship_advice","askreddit","relationships","fap");
 
             for(i in filterWords)
                 if(word.contains(i))

@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +28,9 @@ import coil.request.ImageRequest
 import coil.util.DebugLogger
 import com.alaory.wallmewallpaper.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import okio.Path
+import okio.Path.Companion.toPath
+import java.io.File
 
 class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : OnImageClick): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -44,7 +48,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
     var lastLongpressedItem : PostItemView? = null;
 
-
+    var save_local_external = false;
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
@@ -58,6 +62,12 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
         this.context = recyclerView.context;
 
+        var path : Path? =null;
+        if(save_local_external){
+            path = this.context!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.path.toPath();
+        }else{
+            path = recyclerView.context!!.cacheDir.resolve("imagePreview").path.toPath();
+        }
 
 
         adab_ImageLoader = ImageLoader.Builder(recyclerView.context!!)
@@ -85,7 +95,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             }
             .diskCache {
                 DiskCache.Builder()
-                    .directory( recyclerView.context!!.cacheDir.resolve("imagePreview"))
+                    .directory(path)
                     .maxSizePercent(0.1)
                     .build();
             }

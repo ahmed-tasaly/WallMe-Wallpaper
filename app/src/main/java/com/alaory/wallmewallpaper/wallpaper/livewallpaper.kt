@@ -135,6 +135,9 @@ class livewallpaper : WallpaperService() {
             val canvas  = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             { surfholder?.lockHardwareCanvas(); } else { surfholder?.lockCanvas(); }
 
+            if(largestscale == 0f)
+                largestscale = 1f;
+
             val surfgifwidth = moive.width()*largestscale;
             val surfgifheight = moive.height()*largestscale;
 

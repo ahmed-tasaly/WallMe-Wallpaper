@@ -32,6 +32,7 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         favoriteList_adabter = Image_list_adapter(database.imageinfo_list.toMutableList(),this);
+        favoriteList_adabter!!.save_local_external = true;
         BottonLoading.loctionbottom = 0;
         MenuChange?.PlayAnimation_forNav {
             it?.translationY(0f);
@@ -104,6 +105,7 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
             Image_Activity.THUMBNAIL = thumbnail;
             Image_Activity.MYDATA = database.imageinfo_list[Pos];
             Image_Activity.postmode = Image_Activity.mode.reddit;
+            Image_Activity.save_local_external = true;
             Image_Activity.loadedPreview = loaded;
             startActivity(intent);
         }catch (e : Exception){
