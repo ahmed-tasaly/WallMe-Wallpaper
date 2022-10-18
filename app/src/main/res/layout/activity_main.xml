@@ -53,6 +53,18 @@
                     android:layout_height="wrap_content">
 
                     <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/wallpaper_changer_list_navigation_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/widget"
+                        android:paddingHorizontal="10dp"
+                        android:src="@drawable/ic_settings_svgrepo_com"
+                        app:borderWidth="0dp"
+                        app:elevation="0dp"
+                        app:tint="@color/Buttons" />
+
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
                         android:id="@+id/favorite_list_navigation_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

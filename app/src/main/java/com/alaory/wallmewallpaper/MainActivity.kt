@@ -2,20 +2,11 @@ package com.alaory.wallmewallpaper
 
 import android.content.DialogInterface
 import android.content.res.ColorStateList
-import android.content.res.Configuration
-import android.content.res.Resources
-import android.graphics.drawable.Animatable2
-import android.graphics.drawable.AnimatedVectorDrawable
-import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewPropertyAnimator
-import android.view.Window
-import android.view.WindowManager
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -27,6 +18,7 @@ import com.alaory.wallmewallpaper.databinding.ActivityMainBinding
 import com.alaory.wallmewallpaper.postPage.Reddit_posts
 import com.alaory.wallmewallpaper.postPage.favorite_list
 import com.alaory.wallmewallpaper.postPage.wallhaven_posts
+import com.alaory.wallmewallpaper.postPage.wallpaper_changer
 import com.alaory.wallmewallpaper.settings.Reddit_settings
 import com.alaory.wallmewallpaper.settings.wallhaven_settings
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -48,6 +40,7 @@ class MainActivity : AppCompatActivity(){
     var redditPosts  : Reddit_posts? = null;
     var wallhavenPosts : wallhaven_posts? = null;
     var favoriteList : favorite_list? = null;
+    var wallpaperchanger : wallpaper_changer? = null
 
 
     //nav
@@ -57,6 +50,7 @@ class MainActivity : AppCompatActivity(){
     var reddit_floatingButton : FloatingActionButton? = null;
     var wallhaven_floatingButton : FloatingActionButton? = null;
     var favorite_floatingButton : FloatingActionButton? = null;
+    var wallpaperChangerButton : ImageView? = null;
 
 
     var firstTimeOPen = true;
@@ -65,6 +59,7 @@ class MainActivity : AppCompatActivity(){
         reddit,
         wallhaven,
         favorite,
+        wallpaperchanger,
         reddit_set,
         wallhaven_set,
         settings
@@ -196,6 +191,9 @@ class MainActivity : AppCompatActivity(){
                     menu.wallhaven ->{
                         wallhavenPosts?.let { FragmentControll.replace(R.id.container, it) };
                     }
+                    menu.wallpaperchanger ->{
+                        wallpaperchanger?.let { FragmentControll.replace(R.id.container, it) }
+                    }
                     menu.reddit_set ->{
                         reddit_filter?.let { FragmentControll.replace(R.id.container, it) };
                     }
@@ -253,6 +251,8 @@ class MainActivity : AppCompatActivity(){
         redditPosts  = Reddit_posts(menucontroll);
         wallhavenPosts = wallhaven_posts(menucontroll);
         favoriteList = favorite_list(menucontroll);
+        wallpaperchanger = wallpaper_changer();
+
         wallhaven_filter = wallhaven_settings(menucontroll);
         reddit_filter = Reddit_settings(menucontroll);
         settings = com.alaory.wallmewallpaper.settings.settings(menucontroll);
@@ -272,6 +272,7 @@ class MainActivity : AppCompatActivity(){
         reddit_floatingButton = findViewById(R.id.reddit_list_navigation_button);
         wallhaven_floatingButton = findViewById(R.id.wallhaven_list_navigation_button);
         favorite_floatingButton = findViewById(R.id.favorite_list_navigation_button);
+        wallpaperChangerButton = findViewById(R.id.wallpaper_changer_list_navigation_button)
 
 
         if(firstTimeOPen){
@@ -323,6 +324,11 @@ class MainActivity : AppCompatActivity(){
                 menucontroll?.ChangeTo(menu.favorite);
             }
         }
+        wallpaperChangerButton?.let {
+            it.setOnClickListener {
+                menucontroll?.ChangeTo(menu.wallpaperchanger)
+            }
+        }
 
 
         //set floating button actions
@@ -335,6 +341,9 @@ class MainActivity : AppCompatActivity(){
                     menucontroll?.ChangeTo(menu.wallhaven_set,false)
                 }
                 menu.favorite ->{
+                    //menucontroll?.ChangeTo(menu.settings,false)
+                }
+                menu.wallpaperchanger ->{
                     menucontroll?.ChangeTo(menu.settings,false)
                 }
                 else -> {}
@@ -348,6 +357,7 @@ class MainActivity : AppCompatActivity(){
         reddit_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));
         wallhaven_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));
         favorite_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));
+        wallpaperChangerButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));
         favorite_floatingButton?.setImageResource(R.drawable.ic_favorite);
         when (icon){
             menu.reddit ->{
@@ -359,6 +369,9 @@ class MainActivity : AppCompatActivity(){
             menu.favorite ->{
                 favorite_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Selected,theme));
                 favorite_floatingButton?.setImageResource(R.drawable.ic_heartfull);
+            }
+            menu.wallpaperchanger ->{
+                wallpaperChangerButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Selected,theme));
             }
             else -> {}
         }
@@ -374,6 +387,9 @@ class MainActivity : AppCompatActivity(){
                 filterbutton!!.setImageResource(R.drawable.filter_ic);
             }
             menu.favorite -> {
+                filterbutton!!.setImageResource(R.drawable.add_ic);
+            }
+            menu.wallpaperchanger -> {
                 filterbutton!!.setImageResource(R.drawable.ic_outline_settings_24);
             }
             else -> {}
