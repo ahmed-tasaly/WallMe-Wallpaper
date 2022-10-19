@@ -2,9 +2,11 @@ package com.alaory.wallmewallpaper.adabter
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +16,7 @@ import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.net.toFile
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -222,9 +225,26 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             }else{
                 holder.texttype.visibility = View.INVISIBLE;
             }
+            val pathuri = Uri.parse(currentpost.Image_url);
+            if(pathuri.scheme != "content" && pathuri.scheme != "file"){
+                adab_ImageLoader?.let {
+                    it.enqueue(getImagerequest(holder));
+                }
+            }else{
+                holder.cricle_prograssBar.visibility = View.GONE;
+                holder.cricle_prograssBar.setImageDrawable(null);
+                val postbitmap : Bitmap?;
+                if(pathuri.scheme == "content"){
+                    val imagebytestream = this.context?.contentResolver!!.openInputStream(pathuri)
+                    postbitmap = BitmapFactory.decodeStream(imagebytestream)
+                }else{
+                    val inputstreamfile = pathuri.toFile().inputStream();
+                    postbitmap = BitmapFactory.decodeStream(inputstreamfile);
+                    inputstreamfile.close();
+                }
 
-            adab_ImageLoader?.let {
-                it.enqueue(getImagerequest(holder));
+
+                holder.image_main!!.setImageBitmap(postbitmap);
             }
 
 

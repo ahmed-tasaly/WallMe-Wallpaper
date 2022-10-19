@@ -161,9 +161,6 @@ fun loadMedia(context: Activity){
     )
     intent.setType("*/*");
     intent.putExtra(Intent.EXTRA_MIME_TYPES,mime_type);
-    intent.putExtra(Intent.EXTRA_LOCAL_ONLY,true);
-    intent.addCategory(Intent.CATEGORY_DEFAULT);
-    val i = Intent.createChooser(intent,"File");
-    context.startActivityForResult(i,8778);
-
+    val i = Intent.createChooser(intent,"Select a wallpaper");
+    context.startActivityForResult(i,8777);
 }

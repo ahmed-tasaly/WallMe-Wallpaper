@@ -3,11 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".postPage.wallpaper_changer">
+    tools:context=".postPage.wallpaper_changer"
+    android:background="@color/Background"
+    >
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:text="i am a PLACEHOLDER. my job is. TO HOLD THIS PLACE"
+        android:textSize="30sp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        />
 
 </FrameLayout>

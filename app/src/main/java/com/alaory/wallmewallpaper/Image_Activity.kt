@@ -25,6 +25,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.values
+import androidx.core.net.toFile
 import androidx.core.view.isVisible
 import androidx.palette.graphics.Palette
 import coil.ImageLoader
@@ -611,91 +612,118 @@ class Image_Activity(): AppCompatActivity(){
                 }
                 .build()
 
+            val Wallpaper_Uri = Uri.parse(myDataLocal!!.Image_url);
+            if(Wallpaper_Uri.scheme != "content" && Wallpaper_Uri.scheme != "file") {
+                //load local bitmap and ui imageview data and do it in a callback
+                imageloader?.let {
+                    it.enqueue(coil.request.ImageRequest.Builder(this)
+                        .data(myDataLocal?.Image_url)
+                        .placeholder(thumbnail)
+                        .fallback(com.google.android.material.R.drawable.ic_mtrl_chip_close_circle)
+                        .target(object : coil.target.Target {
+                            override fun onError(error: Drawable?) {
+                                super.onError(error)
+                                mybitmap = error!!.toBitmap();
+                                Full_image!!.setImageBitmap(mybitmap);
+                            }
 
-            //load local bitmap and ui imageview data and do it in a callback
-            imageloader?.let {
-                it.enqueue(coil.request.ImageRequest.Builder(this)
-                    .data(myDataLocal?.Image_url)
-                    .placeholder(thumbnail)
-                    .fallback(com.google.android.material.R.drawable.ic_mtrl_chip_close_circle)
-                    .target(object : coil.target.Target {
-                        override fun onError(error: Drawable?) {
-                            super.onError(error)
-                            mybitmap = error!!.toBitmap();
-                            Full_image!!.setImageBitmap(mybitmap);
-                        }
+                            override fun onStart(placeholder: Drawable?) {
+                                super.onStart(placeholder);
+                                mybitmap = placeholder!!.toBitmap();
+                                if (loadedPreview)
+                                    SetBottomSheetColorsLambda(mybitmap!!);
+                                Full_image!!.setImageBitmap(mybitmap);
 
-                        override fun onStart(placeholder: Drawable?) {
-                            super.onStart(placeholder);
-                            mybitmap = placeholder!!.toBitmap();
-                            if (loadedPreview)
-                                SetBottomSheetColorsLambda(mybitmap!!);
-                            Full_image!!.setImageBitmap(mybitmap);
+                            }
 
-                        }
+                            override fun onSuccess(result: Drawable) {
+                                super.onSuccess(result);
+                                MediaPath =
+                                    imageloader!!.diskCache!![MemoryCache.Key(myDataLocal!!.Image_url).key]!!.data.toString();
+                                loaded = true;
+                                SetBottomSheetColorsLambda(result.toBitmap());
+                                if (myDataLocal!!.type == UrlType.Image || myDataLocal!!.type == UrlType.Gif) {
+                                    mybitmap = result.toBitmap();
+                                    Full_image!!.setImageDrawable(result);
+                                    (result as? Animatable)?.start();
+                                    myDataLocal!!.imageRatio =
+                                        Image_Ratio(mybitmap!!.width, mybitmap!!.height);
+                                } else {
+                                    val player = MediaPlayer();
+                                    Full_video!!.addCallback(object : ZoomSurfaceView.Callback {
+                                        override fun onZoomSurfaceCreated(view: ZoomSurfaceView) {
+                                            player.setSurface(Full_video!!.surface);
+                                        }
 
-                        override fun onSuccess(result: Drawable) {
-                            super.onSuccess(result);
-                            MediaPath = imageloader!!.diskCache!![MemoryCache.Key(myDataLocal!!.Image_url).key]!!.data.toString();
-                            loaded = true;
-                            SetBottomSheetColorsLambda(result.toBitmap());
-                            if(myDataLocal!!.type == UrlType.Image  || myDataLocal!!.type == UrlType.Gif) {
-                                mybitmap = result.toBitmap();
-                                Full_image!!.setImageDrawable(result);
-                                (result as? Animatable)?.start();
-                                myDataLocal!!.imageRatio =
-                                    Image_Ratio(mybitmap!!.width, mybitmap!!.height);
-                            }else{
-                                val player = MediaPlayer();
-                                Full_video!!.addCallback(object  : ZoomSurfaceView.Callback{
-                                    override fun onZoomSurfaceCreated(view: ZoomSurfaceView) {
-                                        player.setSurface(Full_video!!.surface);
+                                        override fun onZoomSurfaceDestroyed(view: ZoomSurfaceView) {
+                                            if (player.isPlaying) player!!.stop();
+                                            player.release();
+                                        }
+                                    });
+
+
+                                    player.apply {
+                                        this.setOnVideoSizeChangedListener { mediaPlayer, i, i2 ->
+                                            Full_video!!.setContentSize(
+                                                i.toFloat(),
+                                                i2.toFloat()
+                                            );
+                                        }
+
+                                        isLooping = true;
+                                        setDataSource(MediaPath);
+                                        setOnPreparedListener {
+                                            Full_video!!.visibility = View.VISIBLE;
+                                            Full_image!!.visibility = View.INVISIBLE;
+                                        }
+                                        setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
+                                        prepare();
+                                        start();
                                     }
-                                    override fun onZoomSurfaceDestroyed(view: ZoomSurfaceView) {
-                                        if(player.isPlaying) player!!.stop();
-                                        player.release();
-                                    }
-                                });
-
-
-                                player.apply {
-                                    this.setOnVideoSizeChangedListener { mediaPlayer, i, i2 ->
-                                        Full_video!!.setContentSize(i.toFloat(),i2.toFloat());
-                                    }
-
-                                    isLooping = true;
-                                    setDataSource(MediaPath);
-                                    setOnPreparedListener {
-                                        Full_video!!.visibility = View.VISIBLE;
-                                        Full_image!!.visibility = View.INVISIBLE;
-                                    }
-                                    setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
-                                    prepare();
-                                    start();
                                 }
                             }
-                        }
-                    })
-                    .listener(
-                        onSuccess = { _, _ ->
-                            cricle_prograssBar?.visibility = View.GONE;
-                        },
-                        onCancel = {
-                            cricle_prograssBar?.visibility = View.GONE;
-                            Log.i("cricle_prograssBar", "cancled");
-                        },
-                        onError = { _, _ ->
-                            cricle_prograssBar?.visibility = View.GONE;
-                            Log.i("cricle_prograssBar", "error");
-                        },
-                        onStart = {
-                            cricle_prograssBar?.visibility = View.VISIBLE;
-                            Log.i("cricle_prograssBar", "starting");
-                        }
+                        })
+                        .listener(
+                            onSuccess = { _, _ ->
+                                cricle_prograssBar?.visibility = View.GONE;
+                            },
+                            onCancel = {
+                                cricle_prograssBar?.visibility = View.GONE;
+                                Log.i("cricle_prograssBar", "cancled");
+                            },
+                            onError = { _, _ ->
+                                cricle_prograssBar?.visibility = View.GONE;
+                                Log.i("cricle_prograssBar", "error");
+                            },
+                            onStart = {
+                                cricle_prograssBar?.visibility = View.VISIBLE;
+                                Log.i("cricle_prograssBar", "starting");
+                            }
 
-                    )
-                    .build()
-                );
+                        )
+                        .build()
+                    );
+                }
+            }else{
+                cricle_prograssBar?.visibility = View.GONE;
+                MediaPath = myDataLocal!!.Image_url;
+                val bitmapfromfile : Bitmap?;
+                if (Wallpaper_Uri.scheme == "content"){
+                    val cont = this.contentResolver.openInputStream(Wallpaper_Uri);
+                    bitmapfromfile = BitmapFactory.decodeStream(cont);
+                }else{
+                    val inputStreamfile = Wallpaper_Uri.toFile().inputStream();
+                    bitmapfromfile = BitmapFactory.decodeStream(inputStreamfile)
+                    inputStreamfile.close();
+                }
+
+
+
+                mybitmap = bitmapfromfile;
+                Full_image!!.setImageBitmap(bitmapfromfile);
+                (bitmapfromfile as? Animatable)?.start();
+                myDataLocal!!.imageRatio =
+                    Image_Ratio(mybitmap!!.width, mybitmap!!.height);
             }
 
         //--------------------------------------------------------------------------
