@@ -1,9 +1,11 @@
 package com.alaory.wallmewallpaper.wallpaper
 
+import android.app.Activity
 import android.app.WallpaperManager
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.RectF
@@ -147,4 +149,21 @@ fun saveMedia(context: Context, path : String, type: UrlType, Name : Image_Info)
             Toast.makeText(context,"Gif has been saved to your Picture directory",Toast.LENGTH_LONG).show();
         }
     }
+}
+
+fun loadMedia(context: Activity){
+    val intent = Intent(Intent.ACTION_GET_CONTENT);
+    val mime_type = arrayOf(
+        "image/png",
+        "image/jpg",
+        "image/gif",
+        "video/mp4"
+    )
+    intent.setType("*/*");
+    intent.putExtra(Intent.EXTRA_MIME_TYPES,mime_type);
+    intent.putExtra(Intent.EXTRA_LOCAL_ONLY,true);
+    intent.addCategory(Intent.CATEGORY_DEFAULT);
+    val i = Intent.createChooser(intent,"File");
+    context.startActivityForResult(i,8778);
+
 }

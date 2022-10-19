@@ -90,7 +90,7 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
         loadprefs(requireContext());
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
-            MenuChange?.ChangeTo(MainActivity.menu.favorite,true);
+            MenuChange?.ChangeTo(MainActivity.menu.wallpaperchanger,true);
         }
 
         backbutton = layout.findViewById(R.id.backArrow_button);
@@ -167,7 +167,7 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
 
         backbutton?.let {
             it.setOnClickListener {
-                MenuChange?.ChangeTo(MainActivity.menu.favorite,true);
+                MenuChange?.ChangeTo(MainActivity.menu.wallpaperchanger,true);
             }
         }
 

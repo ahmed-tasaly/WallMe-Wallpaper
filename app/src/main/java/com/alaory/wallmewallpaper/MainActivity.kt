@@ -1,8 +1,11 @@
 package com.alaory.wallmewallpaper
 
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.res.ColorStateList
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.view.ViewPropertyAnimator
@@ -21,7 +24,10 @@ import com.alaory.wallmewallpaper.postPage.wallhaven_posts
 import com.alaory.wallmewallpaper.postPage.wallpaper_changer
 import com.alaory.wallmewallpaper.settings.Reddit_settings
 import com.alaory.wallmewallpaper.settings.wallhaven_settings
+import com.alaory.wallmewallpaper.wallpaper.loadMedia
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import okio.Path.Companion.toPath
+import java.io.File
 
 class MainActivity : AppCompatActivity(){
 
@@ -341,6 +347,7 @@ class MainActivity : AppCompatActivity(){
                     menucontroll?.ChangeTo(menu.wallhaven_set,false)
                 }
                 menu.favorite ->{
+                    loadMedia(this);
                     //menucontroll?.ChangeTo(menu.settings,false)
                 }
                 menu.wallpaperchanger ->{
@@ -425,4 +432,12 @@ class MainActivity : AppCompatActivity(){
         Runtime.getRuntime().exit(1);
     }
 
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("outInfo","reqcode : $requestCode  res: $resultCode  data: ${data!!.data!!.path} ")
+        val file = File(data.data!!.toString());
+        val sotrageinternal = File("${this.getExternalFilesDir(Environment.DIRECTORY_MOVIES)!!.path.toPath()}/myfile.png");
+        sotrageinternal.writeBytes(file.inputStream().readBytes());
+    }
 }
