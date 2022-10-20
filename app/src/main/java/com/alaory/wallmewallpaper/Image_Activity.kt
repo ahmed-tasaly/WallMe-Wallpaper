@@ -709,8 +709,62 @@ class Image_Activity(): AppCompatActivity(){
                 MediaPath = myDataLocal!!.Image_url;
                 val bitmapfromfile : Bitmap?;
                 if (Wallpaper_Uri.scheme == "content"){
-                    val cont = this.contentResolver.openInputStream(Wallpaper_Uri);
-                    bitmapfromfile = BitmapFactory.decodeStream(cont);
+                    loaded = true;
+                    when(myDataLocal!!.type){
+                        UrlType.Video ->{
+                            val player = MediaPlayer();
+                            Full_video!!.addCallback(object : ZoomSurfaceView.Callback {
+                                override fun onZoomSurfaceCreated(view: ZoomSurfaceView) {
+                                    player.setSurface(Full_video!!.surface);
+                                }
+
+                                override fun onZoomSurfaceDestroyed(view: ZoomSurfaceView) {
+                                    if (player.isPlaying) player!!.stop();
+                                    player.release();
+                                }
+                            });
+
+
+                            player.apply {
+                                this.setOnVideoSizeChangedListener { mediaPlayer, i, i2 ->
+                                    Full_video!!.setContentSize(
+                                        i.toFloat(),
+                                        i2.toFloat()
+                                    );
+                                }
+
+                                isLooping = true;
+                                when(Wallpaper_Uri.scheme){
+                                    "content" -> {
+                                        val fd = this@Image_Activity.contentResolver.openFileDescriptor(Wallpaper_Uri,"r")!!;
+                                        setDataSource(fd.fileDescriptor)
+                                    }
+                                    else ->{
+                                        setDataSource(MediaPath);
+                                    }
+                                }
+
+                                setOnPreparedListener {
+                                    Full_video!!.visibility = View.VISIBLE;
+                                    Full_image!!.visibility = View.INVISIBLE;
+                                }
+                                setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
+                                prepare();
+                                start();
+                            }
+                        }
+                        else ->{
+                            val cont = this.contentResolver.openInputStream(Wallpaper_Uri);
+                            bitmapfromfile = BitmapFactory.decodeStream(cont);
+                            mybitmap = bitmapfromfile;
+                            Full_image!!.setImageBitmap(bitmapfromfile);
+                            (bitmapfromfile as? Animatable)?.start();
+                            myDataLocal!!.imageRatio =
+                                Image_Ratio(mybitmap!!.width, mybitmap!!.height);
+                        }
+                    }
+
+
                 }else{
                     val inputStreamfile = Wallpaper_Uri.toFile().inputStream();
                     bitmapfromfile = BitmapFactory.decodeStream(inputStreamfile)
@@ -719,11 +773,7 @@ class Image_Activity(): AppCompatActivity(){
 
 
 
-                mybitmap = bitmapfromfile;
-                Full_image!!.setImageBitmap(bitmapfromfile);
-                (bitmapfromfile as? Animatable)?.start();
-                myDataLocal!!.imageRatio =
-                    Image_Ratio(mybitmap!!.width, mybitmap!!.height);
+
             }
 
         //--------------------------------------------------------------------------

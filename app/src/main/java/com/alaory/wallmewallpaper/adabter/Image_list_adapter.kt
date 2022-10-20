@@ -6,8 +6,11 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.media.ThumbnailUtils
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -206,7 +209,22 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                     val postbitmap : Bitmap?;
                     if(uriInfo.scheme == "content"){
                         val imagebytestream = this.context?.contentResolver!!.openInputStream(uriInfo)
+                        when(listPosts[holder.layoutPosition].type){
+                            UrlType.Video ->{
+                                if(Build.VERSION.SDK_INT > 28){
+
+                                }else{
+                                   // postbitmap =  MediaStore.Video.Thumbnails. // load video thumbnail
+                                }
+
+                            }
+                            else ->{
+
+                            }
+                        }
+
                         postbitmap = BitmapFactory.decodeStream(imagebytestream)
+
                     }else{
                         val inputstreamfile = uriInfo.toFile().inputStream();
                         postbitmap = BitmapFactory.decodeStream(inputstreamfile);

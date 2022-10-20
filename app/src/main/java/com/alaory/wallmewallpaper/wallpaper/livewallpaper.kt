@@ -4,6 +4,7 @@ package com.alaory.wallmewallpaper.wallpaper
 
 import android.graphics.Movie
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.service.wallpaper.WallpaperService
@@ -57,8 +58,17 @@ class livewallpaper : WallpaperService() {
                 val left = prefs.getFloat("left",0f);
                 val top = prefs.getFloat("top",0f);
 
+                var uricontent = Uri.parse(videoPath);
+                when(uricontent.scheme){
+                    "content" -> {
+                        val fd = this@livewallpaper.contentResolver.openFileDescriptor(uricontent,"r")
+                        setDataSource(fd!!.fileDescriptor);
+                    }
+                    else -> {
+                        setDataSource(videoPath);
+                    }
+                }
 
-                setDataSource(videoPath);
                 setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
                 prepare();
                 start();

@@ -450,9 +450,24 @@ class MainActivity : AppCompatActivity(){
             Log.d("outInfo","reqcode : $requestCode  res: $resultCode  data: ${data!!.data!!.path} type: ${conres.getType(conpath)!!.split('/')[1]} ");
 
             val wallpapername = conpath.lastPathSegment!!;
+            var type = UrlType.Image;
+            when(conres.getType(conpath)!!.split('/')[0].lowercase()){
+                "image" ->{
+                    if(conres.getType(conpath)!!.lowercase().contains("gif")){
+                        type = UrlType.Gif
+                    }
+                }
+                "video" ->{
+                    type = UrlType.Video;
+                }
+                else -> {
+
+                }
+            }
 
 
-            var Imageinfo = Image_Info(wallpaperpath.toString(),wallpaperpath.toString(),wallpapername,wallpapername,wallpapername,"",Image_Ratio(1,1),UrlType.Image);
+
+            var Imageinfo = Image_Info(wallpaperpath.toString(),wallpaperpath.toString(),wallpapername,wallpapername,wallpapername,"",Image_Ratio(1,1),type);
 
 
             var intent = Intent(this, Image_Activity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

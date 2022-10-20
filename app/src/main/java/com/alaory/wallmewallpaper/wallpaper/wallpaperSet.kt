@@ -157,7 +157,8 @@ fun loadMedia(context: Activity){
         "image/png",
         "image/jpg",
         "image/gif",
-        "video/mp4"
+        "video/mp4",
+        "video/webm"
     )
     intent.setType("*/*");
     intent.addCategory(Intent.CATEGORY_OPENABLE)
