@@ -34,6 +34,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import okio.Path
 import okio.Path.Companion.toPath
 import java.io.File
+import kotlin.concurrent.thread
 
 class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : OnImageClick): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -166,9 +167,13 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             val holder = holder as PostItemView;
             if(holder.buttonframe.isVisible)
                 holder.buttonframe.visibility = View.GONE;
+
+            val uriInfo = Uri.parse(listPosts[holder.layoutPosition].Image_url)
             holder.cricle_prograssBar.setImageDrawable(null);
             holder.image_main?.setImageDrawable(null);
             holder.root_view.setOnClickListener(null);
+
+
         }else{
             val holder = holder as LoadingViewHolder;
             holder.cricle_prograssBar.setImageDrawable(null);
@@ -188,6 +193,30 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                 adab_ImageLoader!!.memoryCache!!.clear();
                 imgclick.onImageClick(holder.layoutPosition,holder.image_main?.drawable,holder.loaded);
             }
+            val uriInfo = Uri.parse(listPosts[holder.layoutPosition].Image_url)
+            if(uriInfo.scheme == "content"){
+
+                var updateCallback : (bitmap : Bitmap) -> Unit= {
+                    holder.image_main!!.setImageBitmap(it);
+                }
+
+                thread {
+                    holder.cricle_prograssBar.visibility = View.GONE;
+                    holder.cricle_prograssBar.setImageDrawable(null);
+                    val postbitmap : Bitmap?;
+                    if(uriInfo.scheme == "content"){
+                        val imagebytestream = this.context?.contentResolver!!.openInputStream(uriInfo)
+                        postbitmap = BitmapFactory.decodeStream(imagebytestream)
+                    }else{
+                        val inputstreamfile = uriInfo.toFile().inputStream();
+                        postbitmap = BitmapFactory.decodeStream(inputstreamfile);
+                        inputstreamfile.close();
+                    }
+                    updateCallback(postbitmap!!);
+                }.run()
+
+            }
+
         }else{
             val holder = holder as LoadingViewHolder;
             loadingdraw = ResourcesCompat.getDrawable(this.context!!.applicationContext!!.resources,R.drawable.loading_anim,this.context!!.applicationContext.theme) as AnimatedVectorDrawable;
@@ -231,20 +260,6 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                     it.enqueue(getImagerequest(holder));
                 }
             }else{
-                holder.cricle_prograssBar.visibility = View.GONE;
-                holder.cricle_prograssBar.setImageDrawable(null);
-                val postbitmap : Bitmap?;
-                if(pathuri.scheme == "content"){
-                    val imagebytestream = this.context?.contentResolver!!.openInputStream(pathuri)
-                    postbitmap = BitmapFactory.decodeStream(imagebytestream)
-                }else{
-                    val inputstreamfile = pathuri.toFile().inputStream();
-                    postbitmap = BitmapFactory.decodeStream(inputstreamfile);
-                    inputstreamfile.close();
-                }
-
-
-                holder.image_main!!.setImageBitmap(postbitmap);
             }
 
 

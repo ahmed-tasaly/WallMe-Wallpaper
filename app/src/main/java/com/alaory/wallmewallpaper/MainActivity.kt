@@ -436,19 +436,28 @@ class MainActivity : AppCompatActivity(){
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 8777 && resultCode == RESULT_OK ){
-            val wallpaperpath =data!!.data!!.toString();
-            val conpath = Uri.parse(data!!.data!!.toString());
-            val conres = this.contentResolver;
-            Log.d("outInfo","reqcode : $requestCode  res: $resultCode  data: ${data!!.data!!.path} type: ${conres.getType(conpath)!!.split('/')[1]} ");
-            val type = conres.getType(conpath)!!.split('/')[1];
-            val wallpapername = conpath.lastPathSegment!!;
-            val savePath = "${this.getExternalFilesDir(Environment.DIRECTORY_MOVIES)!!.path.toPath()}/${wallpapername}.${type}";
-            val sotrageinternal = File(savePath);
-            sotrageinternal.writeBytes(conres.openInputStream(conpath)!!.readBytes());
 
-            var Imageinfo = Image_Info(Uri.fromFile(sotrageinternal).toString(),Uri.fromFile(sotrageinternal).toString(),wallpapername,wallpapername,wallpapername,"",Image_Ratio(1,1),UrlType.Image);
-            Log.d("outInfo","path ${Uri.fromFile(sotrageinternal).toString()}")
+
+            val wallpaperpath =data!!.data!!
+
+
+            this.contentResolver.takePersistableUriPermission(wallpaperpath,Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+            val conpath = Uri.parse(data!!.data!!.toString());
+
+            val conres = this.contentResolver;
+
+            Log.d("outInfo","reqcode : $requestCode  res: $resultCode  data: ${data!!.data!!.path} type: ${conres.getType(conpath)!!.split('/')[1]} ");
+
+            val wallpapername = conpath.lastPathSegment!!;
+
+
+            var Imageinfo = Image_Info(wallpaperpath.toString(),wallpaperpath.toString(),wallpapername,wallpapername,wallpapername,"",Image_Ratio(1,1),UrlType.Image);
+
+
             var intent = Intent(this, Image_Activity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+
             Image_Activity.MYDATA = Imageinfo;
             Image_Activity.THUMBNAIL = null;
             Image_Activity.save_local_external = false;
