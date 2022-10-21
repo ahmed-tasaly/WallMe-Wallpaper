@@ -22,6 +22,7 @@
 ![downloads](https://img.shields.io/github/downloads/alaory/wallme-wallpaper/total)
 ![language](https://img.shields.io/github/languages/top/alaory/wallme-wallpaper)
 [![Follow me](https://img.shields.io/github/followers/Alaory)](https://github.com/Alaory)
+![Repo Size](https://img.shields.io/github/repo-size/Alaory/wallme-wallpaper)
 
 ## Download
 
