@@ -247,8 +247,8 @@ class MainActivity : AppCompatActivity(){
                 navbox?.animate().apply {
                     playanimation(this);
                 }
-
             }
+
         }
 
 

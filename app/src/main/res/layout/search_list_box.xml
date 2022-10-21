@@ -29,6 +29,7 @@
         android:iconifiedByDefault="false"
         android:layoutDirection="locale"
 
+
         android:queryBackground="@drawable/textinput"
 
 

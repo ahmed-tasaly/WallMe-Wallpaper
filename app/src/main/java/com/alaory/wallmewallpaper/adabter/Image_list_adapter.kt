@@ -3,6 +3,7 @@ package com.alaory.wallmewallpaper.adabter
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Animatable
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -31,11 +32,13 @@ import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import coil.request.ImageRequest
+import coil.size.Size
 import coil.util.DebugLogger
 import com.alaory.wallmewallpaper.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import okio.Path
 import okio.Path.Companion.toPath
+import wseemann.media.FFmpegMediaMetadataRetriever
 import java.io.File
 import kotlin.concurrent.thread
 
@@ -198,39 +201,41 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             }
             val uriInfo = Uri.parse(listPosts[holder.layoutPosition].Image_url)
             if(uriInfo.scheme == "content"){
-
-                var updateCallback : (bitmap : Bitmap) -> Unit= {
-                    holder.image_main!!.setImageBitmap(it);
+                var updateCallback : (bitmap : Bitmap?,daw : Drawable?) -> Unit= { bit , draw ->
+                    if(bit != null)
+                        holder.image_main!!.setImageBitmap(bit);
+                    else
+                        holder.image_main!!.setImageDrawable(draw!!);
                 }
-
                 thread {
                     holder.cricle_prograssBar.visibility = View.GONE;
                     holder.cricle_prograssBar.setImageDrawable(null);
-                    val postbitmap : Bitmap?;
+                    var postbitmap : Bitmap? = null;
+                    var postdrawable : Drawable? = null;
                     if(uriInfo.scheme == "content"){
-                        val imagebytestream = this.context?.contentResolver!!.openInputStream(uriInfo)
+                        val contentres = this.context?.contentResolver!!;
                         when(listPosts[holder.layoutPosition].type){
                             UrlType.Video ->{
                                 if(Build.VERSION.SDK_INT > 28){
-
+                                    postbitmap = this.context!!.contentResolver.loadThumbnail(uriInfo,android.util.Size(480,480),null);
                                 }else{
-                                   // postbitmap =  MediaStore.Video.Thumbnails. // load video thumbnail
+                                    val ffmpegmedia = FFmpegMediaMetadataRetriever()
+                                    ffmpegmedia.setDataSource(contentres.openFileDescriptor(uriInfo,"r")!!.fileDescriptor);
+                                    postbitmap = ffmpegmedia.frameAtTime
                                 }
 
                             }
                             else ->{
-
+                                postdrawable = Drawable.createFromStream(contentres.openInputStream(uriInfo),listPosts[holder.layoutPosition].Image_name);
+                                (postdrawable as? Animatable)?.start();
                             }
                         }
-
-                        postbitmap = BitmapFactory.decodeStream(imagebytestream)
-
                     }else{
                         val inputstreamfile = uriInfo.toFile().inputStream();
                         postbitmap = BitmapFactory.decodeStream(inputstreamfile);
                         inputstreamfile.close();
                     }
-                    updateCallback(postbitmap!!);
+                    updateCallback(postbitmap,postdrawable);
                 }.run()
 
             }
@@ -278,6 +283,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                     it.enqueue(getImagerequest(holder));
                 }
             }else{
+
             }
 
 

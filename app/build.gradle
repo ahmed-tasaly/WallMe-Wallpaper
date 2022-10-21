@@ -13,8 +13,8 @@ android {
         applicationId "com.alaory.wallmewallpaper"
         minSdk 24
         targetSdk 32
-        versionCode 19
-        versionName "2.31"
+        versionCode 20
+        versionName "2.32"
 
         buildConfigField "String", "API_KEY_Base",localProperties['Base64_API_KEY']
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -39,6 +39,9 @@ android {
 }
 
 dependencies {
+    implementation 'com.github.wseemann:FFmpegMediaMetadataRetriever-core:1.0.19'
+
+
     implementation("androidx.palette:palette:1.0.0")
     implementation("androidx.work:work-runtime-ktx:2.7.1")
     implementation 'com.github.MikeOrtiz:TouchImageView:3.2.1'

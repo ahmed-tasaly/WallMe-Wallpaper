@@ -161,7 +161,7 @@ fun loadMedia(context: Activity){
         "video/webm"
     )
     intent.setType("*/*");
-    intent.addCategory(Intent.CATEGORY_OPENABLE)
+
     intent.putExtra(Intent.EXTRA_MIME_TYPES,mime_type);
     val i = Intent.createChooser(intent,"Select a wallpaper");
     context.startActivityForResult(i,8777);

@@ -704,10 +704,11 @@ class Image_Activity(): AppCompatActivity(){
                         .build()
                     );
                 }
+                //load from device
             }else{
                 cricle_prograssBar?.visibility = View.GONE;
                 MediaPath = myDataLocal!!.Image_url;
-                val bitmapfromfile : Bitmap?;
+                val bitmapfromfile : Drawable?;
                 if (Wallpaper_Uri.scheme == "content"){
                     loaded = true;
                     when(myDataLocal!!.type){
@@ -743,6 +744,7 @@ class Image_Activity(): AppCompatActivity(){
                                         setDataSource(MediaPath);
                                     }
                                 }
+                                setVolume(0f,0f);
 
                                 setOnPreparedListener {
                                     Full_video!!.visibility = View.VISIBLE;
@@ -755,25 +757,15 @@ class Image_Activity(): AppCompatActivity(){
                         }
                         else ->{
                             val cont = this.contentResolver.openInputStream(Wallpaper_Uri);
-                            bitmapfromfile = BitmapFactory.decodeStream(cont);
-                            mybitmap = bitmapfromfile;
-                            Full_image!!.setImageBitmap(bitmapfromfile);
+                            bitmapfromfile = Drawable.createFromStream(cont,myDataLocal!!.Image_name);
+                            mybitmap = bitmapfromfile!!.toBitmap();
+                            Full_image!!.setImageDrawable(bitmapfromfile);
                             (bitmapfromfile as? Animatable)?.start();
                             myDataLocal!!.imageRatio =
                                 Image_Ratio(mybitmap!!.width, mybitmap!!.height);
                         }
                     }
-
-
-                }else{
-                    val inputStreamfile = Wallpaper_Uri.toFile().inputStream();
-                    bitmapfromfile = BitmapFactory.decodeStream(inputStreamfile)
-                    inputStreamfile.close();
                 }
-
-
-
-
             }
 
         //--------------------------------------------------------------------------

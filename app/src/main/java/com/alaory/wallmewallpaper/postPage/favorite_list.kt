@@ -28,11 +28,14 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
     var mlayout : RecyclerView.LayoutManager? = null;
     var textmain : TextView? = null;
 
+    var favoritelist = database.imageinfo_list.toMutableList();
+
     val TAG = "favorite_list";
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        favoriteList_adabter = Image_list_adapter(database.imageinfo_list.toMutableList(),this);
+        favoriteList_adabter = Image_list_adapter(favoritelist,this);
         favoriteList_adabter!!.save_local_external = true;
+
         BottonLoading.loctionbottom = 0;
         MenuChange?.PlayAnimation_forNav {
             it?.translationY(0f);
@@ -41,6 +44,9 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
 
     override fun onResume() {
         super.onResume();
+        favoritelist = database.imageinfo_list.toMutableList();
+        favoriteList_adabter = Image_list_adapter(favoritelist,this);
+        setLayout();
         refrech_adabter();
         if(database.imageinfo_list.isEmpty()){
             textmain!!.visibility = View.VISIBLE;
@@ -94,7 +100,7 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
 
     fun refrech_adabter(){
         requireActivity().runOnUiThread {
-            favoriteList_adabter!!.notifyDataSetChanged();
+            favoriteList_adabter!!.notifyDataSetChanged()
         }
     }
 

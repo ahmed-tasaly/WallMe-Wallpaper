@@ -68,6 +68,7 @@ class livewallpaper : WallpaperService() {
                         setDataSource(videoPath);
                     }
                 }
+                setVolume(0f,0f)
 
                 setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
                 prepare();
@@ -134,7 +135,8 @@ class livewallpaper : WallpaperService() {
         var scaleX = 0f;
         var scaleY = 0f;
         var largestscale = 0f;
-        val moive = Movie.decodeFile(GifPath);//i know
+
+        var moive : Movie? = null;
         var isVisiable = true;
 
         val drawloopfun = Runnable {
@@ -148,8 +150,8 @@ class livewallpaper : WallpaperService() {
             if(largestscale == 0f)
                 largestscale = 1f;
 
-            val surfgifwidth = moive.width()*largestscale;
-            val surfgifheight = moive.height()*largestscale;
+            val surfgifwidth = moive!!.width()*largestscale;
+            val surfgifheight = moive!!.height()*largestscale;
 
 
             //set offset
@@ -160,11 +162,11 @@ class livewallpaper : WallpaperService() {
             canvas?.let {
                 it.scale(largestscale,largestscale);
                 it.translate(-xtran,-ytran);
-                moive.draw(it,0f,0f);
+                moive?.draw(it,0f,0f);
                 surfholder!!.unlockCanvasAndPost(it);
             }
 
-            moive.setTime((System.currentTimeMillis()%moive.duration()).toInt());
+            moive!!.setTime((System.currentTimeMillis()%moive!!.duration()).toInt());
             callbackHandler.removeCallbacks(drawloopfun);
             if(isVisiable)
                 callbackHandler.postDelayed(drawloopfun,40);
@@ -172,6 +174,17 @@ class livewallpaper : WallpaperService() {
 
         override fun onCreate(surfaceHolder: SurfaceHolder?) {
             super.onCreate(surfaceHolder);
+            var sourceuri = Uri.parse(GifPath);
+            when(sourceuri.scheme){
+                "content" -> {
+                    val  contentstream = this@livewallpaper.contentResolver.openInputStream(sourceuri);
+                    moive = Movie.decodeStream(contentstream);
+                }
+
+                else -> {
+                    moive = Movie.decodeFile(GifPath);//i know
+                }
+            }
 
         }
         override fun onSurfaceCreated(holder: SurfaceHolder?) {
@@ -188,8 +201,8 @@ class livewallpaper : WallpaperService() {
             height: Int
         ) {
             super.onSurfaceChanged(holder, format, width, height);
-            scaleX =  width.toFloat() / moive.width().toFloat();
-            scaleY =  height.toFloat() /moive.height().toFloat();
+            scaleX =  width.toFloat() / moive!!.width().toFloat();
+            scaleY =  height.toFloat() /moive!!.height().toFloat();
             largestscale = max(scaleX,scaleY);
         }
 
