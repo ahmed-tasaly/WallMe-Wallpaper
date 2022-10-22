@@ -7,11 +7,9 @@ import android.graphics.drawable.Animatable
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -32,14 +30,12 @@ import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import coil.request.ImageRequest
-import coil.size.Size
-import coil.util.DebugLogger
 import com.alaory.wallmewallpaper.*
+import com.alaory.wallmewallpaper.interpreter.ffmpegframedecoder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import okio.Path
 import okio.Path.Companion.toPath
 import wseemann.media.FFmpegMediaMetadataRetriever
-import java.io.File
 import kotlin.concurrent.thread
 
 class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : OnImageClick): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -91,10 +87,11 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             .crossfade(true)
             //.logger(DebugLogger())
             .components {
-                add(VideoFrameDecoder.Factory())
                 if (android.os.Build.VERSION.SDK_INT >= 28) {
                     add(ImageDecoderDecoder.Factory())
+                    add(VideoFrameDecoder.Factory())
                 } else {
+                    add(ffmpegframedecoder.ffmpegfactory())
                     add(GifDecoder.Factory())
                 }
             }
@@ -221,6 +218,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                                 }else{
                                     val ffmpegmedia = FFmpegMediaMetadataRetriever()
                                     ffmpegmedia.setDataSource(contentres.openFileDescriptor(uriInfo,"r")!!.fileDescriptor);
+
                                     postbitmap = ffmpegmedia.frameAtTime
                                 }
 

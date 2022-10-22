@@ -36,6 +36,7 @@ import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import com.alaory.wallmewallpaper.api.wallhaven_api
+import com.alaory.wallmewallpaper.interpreter.ffmpegframedecoder
 import com.alaory.wallmewallpaper.interpreter.progressRespondBody
 import com.alaory.wallmewallpaper.postPage.TagActivity
 import com.alaory.wallmewallpaper.wallpaper.*
@@ -583,7 +584,11 @@ class Image_Activity(): AppCompatActivity(){
                 .allowHardware(false)
                 .components {
                     if(myDataLocal!!.type == UrlType.Video){
-                        add(VideoFrameDecoder.Factory())//need to replace doesnt work on andorid 7
+                        if (android.os.Build.VERSION.SDK_INT >= 28) {
+                            add(VideoFrameDecoder.Factory())
+                        } else {
+                            add(ffmpegframedecoder.ffmpegfactory())
+                        }
                     }else{
                         if (android.os.Build.VERSION.SDK_INT >= 28) {
                             add(ImageDecoderDecoder.Factory())
