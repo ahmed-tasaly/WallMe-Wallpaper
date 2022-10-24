@@ -10,6 +10,13 @@ import android.os.Handler
 import android.service.wallpaper.WallpaperService
 import android.util.Log
 import android.view.SurfaceHolder
+import android.view.View
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.video.VideoSize
+import com.otaliastudios.zoom.ZoomSurfaceView
+import java.io.File
 
 import kotlin.math.max
 
@@ -37,67 +44,55 @@ class livewallpaper : WallpaperService() {
 
     // Video Engine
     inner class VideoLiveWallpaperEngine : WallpaperService.Engine(){
-        var player : MediaPlayer? = null;
+        var exoPlayer  = ExoPlayer.Builder(this@livewallpaper).build()
 
         override fun onCreate(surfaceHolder: SurfaceHolder?) {
             super.onCreate(surfaceHolder);
+            exoPlayer.apply {
+                val prefs = this@livewallpaper.getSharedPreferences("LiveWallpaper", 0);
+                val videoPath = prefs.getString("Video_Path", "")!!.toString();
+
+                repeatMode = Player.REPEAT_MODE_ONE
+
+
+                val mediaItem = MediaItem.fromUri(Uri.parse(videoPath))
+                exoPlayer.setMediaItem(mediaItem);
+
+
+                volume = 0f;
+
+
+                videoScalingMode = 2 //VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
+                setVideoSurface(surfaceHolder!!.surface)
+            }
         }
 
         override fun onSurfaceCreated(holder: SurfaceHolder?) {
             super.onSurfaceCreated(holder);
-
-            player = MediaPlayer().apply {
-                isLooping = true;
-                setSurface(holder!!.surface);
-                val prefs = this@livewallpaper.getSharedPreferences("LiveWallpaper",0);
-                val videoPath = prefs.getString("Video_Path","")!!.toString();
-
-                if(videoPath == "")
-                    return;
-
-                val left = prefs.getFloat("left",0f);
-                val top = prefs.getFloat("top",0f);
-
-                var uricontent = Uri.parse(videoPath);
-                when(uricontent.scheme){
-                    "content" -> {
-                        val fd = this@livewallpaper.contentResolver.openFileDescriptor(uricontent,"r")
-                        setDataSource(fd!!.fileDescriptor);
-                    }
-                    else -> {
-                        setDataSource(videoPath);
-                    }
-                }
-                setVolume(0f,0f)
-
-                setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
+            exoPlayer.apply {
                 prepare();
-                start();
+                play();
             }
         }
 
         override fun onVisibilityChanged(visible: Boolean) {
             super.onVisibilityChanged(visible);
             if(visible)
-                player!!.start();
+                exoPlayer.play();
             else
-                player!!.pause();
+                exoPlayer.pause();
 
         }
 
         override fun onSurfaceDestroyed(holder: SurfaceHolder?) {
             super.onSurfaceDestroyed(holder);
-            if(player!!.isPlaying) player!!.stop();
-            player?.release();
-            player = null;
+            if(exoPlayer.isPlaying) exoPlayer.stop();
         }
 
         override fun onDestroy() {
             super.onDestroy();
-
-            if(player?.isPlaying == true) player!!.stop();
-            player?.release();
-            player = null;
+            if(exoPlayer.isPlaying) exoPlayer.stop();
+            exoPlayer.release();
         }
 
     }

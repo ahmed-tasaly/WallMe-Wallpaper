@@ -8,9 +8,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
-import android.graphics.*
-import android.graphics.drawable.*
-import android.media.MediaPlayer
+import android.graphics.Bitmap
+import android.graphics.RectF
+import android.graphics.drawable.Animatable
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.TransitionDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -21,11 +24,9 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.values
-import androidx.core.net.toFile
 import androidx.core.view.isVisible
 import androidx.palette.graphics.Palette
 import coil.ImageLoader
@@ -39,7 +40,14 @@ import com.alaory.wallmewallpaper.api.wallhaven_api
 import com.alaory.wallmewallpaper.interpreter.ffmpegframedecoder
 import com.alaory.wallmewallpaper.interpreter.progressRespondBody
 import com.alaory.wallmewallpaper.postPage.TagActivity
-import com.alaory.wallmewallpaper.wallpaper.*
+import com.alaory.wallmewallpaper.wallpaper.livewallpaper
+import com.alaory.wallmewallpaper.wallpaper.saveMedia
+import com.alaory.wallmewallpaper.wallpaper.setWallpaper
+import com.alaory.wallmewallpaper.wallpaper.setmode
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.video.VideoSize
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -53,7 +61,6 @@ import okhttp3.Response
 import okhttp3.internal.toHexString
 import okio.Path
 import okio.Path.Companion.toPath
-import java.util.jar.Manifest
 
 class Image_Activity(): AppCompatActivity(){
 
@@ -577,6 +584,7 @@ class Image_Activity(): AppCompatActivity(){
             }else{
                 path = this.cacheDir.resolve("imagesaved").path.toPath();
             }
+
             //set Image Loader
             imageloader = ImageLoader.Builder(this)
                 .memoryCachePolicy(CachePolicy.DISABLED)
@@ -654,36 +662,34 @@ class Image_Activity(): AppCompatActivity(){
                                     myDataLocal!!.imageRatio =
                                         Image_Ratio(mybitmap!!.width, mybitmap!!.height);
                                 } else {
-                                    val player = MediaPlayer();
+                                    val exoplayer = ExoPlayer.Builder(this@Image_Activity)
+                                        .build()
                                     Full_video!!.addCallback(object : ZoomSurfaceView.Callback {
                                         override fun onZoomSurfaceCreated(view: ZoomSurfaceView) {
-                                            player.setSurface(Full_video!!.surface);
+                                            exoplayer.setVideoSurface(Full_video!!.surface)
                                         }
 
                                         override fun onZoomSurfaceDestroyed(view: ZoomSurfaceView) {
-                                            if (player.isPlaying) player!!.stop();
-                                            player.release();
+                                            if(exoplayer.isPlaying) exoplayer.stop();
+                                            exoplayer.release()
                                         }
                                     });
 
-
-                                    player.apply {
-                                        this.setOnVideoSizeChangedListener { mediaPlayer, i, i2 ->
-                                            Full_video!!.setContentSize(
-                                                i.toFloat(),
-                                                i2.toFloat()
-                                            );
-                                        }
-
-                                        isLooping = true;
-                                        setDataSource(MediaPath);
-                                        setOnPreparedListener {
-                                            Full_video!!.visibility = View.VISIBLE;
-                                            Full_image!!.visibility = View.INVISIBLE;
-                                        }
-                                        setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
+                                    Full_video!!.visibility = View.VISIBLE;
+                                    Full_image!!.visibility = View.INVISIBLE;
+                                    exoplayer.apply {
+                                        this.addListener(object : Player.Listener{
+                                            override fun onVideoSizeChanged(videoSize: VideoSize) {
+                                                super.onVideoSizeChanged(videoSize);
+                                                Full_video!!.setContentSize(videoSize.width.toFloat(),videoSize.height.toFloat())
+                                            }
+                                        })
+                                        repeatMode = Player.REPEAT_MODE_ONE;
+                                        videoScalingMode = 2 //VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
+                                        val mediaitem = MediaItem.fromUri(Uri.parse(MediaPath))
+                                        setMediaItem(mediaitem);
                                         prepare();
-                                        start();
+                                        play();
                                     }
                                 }
                             }
@@ -718,46 +724,40 @@ class Image_Activity(): AppCompatActivity(){
                     loaded = true;
                     when(myDataLocal!!.type){
                         UrlType.Video ->{
-                            val player = MediaPlayer();
+                            val exoPlayer = ExoPlayer.Builder(this@Image_Activity).build();
                             Full_video!!.addCallback(object : ZoomSurfaceView.Callback {
                                 override fun onZoomSurfaceCreated(view: ZoomSurfaceView) {
-                                    player.setSurface(Full_video!!.surface);
+                                    exoPlayer.setVideoSurface(Full_video!!.surface);
                                 }
 
                                 override fun onZoomSurfaceDestroyed(view: ZoomSurfaceView) {
-                                    if (player.isPlaying) player!!.stop();
-                                    player.release();
+                                    if (exoPlayer.isPlaying) exoPlayer!!.stop();
+                                    exoPlayer.release();
                                 }
                             });
 
-
-                            player.apply {
-                                this.setOnVideoSizeChangedListener { mediaPlayer, i, i2 ->
-                                    Full_video!!.setContentSize(
-                                        i.toFloat(),
-                                        i2.toFloat()
-                                    );
-                                }
-
-                                isLooping = true;
-                                when(Wallpaper_Uri.scheme){
-                                    "content" -> {
-                                        val fd = this@Image_Activity.contentResolver.openFileDescriptor(Wallpaper_Uri,"r")!!;
-                                        setDataSource(fd.fileDescriptor)
+                            Full_video!!.visibility = View.VISIBLE;
+                            Full_image!!.visibility = View.INVISIBLE;
+                            exoPlayer.apply {
+                                addListener(object : Player.Listener{
+                                    override fun onVideoSizeChanged(videoSize: VideoSize) {
+                                        super.onVideoSizeChanged(videoSize)
+                                        Full_video!!.setContentSize(videoSize.width.toFloat(),videoSize.height.toFloat())
                                     }
-                                    else ->{
-                                        setDataSource(MediaPath);
-                                    }
-                                }
-                                setVolume(0f,0f);
+                                })
+                                repeatMode = Player.REPEAT_MODE_ONE
 
-                                setOnPreparedListener {
-                                    Full_video!!.visibility = View.VISIBLE;
-                                    Full_image!!.visibility = View.INVISIBLE;
-                                }
-                                setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
+
+                                val mediaItem = MediaItem.fromUri(Wallpaper_Uri);
+                                exoPlayer.setMediaItem(mediaItem);
+
+
+                                volume = 0f;
+
+
+                                videoScalingMode = 2 //VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
                                 prepare();
-                                start();
+                                play();
                             }
                         }
                         else ->{
