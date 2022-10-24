@@ -3,15 +3,21 @@ package com.alaory.wallmewallpaper.wallpaper
 
 
 import android.graphics.Movie
-import android.graphics.drawable.Animatable
-import android.graphics.drawable.AnimatedImageDrawable
-import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.service.wallpaper.WallpaperService
 import android.util.Log
 import android.view.SurfaceHolder
+import android.view.View
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.video.VideoSize
+import com.otaliastudios.zoom.ZoomSurfaceView
+import java.io.File
+
 import kotlin.math.max
 
 class livewallpaper : WallpaperService() {
@@ -38,53 +44,55 @@ class livewallpaper : WallpaperService() {
 
     // Video Engine
     inner class VideoLiveWallpaperEngine : WallpaperService.Engine(){
-        var player : MediaPlayer? = null;
+        var exoPlayer  = ExoPlayer.Builder(this@livewallpaper).build()
 
         override fun onCreate(surfaceHolder: SurfaceHolder?) {
             super.onCreate(surfaceHolder);
+            exoPlayer.apply {
+                val prefs = this@livewallpaper.getSharedPreferences("LiveWallpaper", 0);
+                val videoPath = prefs.getString("Video_Path", "")!!.toString();
+
+                repeatMode = Player.REPEAT_MODE_ONE
+
+
+                val mediaItem = MediaItem.fromUri(Uri.parse(videoPath))
+                exoPlayer.setMediaItem(mediaItem);
+
+
+                volume = 0f;
+
+
+                videoScalingMode = 2 //VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
+                setVideoSurface(surfaceHolder!!.surface)
+            }
         }
 
         override fun onSurfaceCreated(holder: SurfaceHolder?) {
             super.onSurfaceCreated(holder);
-            player = MediaPlayer().apply {
-                isLooping = true;
-                setSurface(holder!!.surface);
-                val prefs = this@livewallpaper.getSharedPreferences("LiveWallpaper",0);
-                val videoPath = prefs.getString("Video_Path","")!!.toString();
-                val left = prefs.getFloat("left",0f);
-                val top = prefs.getFloat("top",0f);
-
-                if(videoPath == "")
-                    return;
-                setDataSource(videoPath);
-                setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
+            exoPlayer.apply {
                 prepare();
-                start();
+                play();
             }
         }
 
         override fun onVisibilityChanged(visible: Boolean) {
             super.onVisibilityChanged(visible);
             if(visible)
-                player!!.start();
+                exoPlayer.play();
             else
-                player!!.pause();
+                exoPlayer.pause();
 
         }
 
         override fun onSurfaceDestroyed(holder: SurfaceHolder?) {
             super.onSurfaceDestroyed(holder);
-            if(player!!.isPlaying) player!!.stop();
-            player?.release();
-            player = null;
+            if(exoPlayer.isPlaying) exoPlayer.stop();
         }
 
         override fun onDestroy() {
             super.onDestroy();
-
-            if(player?.isPlaying == true) player!!.stop();
-            player?.release();
-            player = null;
+            if(exoPlayer.isPlaying) exoPlayer.stop();
+            exoPlayer.release();
         }
 
     }
@@ -122,7 +130,8 @@ class livewallpaper : WallpaperService() {
         var scaleX = 0f;
         var scaleY = 0f;
         var largestscale = 0f;
-        val moive = Movie.decodeFile(GifPath);//i know
+
+        var moive : Movie? = null;
         var isVisiable = true;
 
         val drawloopfun = Runnable {
@@ -133,8 +142,11 @@ class livewallpaper : WallpaperService() {
             val canvas  = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             { surfholder?.lockHardwareCanvas(); } else { surfholder?.lockCanvas(); }
 
-            val surfgifwidth = moive.width()*largestscale;
-            val surfgifheight = moive.height()*largestscale;
+            if(largestscale == 0f)
+                largestscale = 1f;
+
+            val surfgifwidth = moive!!.width()*largestscale;
+            val surfgifheight = moive!!.height()*largestscale;
 
 
             //set offset
@@ -145,11 +157,11 @@ class livewallpaper : WallpaperService() {
             canvas?.let {
                 it.scale(largestscale,largestscale);
                 it.translate(-xtran,-ytran);
-                moive.draw(it,0f,0f);
+                moive?.draw(it,0f,0f);
                 surfholder!!.unlockCanvasAndPost(it);
             }
 
-            moive.setTime((System.currentTimeMillis()%moive.duration()).toInt());
+            moive!!.setTime((System.currentTimeMillis()%moive!!.duration()).toInt());
             callbackHandler.removeCallbacks(drawloopfun);
             if(isVisiable)
                 callbackHandler.postDelayed(drawloopfun,40);
@@ -157,6 +169,17 @@ class livewallpaper : WallpaperService() {
 
         override fun onCreate(surfaceHolder: SurfaceHolder?) {
             super.onCreate(surfaceHolder);
+            var sourceuri = Uri.parse(GifPath);
+            when(sourceuri.scheme){
+                "content" -> {
+                    val  contentstream = this@livewallpaper.contentResolver.openInputStream(sourceuri);
+                    moive = Movie.decodeStream(contentstream);
+                }
+
+                else -> {
+                    moive = Movie.decodeFile(GifPath);//i know
+                }
+            }
 
         }
         override fun onSurfaceCreated(holder: SurfaceHolder?) {
@@ -173,8 +196,8 @@ class livewallpaper : WallpaperService() {
             height: Int
         ) {
             super.onSurfaceChanged(holder, format, width, height);
-            scaleX =  width.toFloat() / moive.width().toFloat();
-            scaleY =  height.toFloat() /moive.height().toFloat();
+            scaleX =  width.toFloat() / moive!!.width().toFloat();
+            scaleY =  height.toFloat() /moive!!.height().toFloat();
             largestscale = max(scaleX,scaleY);
         }
 

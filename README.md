@@ -6,9 +6,9 @@
 
 <img src="./Images/newlogo_512.png" width=200 style="border-radius:20%"/>
 
-[<h4 align="center">Support me </h4>](https://www.patreon.com/Alaory)
+[Support me](https://www.patreon.com/Alaory)
 
-[<h4 align="center">Discussions</h4>](https://github.com/Alaory/WallMe-Wallpaper/discussions)
+[Discussions](https://github.com/Alaory/WallMe-Wallpaper/discussions)
 
 
 
@@ -22,6 +22,7 @@
 ![downloads](https://img.shields.io/github/downloads/alaory/wallme-wallpaper/total)
 ![language](https://img.shields.io/github/languages/top/alaory/wallme-wallpaper)
 [![Follow me](https://img.shields.io/github/followers/Alaory)](https://github.com/Alaory)
+![Repo Size](https://img.shields.io/github/repo-size/Alaory/wallme-wallpaper)
 
 ## Download
 
@@ -66,12 +67,13 @@ Wallhaven source:
 <div align=center>
 
 <img src="./Images/phone2a.jpg" alt="drawing" width=100/>
-<img src="./Images/phone10.jpg" alt="drawing" width=100/>
-<img src="./Images/phone11.jpg" alt="drawing" width=100/>
-<img src="./Images/phone5.jpg" alt="drawing" width=100/>
-<img src="./Images/phone6.jpg" alt="drawing" width=100/>
-<img src="./Images/phone8.jpg" alt="drawing" width=100/>
-<img src="./Images/phone9.jpg" alt="drawing" width=100/>
+<img src="./Images/img1.jpg" alt="drawing" width=100/>
+<img src="./Images/img2.jpg" alt="drawing" width=100/>
+<img src="./Images/img3.jpg" alt="drawing" width=100/>
+<img src="./Images/img4.jpg" alt="drawing" width=100/>
+
+<img width=100 src="./Images/gif1.gif">
+<img width=100 src="./Images/gif2.gif">
 
 
 since the app is still in development the ui may change :)
@@ -86,18 +88,14 @@ since the app is still in development the ui may change :)
 - [x] add progress bar when downloading an image
 - [x] add landscape and portrait mode 
 - [x] add auto wallpaper changer with the user configuration //still work in progress.
+- [x] add support for gif wallpapers
+- [x] add support for video wallpapers
 - [ ] add functionality to the auto wallpaper changer to change the wallpaper based on android theme (dark/light).
 - [ ] add user's posts page
 - [ ] add the ability to add images from the device to the favorite page
-- [x] add support for gif wallpapers
-- [x] add support for video wallpapers
 - [ ] add more UI I SAID MORE
 - [ ] more plans coming
 - [ ] go to sleep
-
-
-
-
 
 
 
@@ -106,5 +104,6 @@ since the app is still in development the ui may change :)
     - coil 
     - okhttp
     - TouchImageView
+    - zoomlayout
 
 

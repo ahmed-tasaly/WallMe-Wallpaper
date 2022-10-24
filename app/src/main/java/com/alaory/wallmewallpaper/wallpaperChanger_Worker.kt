@@ -47,8 +47,8 @@ class wallpaperChanger_Worker(val context: Context, param : WorkerParameters) : 
         val lastname = context.getSharedPreferences("wallpaper_changer_service",
             JobService.MODE_PRIVATE
         ).getString("wallpapername","0");
-        if(lastname == imageInfo.Image_name){
-            rannum = (0..database.imageinfo_list.lastIndex).random(Random(stringtonum(lastname)));
+        if(lastname == imageInfo.Image_name || imageInfo.type != UrlType.Image){
+            rannum = (0..database.imageinfo_list.lastIndex).random(Random(stringtonum(lastname!!)));
             imageInfo = database.imageinfo_list[rannum];
 
             if(context.getSharedPreferences("wallpaper_changer_service", JobService.MODE_PRIVATE).getString("wallpapername","0") == imageInfo.Image_name){

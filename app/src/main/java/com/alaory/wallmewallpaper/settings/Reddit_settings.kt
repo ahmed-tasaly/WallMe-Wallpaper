@@ -160,12 +160,12 @@ class Reddit_settings( menuChange : MainActivity.MenuChange? = null) : Fragment(
 
             val adapter = list_item_adabter(subredditList,object : list_item_adabter.Onclick{
                 override fun onclick(name: String) {
-                    var found = false;
+                    var hasbeenadded_before = false;
                     for (i in subreddits_list_names){
                         if(i.lowercase().trim() == name.lowercase().trim())
-                            found = true;
+                            hasbeenadded_before = true;
                     }
-                    if(found)
+                    if(hasbeenadded_before)
                         return;
                     Log.i("subreddits_list_names",name);
                     subreddits_list_names += name;
@@ -188,6 +188,7 @@ class Reddit_settings( menuChange : MainActivity.MenuChange? = null) : Fragment(
 
                 override fun onQueryTextChange(text: String?): Boolean {
                     Reddit_Api.redditcon?.search_subreddits(text!!) {
+
                         subredditList.clear()
                         subredditList += it;
                         requireActivity().runOnUiThread {

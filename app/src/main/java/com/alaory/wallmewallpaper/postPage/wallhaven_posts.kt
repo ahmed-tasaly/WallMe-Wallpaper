@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +17,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.alaory.wallmewallpaper.*
@@ -112,7 +114,9 @@ class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment(
             hideloading();
         }
 
-        wallmewallpaper.setImageView_asLoading(imageloading!!);
+        val loadingdraw = ResourcesCompat.getDrawable(this.resources,R.drawable.loading_anim,requireContext().theme) as AnimatedVectorDrawable;
+        loadingdraw.start();
+        imageloading!!.setImageDrawable(loadingdraw);
 
         if(Resources.getSystem().configuration.orientation !=  wallmewallpaper.last_orein)
             LoadMore();
@@ -199,13 +203,14 @@ class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment(
 
 
 
-    override fun onImageClick(Pos: Int, thumbnail: Drawable,loaded : Boolean) {
+    override fun onImageClick(Pos: Int, thumbnail: Drawable?,loaded : Boolean) {
         try{
             lastPastImageInfo =  wallhaven_api.wallhavenApi!!.wallhaven_homepage_posts[Pos];
             lastPastImageInfo_pos = Pos;
             var intent = Intent(requireContext(), Image_Activity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             Image_Activity.MYDATA = wallhaven_api.wallhavenApi!!.wallhaven_homepage_posts[Pos];
             Image_Activity.THUMBNAIL = thumbnail;
+            Image_Activity.save_local_external = false;
             Image_Activity.postmode = Image_Activity.mode.wallhaven;
             Image_Activity.loadedPreview = loaded;
             startActivity(intent);

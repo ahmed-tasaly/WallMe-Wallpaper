@@ -148,7 +148,7 @@ class Reddit_Api_Contorller() {
                         val displayname = subredditlist.getJSONObject(i).getJSONObject("data")
                             .getString("display_name").lowercase();
                         if (Reddit_Api.filter_words(displayname) || subredditlist.getJSONObject(i)
-                                .getJSONObject("data").optBoolean("over18", true)
+                                .getJSONObject("data").optBoolean("over18", true) || Reddit_Api.ban_subreddits(displayname.lowercase())
                         )
                             continue;
                         subredditsNames += subredditlist.getJSONObject(i).getJSONObject("data")
@@ -176,7 +176,27 @@ class Reddit_Api(subredditname: String) {
 
         fun filter_words(word : String): Boolean{
             val word = word.lowercase();
-            val filterWords: Array<String> = arrayOf("hentai","nsfw","adult","gender","gay","cross","bible","chris","lgbt","lgb","sex","rainbow","pride","furry","jerk")
+            val filterWords: Array<String> = arrayOf("hentai","cursed","semen","pornhub","dick","pussy","cunt","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","lgb","sex","rainbow","pride","furry","jerk")
+
+            for(i in filterWords)
+                if(word.contains(i))
+                    return true
+
+            return false;
+        }
+        fun ban_subreddits(subname : String): Boolean{
+            val word = subname.lowercase();
+            val filterWords: Array<String> = arrayOf("deadbedrooms","4chan","teenagers","showerthoughts","politics","relationship_advice","askreddit","relationships","fap");
+
+            for(i in filterWords)
+                if(word.contains(i))
+                    return true
+
+            return false;
+        }
+        fun has_good_words(word : String): Boolean{
+            val word = word.lowercase();
+            val filterWords: Array<String> = arrayOf("anime","wallpaper","amoled","background","vertical","gif","video","live","animated","art")
 
             for(i in filterWords)
                 if(word.contains(i))
@@ -258,7 +278,7 @@ class Reddit_Api(subredditname: String) {
 
                         for (i in 0 until children_json.length()) {
                             try {
-                                val dataJson = children_json.getJSONObject(i)
+                                var dataJson = children_json.getJSONObject(i)
                                     .getJSONObject("data") as JSONObject;
 
                                 // check if worth adding
@@ -266,6 +286,13 @@ class Reddit_Api(subredditname: String) {
 
                                 var found: Boolean = false;
                                 last_before_id = dataJson.getString("name");
+
+                                //check if its an embedded  from a diff subreddit
+                                if(dataJson.optJSONArray("crosspost_parent_list") != null){
+                                    Log.d("embedded",dataJson.getJSONArray("crosspost_parent_list").length().toString())
+                                    if(dataJson.getJSONArray("crosspost_parent_list").length() > 0)
+                                        dataJson = dataJson.getJSONArray("crosspost_parent_list").getJSONObject(0);
+                                }
 
                                 for (j in 0 until subreddit_posts_list.size) {
                                     if (dataJson.getString("name") == subreddit_posts_list.get(j).Image_name)

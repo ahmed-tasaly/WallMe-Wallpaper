@@ -2,20 +2,27 @@ package com.alaory.wallmewallpaper.adabter
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.Animatable
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.*
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.net.toFile
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import coil.ImageLoader
-import coil.clear
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.decode.VideoFrameDecoder
@@ -23,9 +30,13 @@ import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import coil.request.ImageRequest
-import coil.size.Precision
 import com.alaory.wallmewallpaper.*
+import com.alaory.wallmewallpaper.interpreter.ffmpegframedecoder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import okio.Path
+import okio.Path.Companion.toPath
+import wseemann.media.FFmpegMediaMetadataRetriever
+import kotlin.concurrent.thread
 
 class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : OnImageClick): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -43,6 +54,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
     var lastLongpressedItem : PostItemView? = null;
 
+    var save_local_external = false;
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
@@ -55,20 +67,31 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
 
         this.context = recyclerView.context;
+
+        var path : Path? =null;
+        if(save_local_external){
+            path = this.context!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.path.toPath();
+        }else{
+            path = recyclerView.context!!.cacheDir.resolve("imagePreview").path.toPath();
+        }
+
+
         adab_ImageLoader = ImageLoader.Builder(recyclerView.context!!)
             .allowRgb565(true)
             .bitmapConfig(Bitmap.Config.RGB_565)
-            .bitmapFactoryMaxParallelism(2)
-            .networkCachePolicy(CachePolicy.READ_ONLY)
-            .memoryCachePolicy(CachePolicy.DISABLED)
+            .bitmapFactoryMaxParallelism(4)
+            .networkCachePolicy(CachePolicy.ENABLED)
+            .memoryCachePolicy(CachePolicy.ENABLED)
             .diskCachePolicy(CachePolicy.ENABLED)
             .allowHardware(false)
             .crossfade(true)
+            //.logger(DebugLogger())
             .components {
-                add(VideoFrameDecoder.Factory())
                 if (android.os.Build.VERSION.SDK_INT >= 28) {
                     add(ImageDecoderDecoder.Factory())
+                    add(VideoFrameDecoder.Factory())
                 } else {
+                    add(ffmpegframedecoder.ffmpegfactory())
                     add(GifDecoder.Factory())
                 }
             }
@@ -79,8 +102,8 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             }
             .diskCache {
                 DiskCache.Builder()
-                    .directory( recyclerView.context!!.cacheDir.resolve("imagePreview"))
-                    .maxSizePercent(0.05)
+                    .directory(path)
+                    .maxSizePercent(0.1)
                     .build();
             }
             .networkObserverEnabled(false)
@@ -109,20 +132,26 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
         val request = ImageRequest.Builder(this.context!!)
             .data(listPosts.get(holder.pos).Image_thumbnail)
             .placeholder(tempDrawable)
-            .target(holder.image_main)
+            .target(holder.image_main!!)
             .allowHardware(false)
             .listener(
                 onSuccess = {_,_ ->
                     holder.cricle_prograssBar.visibility = View.GONE;
+                    holder.cricle_prograssBar.setImageDrawable(null);
                     holder.loaded = true;
                     tempDrawable = null;
                     tempBitmap = null;
+
                 },
                 onCancel = {
                     holder.cricle_prograssBar.visibility = View.GONE;
+                    holder.cricle_prograssBar.setImageDrawable(null);
                 },
-                onError = {_,_ ->
+                onError = {errres,imgreq ->
+
+
                     holder.cricle_prograssBar.visibility = View.GONE;
+                    holder.cricle_prograssBar.setImageDrawable(null);
                     tempDrawable = null;
                     tempBitmap = null;
                 },
@@ -141,16 +170,79 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             val holder = holder as PostItemView;
             if(holder.buttonframe.isVisible)
                 holder.buttonframe.visibility = View.GONE;
-            holder.cricle_prograssBar.setImageResource(0);
-            holder.image_main.setImageResource(0);
+
+            val uriInfo = Uri.parse(listPosts[holder.layoutPosition].Image_url)
+            holder.cricle_prograssBar.setImageDrawable(null);
+            holder.image_main?.setImageDrawable(null);
+            holder.root_view.setOnClickListener(null);
+
+
+        }else{
+            val holder = holder as LoadingViewHolder;
+            holder.cricle_prograssBar.setImageDrawable(null);
         }
     }
 
     override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
         super.onViewAttachedToWindow(holder)
+        var loadingdraw : AnimatedVectorDrawable? = null;
         if(holder.itemViewType == VIEW_TYPE_ITEM) {
             val holder = holder as PostItemView;
-            wallmewallpaper.setImageView_asLoading(holder.cricle_prograssBar);
+            loadingdraw = ResourcesCompat.getDrawable(this.context!!.applicationContext!!.resources,R.drawable.loading_anim,this.context!!.applicationContext.theme) as AnimatedVectorDrawable;
+            holder.cricle_prograssBar.setImageDrawable(loadingdraw);
+            loadingdraw.start();
+            holder.root_view.setOnClickListener {
+                holder.buttonframe.visibility = View.GONE;
+                adab_ImageLoader!!.memoryCache!!.clear();
+                imgclick.onImageClick(holder.layoutPosition,holder.image_main?.drawable,holder.loaded);
+            }
+            val uriInfo = Uri.parse(listPosts[holder.layoutPosition].Image_url)
+            if(uriInfo.scheme == "content"){
+                var updateCallback : (bitmap : Bitmap?,daw : Drawable?) -> Unit= { bit , draw ->
+                    if(bit != null)
+                        holder.image_main!!.setImageBitmap(bit);
+                    else
+                        holder.image_main!!.setImageDrawable(draw!!);
+                }
+                thread {
+                    holder.cricle_prograssBar.visibility = View.GONE;
+                    holder.cricle_prograssBar.setImageDrawable(null);
+                    var postbitmap : Bitmap? = null;
+                    var postdrawable : Drawable? = null;
+                    if(uriInfo.scheme == "content"){
+                        val contentres = this.context?.contentResolver!!;
+                        when(listPosts[holder.layoutPosition].type){
+                            UrlType.Video ->{
+                                if(Build.VERSION.SDK_INT > 28){
+                                    postbitmap = this.context!!.contentResolver.loadThumbnail(uriInfo,android.util.Size(480,480),null);
+                                }else{
+                                    val ffmpegmedia = FFmpegMediaMetadataRetriever()
+                                    ffmpegmedia.setDataSource(contentres.openFileDescriptor(uriInfo,"r")!!.fileDescriptor);
+
+                                    postbitmap = ffmpegmedia.frameAtTime
+                                }
+
+                            }
+                            else ->{
+                                postdrawable = Drawable.createFromStream(contentres.openInputStream(uriInfo),listPosts[holder.layoutPosition].Image_name);
+                                (postdrawable as? Animatable)?.start();
+                            }
+                        }
+                    }else{
+                        val inputstreamfile = uriInfo.toFile().inputStream();
+                        postbitmap = BitmapFactory.decodeStream(inputstreamfile);
+                        inputstreamfile.close();
+                    }
+                    updateCallback(postbitmap,postdrawable);
+                }.run()
+
+            }
+
+        }else{
+            val holder = holder as LoadingViewHolder;
+            loadingdraw = ResourcesCompat.getDrawable(this.context!!.applicationContext!!.resources,R.drawable.loading_anim,this.context!!.applicationContext.theme) as AnimatedVectorDrawable;
+            holder.cricle_prograssBar.setImageDrawable(loadingdraw);
+            loadingdraw.start();
         }
     }
 
@@ -183,17 +275,15 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             }else{
                 holder.texttype.visibility = View.INVISIBLE;
             }
+            val pathuri = Uri.parse(currentpost.Image_url);
+            if(pathuri.scheme != "content" && pathuri.scheme != "file"){
+                adab_ImageLoader?.let {
+                    it.enqueue(getImagerequest(holder));
+                }
+            }else{
 
-            adab_ImageLoader?.let {
-                it.enqueue(getImagerequest(holder));
             }
 
-
-            holder.root_view.setOnClickListener {
-                holder.buttonframe.visibility = View.GONE;
-                adab_ImageLoader!!.memoryCache!!.clear();
-                imgclick.onImageClick(position,holder.image_main.drawable,holder.loaded);
-            }
 
             holder.root_view.setOnLongClickListener {
                 lastLongpressedItem?.buttonframe?.visibility = View.GONE;
@@ -204,7 +294,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                 }else{
                     var found = false;
                     for(i in database.imageinfo_list){
-                        if(i.Image_name == currentpost.Image_name){
+                        if(i.Image_url == currentpost.Image_url){
                             found = true;
                         }
                     }
@@ -228,7 +318,6 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
         }else if(holder.itemViewType == VIEW_TYPE_LOADING){
             val holder = holder as LoadingViewHolder;
             val layoutparams = holder.itemView.layoutParams as StaggeredGridLayoutManager.LayoutParams;
-            wallmewallpaper.setImageView_asLoading(holder.cricle_prograssBar);
             layoutparams.isFullSpan = true;
         }
 
@@ -251,7 +340,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
         var found = false;
         val position = holder.layoutPosition;
         for(i in database.imageinfo_list){
-            if(i.Image_name == listPosts.get(position).Image_name){
+            if(i.Image_url == listPosts.get(position).Image_url){
                 found = true;
             }
         }
@@ -293,7 +382,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
         var loaded = false;
         var imageRatio = Image_Ratio(1,1);
         var root_view = itemView.findViewById(R.id.root_imageView) as LinearLayout;
-        var image_main = itemView.findViewById(R.id.image_main) as ImageView;
+        var image_main = itemView.findViewById(R.id.image_main) as? ImageView;
         var cricle_prograssBar = itemView.findViewById(R.id.cricle_prograssBar) as ImageView;
         var favoriteButton = itemView.findViewById(R.id.favorite_scrollable_floatingbutton) as FloatingActionButton;
         var blockButton = itemView.findViewById(R.id.block_scrollable_floatingbutton) as FloatingActionButton;
@@ -317,9 +406,14 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     }
 
     fun removeItem(position : Int){
+        if(position == -1)
+            return;
         this.notifyItemRemoved(position);
         listPosts.removeAt(position);
-        this.notifyItemRangeChanged(position,listPosts.size);
+        if(position -1 >= 0)
+            this.notifyItemRangeChanged(position-1,listPosts.size);
+        else
+            this.notifyItemRangeChanged(position,listPosts.size);
     }
 
 
@@ -346,7 +440,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
 
     interface OnImageClick{
-        fun onImageClick(Pos: Int,thumbnail: Drawable,loaded : Boolean = false);
+        fun onImageClick(Pos: Int,thumbnail: Drawable?,loaded : Boolean = false);
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {

@@ -1,0 +1,5 @@
+release 2.3:
+    -fixed screen rotation crashing
+    -fixed a large memory leak caused by the loading icon
+    -setting a static wallpaper is faster now :)
+    -made the app safer to use

@@ -1,12 +1,13 @@
 package com.alaory.wallmewallpaper.adabter
 
 import android.content.res.ColorStateList
-import android.content.res.Resources
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.alaory.wallmewallpaper.R
 
@@ -19,6 +20,9 @@ class list_item_adabter(var NameList: MutableList<String>,var onclick:Onclick?,v
 
     override fun onBindViewHolder(holder: Item, position: Int) {
         holder.textTitle.setText(NameList[position]);
+
+
+
         if(showremoveonly){
             holder.list_item_add.visibility = View.GONE;
             holder.list_item_remove.visibility = View.VISIBLE;
@@ -57,6 +61,7 @@ class list_item_adabter(var NameList: MutableList<String>,var onclick:Onclick?,v
 
 
     class Item(view: View): RecyclerView.ViewHolder(view){
+        val rootlistitem = view.findViewById<ConstraintLayout>(R.id.root_list_item);
         val textTitle = view.findViewById<TextView>(R.id.list_item_name);
         val list_item_add = view.findViewById<ImageButton>(R.id.list_item_add);
         val list_item_remove = view.findViewById<ImageButton>(R.id.list_item_remove);

@@ -14,22 +14,44 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/title_settings_constrain"
+            android:layout_marginTop="40dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
 
-    <TextView
-        android:id="@+id/title_settings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:padding="10dp"
-        android:text="Settings"
-        android:textColor="@color/Selected"
-        android:textSize="30sp" />
+            <TextView
+                android:id="@+id/title_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:padding="10dp"
+                android:text="Settings"
+                android:textColor="@color/Selected"
+                android:textSize="30sp" />
 
+            <ImageButton
+                android:id="@+id/backArrow_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:padding="10dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/arrow_out_ic"
+                android:background="@color/transparent"
+                />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:layout_below="@id/title_settings"
+        android:layout_below="@id/title_settings_constrain"
         android:background="@color/widget"
         />
 
@@ -38,7 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/wallpaper_changer_layout"
-            android:layout_below="@id/title_settings"
+            android:layout_below="@id/title_settings_constrain"
             android:background="@drawable/border_line"
             android:layout_marginHorizontal="10dp"
             android:layout_marginTop="5dp"
@@ -216,8 +238,8 @@
             android:padding="10dp"
             android:text="Show Wallhaven source"
             android:textColor="@color/white"
-            android:textSize="20sp"
-            />
+            android:textSize="20sp" />
+
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/Switch_reddit_settings"
             android:layout_width="match_parent"
@@ -233,12 +255,47 @@
 
     </RelativeLayout>
 
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/screensize_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sources_settings"
+        android:background="@drawable/border_line"
+        android:layout_marginTop="15dp"
+        android:layout_marginHorizontal="10dp">
+
+        <TextView
+            android:id="@+id/screensize_title_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:padding="10dp"
+            android:text="Screen"
+            android:textColor="@color/Selected"
+            android:textSize="20sp" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/fullscreenapp_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/screensize_title_settings"
+            android:layout_marginBottom="2dp"
+            android:padding="10dp"
+            android:text="Make the app fullscreen"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+
+    </RelativeLayout>
+
+
 
         <RelativeLayout
         android:id="@+id/cache_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/sources_settings"
+        android:layout_below="@id/screensize_settings"
             android:background="@drawable/border_line"
         android:layout_marginTop="15dp"
             android:layout_marginHorizontal="10dp"

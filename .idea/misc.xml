@@ -29,8 +29,10 @@
         <entry key="app/src/main/res/drawable/ic_wallhaven_2.xml" value="0.3295" />
         <entry key="app/src/main/res/drawable/image_border_line.xml" value="0.323" />
         <entry key="app/src/main/res/drawable/image_placeholder.xml" value="0.3525" />
+        <entry key="app/src/main/res/drawable/left_arrow_ic.xml" value="0.323" />
         <entry key="app/src/main/res/drawable/loading.xml" value="0.323" />
         <entry key="app/src/main/res/drawable/loading_anim.xml" value="0.323" />
+        <entry key="app/src/main/res/drawable/loading_inf_ic.xml" value="0.323" />
         <entry key="app/src/main/res/drawable/pull_ic.xml" value="0.323" />
         <entry key="app/src/main/res/drawable/reddit_ic.xml" value="0.3295" />
         <entry key="app/src/main/res/drawable/reddit_ico.xml" value="0.3295" />
@@ -52,6 +54,7 @@
         <entry key="app/src/main/res/layout/fragment_tagfragment.xml" value="0.29585292860196666" />
         <entry key="app/src/main/res/layout/fragment_wallhaven_posts.xml" value="0.29585292860196666" />
         <entry key="app/src/main/res/layout/fragment_wallhaven_settings.xml" value="0.2728921124206709" />
+        <entry key="app/src/main/res/layout/fragment_wallpaperchanger.xml" value="0.2728921124206709" />
         <entry key="app/src/main/res/layout/image_info.xml" value="0.29585292860196666" />
         <entry key="app/src/main/res/layout/image_scrolable.xml" value="0.29585292860196666" />
         <entry key="app/src/main/res/layout/list_item_add_source.xml" value="0.2728921124206709" />

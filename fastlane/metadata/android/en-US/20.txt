@@ -1,0 +1,3 @@
+release 1.32: 
+    -you can now add media from device
+    -bug fixes

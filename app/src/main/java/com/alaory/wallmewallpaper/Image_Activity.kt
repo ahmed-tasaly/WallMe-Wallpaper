@@ -2,19 +2,22 @@ package com.alaory.wallmewallpaper
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.app.WallpaperColors
-import android.app.WallpaperInfo
 import android.app.WallpaperManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
-import android.graphics.*
-import android.graphics.drawable.*
-import android.media.MediaPlayer
+import android.graphics.Bitmap
+import android.graphics.RectF
+import android.graphics.drawable.Animatable
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.TransitionDrawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.service.wallpaper.WallpaperService
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -34,9 +37,17 @@ import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import com.alaory.wallmewallpaper.api.wallhaven_api
+import com.alaory.wallmewallpaper.interpreter.ffmpegframedecoder
 import com.alaory.wallmewallpaper.interpreter.progressRespondBody
 import com.alaory.wallmewallpaper.postPage.TagActivity
-import com.alaory.wallmewallpaper.wallpaper.*
+import com.alaory.wallmewallpaper.wallpaper.livewallpaper
+import com.alaory.wallmewallpaper.wallpaper.saveMedia
+import com.alaory.wallmewallpaper.wallpaper.setWallpaper
+import com.alaory.wallmewallpaper.wallpaper.setmode
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.video.VideoSize
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -47,10 +58,9 @@ import com.otaliastudios.zoom.ZoomSurfaceView
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
-import okhttp3.internal.threadName
 import okhttp3.internal.toHexString
-
-
+import okio.Path
+import okio.Path.Companion.toPath
 
 class Image_Activity(): AppCompatActivity(){
 
@@ -121,6 +131,7 @@ class Image_Activity(): AppCompatActivity(){
          var MYDATA : Image_Info? = null;
          var THUMBNAIL: Drawable? = null;
          var loadedPreview : Boolean = false;
+         var save_local_external : Boolean = false;
 
         //mode
         var postmode = mode.reddit;
@@ -134,7 +145,7 @@ class Image_Activity(): AppCompatActivity(){
     private fun isOnDatabase(): Boolean{
         var found = false;
         for(i in database.imageinfo_list){
-            if(i.Image_name == myDataLocal?.Image_name)
+            if(i.Image_url == myDataLocal?.Image_url)
                 found = true;
         }
         return found;
@@ -174,8 +185,6 @@ class Image_Activity(): AppCompatActivity(){
 
         //-----------------------------------------------------------------
 
-
-
         //bottom buttons
         setwallpaper_bottom_button = findViewById(R.id.bottombutton_setwallpaper);
         goback_bottom_button = findViewById(R.id.bottombutton_goback);
@@ -183,7 +192,6 @@ class Image_Activity(): AppCompatActivity(){
         container_bottom_button!!.animate().translationY(200f);//for animation
         //bottom sheet
         val bottomsheetfragment = findViewById<FrameLayout>(R.id.ImageInfo_BottomSheet);
-
 
         //set the ui elements
         Full_image = findViewById(R.id.full_image);
@@ -194,13 +202,13 @@ class Image_Activity(): AppCompatActivity(){
 
         counter_image = findViewById(R.id.counter_prograssBar_FullImage);
         cricle_prograssBar = findViewById(R.id.cricle_prograssBar_FullImage);
-        wallmewallpaper.setImageView_asLoading(cricle_prograssBar);
+        val loadingdraw = ResourcesCompat.getDrawable(this.applicationContext.resources,R.drawable.loading_anim,this.theme) as AnimatedVectorDrawable;
+        loadingdraw.start();
+        cricle_prograssBar!!.setImageDrawable(loadingdraw);
 
 
 
        BottomSheetBehavior.from(bottomsheetfragment).apply {
-
-
 
             this.state = BottomSheetBehavior.STATE_COLLAPSED;
             this.isHideable = false;
@@ -505,12 +513,14 @@ class Image_Activity(): AppCompatActivity(){
 
                         var BottomSheetSwatch : Palette.Swatch? = null
 
-                        if(pal.mutedSwatch != null){
-                            BottomSheetSwatch = pal.mutedSwatch;
+                        if(pal.darkMutedSwatch != null){
+                            BottomSheetSwatch = pal.darkMutedSwatch;
                         }else if(pal.lightMutedSwatch != null){
                             BottomSheetSwatch = pal.lightMutedSwatch;
+                        }else if(pal.mutedSwatch != null){
+                            BottomSheetSwatch = pal.mutedSwatch;
                         }else{
-                            BottomSheetSwatch = pal.darkMutedSwatch;
+                            BottomSheetSwatch = pal.darkVibrantSwatch;
                         }
 
                         val endBackground = ResourcesCompat.getDrawable(resources,R.drawable.bottomsheetshape,theme);
@@ -568,15 +578,25 @@ class Image_Activity(): AppCompatActivity(){
 
             }
         }
+            var path: Path?;
+            if (save_local_external){
+                path = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.path.toPath()
+            }else{
+                path = this.cacheDir.resolve("imagesaved").path.toPath();
+            }
+
             //set Image Loader
             imageloader = ImageLoader.Builder(this)
                 .memoryCachePolicy(CachePolicy.DISABLED)
-                .networkCachePolicy(CachePolicy.READ_ONLY)
                 .crossfade(true)
                 .allowHardware(false)
                 .components {
                     if(myDataLocal!!.type == UrlType.Video){
-                        add(VideoFrameDecoder.Factory())
+                        if (android.os.Build.VERSION.SDK_INT >= 28) {
+                            add(VideoFrameDecoder.Factory())
+                        } else {
+                            add(ffmpegframedecoder.ffmpegfactory())
+                        }
                     }else{
                         if (android.os.Build.VERSION.SDK_INT >= 28) {
                             add(ImageDecoderDecoder.Factory())
@@ -587,8 +607,8 @@ class Image_Activity(): AppCompatActivity(){
                 }
                 .diskCache {
                     DiskCache.Builder()
-                        .directory(this.cacheDir.resolve("imagesaved"))
-                        //.directory(this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.path.toPath())
+                        .maxSizeBytes(1024 * 1024 * 500)//saved images
+                        .directory(path)
                         .build()
                 }
                 .okHttpClient {
@@ -605,87 +625,152 @@ class Image_Activity(): AppCompatActivity(){
                 }
                 .build()
 
+            val Wallpaper_Uri = Uri.parse(myDataLocal!!.Image_url);
+            if(Wallpaper_Uri.scheme != "content" && Wallpaper_Uri.scheme != "file") {
+                //load local bitmap and ui imageview data and do it in a callback
+                imageloader?.let {
+                    it.enqueue(coil.request.ImageRequest.Builder(this)
+                        .data(myDataLocal?.Image_url)
+                        .placeholder(thumbnail)
+                        .fallback(com.google.android.material.R.drawable.ic_mtrl_chip_close_circle)
+                        .target(object : coil.target.Target {
+                            override fun onError(error: Drawable?) {
+                                super.onError(error)
+                                mybitmap = error!!.toBitmap();
+                                Full_image!!.setImageBitmap(mybitmap);
+                            }
 
-            //load local bitmap and ui imageview data and do it in a callback
-            imageloader?.let {
-                it.enqueue(coil.request.ImageRequest.Builder(this)
-                    .data(myDataLocal?.Image_url)
-                    .placeholder(thumbnail)
-                    .fallback(com.google.android.material.R.drawable.ic_mtrl_chip_close_circle)
-                    .target(object : coil.target.Target {
-                        override fun onError(error: Drawable?) {
-                            super.onError(error)
-                            mybitmap = error!!.toBitmap();
-                            Full_image!!.setImageBitmap(mybitmap);
-                        }
+                            override fun onStart(placeholder: Drawable?) {
+                                super.onStart(placeholder);
+                                mybitmap = placeholder!!.toBitmap();
+                                if (loadedPreview)
+                                    SetBottomSheetColorsLambda(mybitmap!!);
+                                Full_image!!.setImageBitmap(mybitmap);
 
-                        override fun onStart(placeholder: Drawable?) {
-                            super.onStart(placeholder);
-                            mybitmap = placeholder!!.toBitmap();
-                            if (loadedPreview)
-                                SetBottomSheetColorsLambda(mybitmap!!);
-                            Full_image!!.setImageBitmap(mybitmap);
+                            }
 
-                        }
+                            override fun onSuccess(result: Drawable) {
+                                super.onSuccess(result);
+                                MediaPath =
+                                    imageloader!!.diskCache!![MemoryCache.Key(myDataLocal!!.Image_url).key]!!.data.toString();
+                                loaded = true;
+                                SetBottomSheetColorsLambda(result.toBitmap());
+                                if (myDataLocal!!.type == UrlType.Image || myDataLocal!!.type == UrlType.Gif) {
+                                    mybitmap = result.toBitmap();
+                                    Full_image!!.setImageDrawable(result);
+                                    (result as? Animatable)?.start();
+                                    myDataLocal!!.imageRatio =
+                                        Image_Ratio(mybitmap!!.width, mybitmap!!.height);
+                                } else {
+                                    val exoplayer = ExoPlayer.Builder(this@Image_Activity)
+                                        .build()
+                                    Full_video!!.addCallback(object : ZoomSurfaceView.Callback {
+                                        override fun onZoomSurfaceCreated(view: ZoomSurfaceView) {
+                                            exoplayer.setVideoSurface(Full_video!!.surface)
+                                        }
 
-                        override fun onSuccess(result: Drawable) {
-                            super.onSuccess(result);
-                            MediaPath = imageloader!!.diskCache!![MemoryCache.Key(myDataLocal!!.Image_url).key]!!.data.toString();
-                            SetBottomSheetColorsLambda(result.toBitmap());
-                            if(myDataLocal!!.type == UrlType.Image  || myDataLocal!!.type == UrlType.Gif) {
-                                mybitmap = result.toBitmap();
-                                Full_image!!.setImageDrawable(result);
-                                (result as? Animatable)?.start();
-                                myDataLocal!!.imageRatio =
-                                    Image_Ratio(mybitmap!!.width, mybitmap!!.height);
-                            }else{
-                                val player = MediaPlayer();
-                                Full_video!!.setContentSize(myDataLocal!!.imageRatio.Width.toFloat(),myDataLocal!!.imageRatio.Height.toFloat());
-                                Full_video!!.addCallback(object  : ZoomSurfaceView.Callback{
-                                    override fun onZoomSurfaceCreated(view: ZoomSurfaceView) {
-                                        player.setSurface(Full_video!!.surface);
+                                        override fun onZoomSurfaceDestroyed(view: ZoomSurfaceView) {
+                                            if(exoplayer.isPlaying) exoplayer.stop();
+                                            exoplayer.release()
+                                        }
+                                    });
+
+                                    Full_video!!.visibility = View.VISIBLE;
+                                    Full_image!!.visibility = View.INVISIBLE;
+                                    exoplayer.apply {
+                                        this.addListener(object : Player.Listener{
+                                            override fun onVideoSizeChanged(videoSize: VideoSize) {
+                                                super.onVideoSizeChanged(videoSize);
+                                                Full_video!!.setContentSize(videoSize.width.toFloat(),videoSize.height.toFloat())
+                                            }
+                                        })
+                                        repeatMode = Player.REPEAT_MODE_ONE;
+                                        videoScalingMode = 2 //VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
+                                        val mediaitem = MediaItem.fromUri(Uri.parse(MediaPath))
+                                        setMediaItem(mediaitem);
+                                        prepare();
+                                        play();
                                     }
-                                    override fun onZoomSurfaceDestroyed(view: ZoomSurfaceView) {
-                                        if(player.isPlaying) player!!.stop();
-                                        player.release();
-                                    }
-                                });
-
-                                player.apply {
-                                    isLooping = true;
-                                    setDataSource(MediaPath);
-                                    setOnPreparedListener {
-                                        Full_video!!.visibility = View.VISIBLE;
-                                        Full_image!!.visibility = View.INVISIBLE;
-                                    }
-                                    setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
-                                    prepare();
-                                    start();
                                 }
                             }
-                            loaded = true;
-                        }
-                    })
-                    .listener(
-                        onSuccess = { _, _ ->
-                            cricle_prograssBar?.visibility = View.GONE;
-                        },
-                        onCancel = {
-                            cricle_prograssBar?.visibility = View.GONE;
-                            Log.i("cricle_prograssBar", "cancled");
-                        },
-                        onError = { _, _ ->
-                            cricle_prograssBar?.visibility = View.GONE;
-                            Log.i("cricle_prograssBar", "error");
-                        },
-                        onStart = {
-                            cricle_prograssBar?.visibility = View.VISIBLE;
-                            Log.i("cricle_prograssBar", "starting");
-                        }
+                        })
+                        .listener(
+                            onSuccess = { _, _ ->
+                                cricle_prograssBar?.visibility = View.GONE;
+                            },
+                            onCancel = {
+                                cricle_prograssBar?.visibility = View.GONE;
+                                Log.i("cricle_prograssBar", "cancled");
+                            },
+                            onError = { _, _ ->
+                                cricle_prograssBar?.visibility = View.GONE;
+                                Log.i("cricle_prograssBar", "error");
+                            },
+                            onStart = {
+                                cricle_prograssBar?.visibility = View.VISIBLE;
+                                Log.i("cricle_prograssBar", "starting");
+                            }
 
-                    )
-                    .build()
-                );
+                        )
+                        .build()
+                    );
+                }
+                //load from device
+            }else{
+                cricle_prograssBar?.visibility = View.GONE;
+                MediaPath = myDataLocal!!.Image_url;
+                val bitmapfromfile : Drawable?;
+                if (Wallpaper_Uri.scheme == "content"){
+                    loaded = true;
+                    when(myDataLocal!!.type){
+                        UrlType.Video ->{
+                            val exoPlayer = ExoPlayer.Builder(this@Image_Activity).build();
+                            Full_video!!.addCallback(object : ZoomSurfaceView.Callback {
+                                override fun onZoomSurfaceCreated(view: ZoomSurfaceView) {
+                                    exoPlayer.setVideoSurface(Full_video!!.surface);
+                                }
+
+                                override fun onZoomSurfaceDestroyed(view: ZoomSurfaceView) {
+                                    if (exoPlayer.isPlaying) exoPlayer!!.stop();
+                                    exoPlayer.release();
+                                }
+                            });
+
+                            Full_video!!.visibility = View.VISIBLE;
+                            Full_image!!.visibility = View.INVISIBLE;
+                            exoPlayer.apply {
+                                addListener(object : Player.Listener{
+                                    override fun onVideoSizeChanged(videoSize: VideoSize) {
+                                        super.onVideoSizeChanged(videoSize)
+                                        Full_video!!.setContentSize(videoSize.width.toFloat(),videoSize.height.toFloat())
+                                    }
+                                })
+                                repeatMode = Player.REPEAT_MODE_ONE
+
+
+                                val mediaItem = MediaItem.fromUri(Wallpaper_Uri);
+                                exoPlayer.setMediaItem(mediaItem);
+
+
+                                volume = 0f;
+
+
+                                videoScalingMode = 2 //VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
+                                prepare();
+                                play();
+                            }
+                        }
+                        else ->{
+                            val cont = this.contentResolver.openInputStream(Wallpaper_Uri);
+                            bitmapfromfile = Drawable.createFromStream(cont,myDataLocal!!.Image_name);
+                            mybitmap = bitmapfromfile!!.toBitmap();
+                            Full_image!!.setImageDrawable(bitmapfromfile);
+                            (bitmapfromfile as? Animatable)?.start();
+                            myDataLocal!!.imageRatio =
+                                Image_Ratio(mybitmap!!.width, mybitmap!!.height);
+                        }
+                    }
+                }
             }
 
         //--------------------------------------------------------------------------
@@ -751,10 +836,23 @@ class Image_Activity(): AppCompatActivity(){
 
 
         saveWallpaperButton?.setOnClickListener {
-            if(loaded) {
-                saveMedia(this, MediaPath!!, myDataLocal!!.type, myDataLocal!!.Image_name);
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
+                if(checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    var accessstorage = 1;
+                    requestPermissions(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), accessstorage)
+                }else{
+                    if(loaded) {
+                        saveMedia(this, MediaPath!!, myDataLocal!!.type, myDataLocal!!);
+                    }else{
+                        Toast.makeText(this,"Please Wait for the Wallpaper to load",Toast.LENGTH_LONG).show();
+                    }
+                }
             }else{
-                Toast.makeText(this,"Please Wait for the Wallpaper to load",Toast.LENGTH_LONG).show();
+                if(loaded) {
+                    saveMedia(this, MediaPath!!, myDataLocal!!.type, myDataLocal!!);
+                }else{
+                    Toast.makeText(this,"Please Wait for the Wallpaper to load",Toast.LENGTH_LONG).show();
+                }
             }
         };
 
