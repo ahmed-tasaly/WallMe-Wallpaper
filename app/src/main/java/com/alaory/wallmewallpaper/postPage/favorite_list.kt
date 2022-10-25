@@ -30,11 +30,15 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
 
     var favoritelist = database.imageinfo_list.toMutableList();
 
+    var scrollY = 0;
+
     val TAG = "favorite_list";
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         favoriteList_adabter = Image_list_adapter(favoritelist,this);
         favoriteList_adabter!!.save_local_external = true;
+
+
 
         BottonLoading.loctionbottom = 0;
         MenuChange?.PlayAnimation_forNav {
@@ -45,13 +49,19 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
     override fun onResume() {
         super.onResume();
         favoritelist = database.imageinfo_list.toMutableList();
-        favoriteList_adabter = Image_list_adapter(favoritelist,this);
-        setLayout();
+//        favoriteList_adabter = Image_list_adapter(favoritelist,this);
+//        favoriteList_recycler!!.scrollToPosition(scrollY)
+//        setLayout();
         refrech_adabter();
         if(database.imageinfo_list.isEmpty()){
             textmain!!.visibility = View.VISIBLE;
             textmain!!.text = "Empty 'woosh' ;)"
         }
+    }
+
+    override fun onPause() {
+        super.onPause();
+        scrollY = favoriteList_recycler!!.scrollState;
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -100,7 +110,8 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
 
     fun refrech_adabter(){
         requireActivity().runOnUiThread {
-            favoriteList_adabter!!.notifyDataSetChanged()
+            favoriteList_adabter!!.notifyDataSetChanged();
+            favoriteList_recycler!!.invalidate();
         }
     }
 
