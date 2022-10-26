@@ -171,7 +171,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             if(holder.buttonframe.isVisible)
                 holder.buttonframe.visibility = View.GONE;
 
-            val uriInfo = Uri.parse(listPosts[holder.layoutPosition].Image_url)
+
             holder.cricle_prograssBar.setImageDrawable(null);
             holder.image_main?.setImageDrawable(null);
             holder.root_view.setOnClickListener(null);

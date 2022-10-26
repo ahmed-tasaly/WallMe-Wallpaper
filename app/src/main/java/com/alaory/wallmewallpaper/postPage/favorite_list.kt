@@ -30,7 +30,6 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
 
     var favoritelist = database.imageinfo_list.toMutableList();
 
-    var scrollY = 0;
 
     val TAG = "favorite_list";
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,11 +56,6 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
             textmain!!.visibility = View.VISIBLE;
             textmain!!.text = "Empty 'woosh' ;)"
         }
-    }
-
-    override fun onPause() {
-        super.onPause();
-        scrollY = favoriteList_recycler!!.scrollState;
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -108,11 +102,14 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
         favoriteList_recycler!!.setHasFixedSize(true);
     }
 
+
     fun refrech_adabter(){
+        favoriteList_adabter!!.listPosts = favoritelist;
         requireActivity().runOnUiThread {
             favoriteList_adabter!!.notifyDataSetChanged();
             favoriteList_recycler!!.invalidate();
         }
+        Log.d("lastItemPost","list : ${favoritelist.last().Image_url}  adab: ${favoriteList_adabter!!.listPosts.last().Image_url}");
     }
 
 

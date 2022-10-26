@@ -11,6 +11,7 @@ import android.service.wallpaper.WallpaperService
 import android.util.Log
 import android.view.SurfaceHolder
 import android.view.View
+import androidx.core.graphics.translationMatrix
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
@@ -44,14 +45,15 @@ class livewallpaper : WallpaperService() {
 
     // Video Engine
     inner class VideoLiveWallpaperEngine : WallpaperService.Engine(){
-        var exoPlayer  = ExoPlayer.Builder(this@livewallpaper).build()
+        var exoPlayer  = ExoPlayer.Builder(this@livewallpaper)
+            .setVideoScalingMode(2)//VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
+            .build()
 
         override fun onCreate(surfaceHolder: SurfaceHolder?) {
             super.onCreate(surfaceHolder);
             exoPlayer.apply {
                 val prefs = this@livewallpaper.getSharedPreferences("LiveWallpaper", 0);
                 val videoPath = prefs.getString("Video_Path", "")!!.toString();
-
                 repeatMode = Player.REPEAT_MODE_ONE
 
 
@@ -61,15 +63,14 @@ class livewallpaper : WallpaperService() {
 
                 volume = 0f;
 
-
-                videoScalingMode = 2 //VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
-                setVideoSurface(surfaceHolder!!.surface)
+                setVideoSurfaceHolder(surfaceHolder)
             }
         }
 
-        override fun onSurfaceCreated(holder: SurfaceHolder?) {
-            super.onSurfaceCreated(holder);
+        override fun onSurfaceCreated(surfaceHolder: SurfaceHolder?) {
+            super.onSurfaceCreated(surfaceHolder);
             exoPlayer.apply {
+
                 prepare();
                 play();
             }
@@ -106,9 +107,11 @@ class livewallpaper : WallpaperService() {
 
 
     //gif engine
-
-
-
+    //   ||
+    //   ||
+    //   ||
+    //  \||/
+    //   \/
 
 
 
