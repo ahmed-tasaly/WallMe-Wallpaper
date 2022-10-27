@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,7 @@ import android.widget.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.net.toFile
+import androidx.core.os.HandlerCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -27,6 +29,7 @@ import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.decode.VideoFrameDecoder
 import coil.disk.DiskCache
+import coil.imageLoader
 import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import coil.request.ImageRequest
@@ -36,6 +39,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import okio.Path
 import okio.Path.Companion.toPath
 import wseemann.media.FFmpegMediaMetadataRetriever
+import java.util.concurrent.Executor
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import kotlin.concurrent.thread
 
 class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : OnImageClick): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -55,6 +61,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     var lastLongpressedItem : PostItemView? = null;
 
     var save_local_external = false;
+    var handler: Handler? = null;
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
@@ -67,6 +74,8 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
 
         this.context = recyclerView.context;
+
+        handler = HandlerCompat.createAsync(this.context!!.mainLooper)
 
         var path : Path? =null;
         if(save_local_external){
@@ -198,15 +207,19 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             }
             val uriInfo = Uri.parse(listPosts[holder.layoutPosition].Image_url)
             if(uriInfo.scheme == "content"){
+                holder.cricle_prograssBar.visibility = View.GONE;
+                holder.cricle_prograssBar.setImageDrawable(null);
+
                 var updateCallback : (bitmap : Bitmap?,daw : Drawable?) -> Unit= { bit , draw ->
-                    if(bit != null)
-                        holder.image_main!!.setImageBitmap(bit);
-                    else
-                        holder.image_main!!.setImageDrawable(draw!!);
+                    handler?.post {
+                        if(bit != null)
+                            holder.image_main!!.setImageBitmap(bit);
+                        else
+                            holder.image_main!!.setImageDrawable(draw!!);
+                    }
                 }
-                thread {
-                    holder.cricle_prograssBar.visibility = View.GONE;
-                    holder.cricle_prograssBar.setImageDrawable(null);
+
+                val imageresRunnable = Runnable {
                     var postbitmap : Bitmap? = null;
                     var postdrawable : Drawable? = null;
                     if(uriInfo.scheme == "content"){
@@ -214,28 +227,44 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                         when(listPosts[holder.layoutPosition].type){
                             UrlType.Video ->{
                                 if(Build.VERSION.SDK_INT > 28){
-                                    postbitmap = this.context!!.contentResolver.loadThumbnail(uriInfo,android.util.Size(480,480),null);
-                                }else{
+                                    try {
+                                        postbitmap = this.context!!.contentResolver.loadThumbnail(uriInfo,android.util.Size(480,480),null);
+                                    }catch (e : Exception){
+                                        Log.e(this@Image_list_adapter::class.java.simpleName, e.toString());
+                                        try {//in case of contentresolver failer
+                                            val ffmpegmedia = FFmpegMediaMetadataRetriever()
+                                            ffmpegmedia.setDataSource(contentres.openFileDescriptor(uriInfo,"r")!!.fileDescriptor);
+
+                                            postbitmap = ffmpegmedia.frameAtTime
+                                        } catch (ee : Exception){
+                                            Log.e(this@Image_list_adapter::class.java.simpleName,ee.toString());
+                                        }
+                                    }
+                                }else{//is sdk 28 and below
                                     val ffmpegmedia = FFmpegMediaMetadataRetriever()
                                     ffmpegmedia.setDataSource(contentres.openFileDescriptor(uriInfo,"r")!!.fileDescriptor);
+
 
                                     postbitmap = ffmpegmedia.frameAtTime
                                 }
 
                             }
-                            else ->{
+                            else ->{//is a gif or an image
                                 postdrawable = Drawable.createFromStream(contentres.openInputStream(uriInfo),listPosts[holder.layoutPosition].Image_name);
                                 (postdrawable as? Animatable)?.start();
                             }
                         }
-                    }else{
+                    }else{//is a "file" scheme
                         val inputstreamfile = uriInfo.toFile().inputStream();
                         postbitmap = BitmapFactory.decodeStream(inputstreamfile);
                         inputstreamfile.close();
                     }
                     updateCallback(postbitmap,postdrawable);
-                }.run()
+                }
 
+                wallmewallpaper.executor.execute {
+                    imageresRunnable.run();
+                }
             }
 
         }else{

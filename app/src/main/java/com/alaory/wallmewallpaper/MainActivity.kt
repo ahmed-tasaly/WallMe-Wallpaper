@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.provider.OpenableColumns
 import android.util.Log
 import android.view.View
 import android.view.ViewPropertyAnimator
@@ -248,7 +249,6 @@ class MainActivity : AppCompatActivity(){
                     playanimation(this);
                 }
             }
-
         }
 
 
@@ -406,6 +406,7 @@ class MainActivity : AppCompatActivity(){
     override fun onDestroy() {
         super.onDestroy();
         Log.d("DestoryLog",this::class.java.simpleName);
+        wallmewallpaper.executor.shutdown();
 
         wallhaven_filter = null;
         reddit_filter = null;
@@ -429,6 +430,8 @@ class MainActivity : AppCompatActivity(){
 
         database.imageblock_list = emptyArray();
         database.imageinfo_list = emptyArray();
+
+
         Runtime.getRuntime().exit(1);
     }
 
@@ -443,34 +446,42 @@ class MainActivity : AppCompatActivity(){
 
             this.contentResolver.takePersistableUriPermission(wallpaperpath,Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
-            val conpath = Uri.parse(data!!.data!!.toString());
+            val conUri = Uri.parse(data!!.data!!.toString());
 
             val conres = this.contentResolver;
 
-            Log.d("outInfo","reqcode : $requestCode  res: $resultCode  data: ${data!!.data!!.path} type: ${conres.getType(conpath)!!.split('/')[1]} ");
+            Log.d("outInfo","reqcode : $requestCode  res: $resultCode  data: ${data!!.data!!.path} type: ${conres.getType(conUri)!!.split('/')[1]} ");
 
-            val wallpapername = conpath.lastPathSegment!!;
-            var type = UrlType.Image;
-            when(conres.getType(conpath)!!.split('/')[0].lowercase()){
+            var wallpapername = conUri.lastPathSegment!!;//mime firs
+
+            var type = UrlType.Image;//defualt
+
+            //set wallpaper type
+            when(conres.getType(conUri)!!.split('/')[0].lowercase()){
                 "image" ->{
-                    if(conres.getType(conpath)!!.lowercase().contains("gif")){
+                    if(conres.getType(conUri)!!.lowercase().contains("gif")){
                         type = UrlType.Gif
                     }
                 }
                 "video" ->{
                     type = UrlType.Video;
                 }
-                else -> {
+            }
 
-                }
+            data.data?.let { uri ->
+                conres.query(conUri,null,null,null,null)
+            }?.use { cursor ->
+                val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                cursor.moveToFirst();
+                wallpapername = cursor.getString(nameIndex)
             }
 
 
 
-            var Imageinfo = Image_Info(wallpaperpath.toString(),wallpaperpath.toString(),wallpapername,wallpapername,wallpapername,"",Image_Ratio(1,1),type);
+            val Imageinfo = Image_Info(wallpaperpath.toString(),wallpaperpath.toString(),wallpapername,"unknown",wallpapername,"",Image_Ratio(1,1),type);
 
 
-            var intent = Intent(this, Image_Activity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            val intent = Intent(this, Image_Activity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
 
             Image_Activity.MYDATA = Imageinfo;

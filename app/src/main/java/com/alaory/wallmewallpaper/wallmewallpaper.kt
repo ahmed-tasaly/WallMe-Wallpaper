@@ -21,6 +21,8 @@ import com.alaory.wallmewallpaper.api.Reddit_Api_Contorller
 import com.alaory.wallmewallpaper.api.wallhaven_api
 import com.alaory.wallmewallpaper.settings.Reddit_settings
 import com.alaory.wallmewallpaper.settings.wallhaven_settings
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class wallmewallpaper : Application() {
 
@@ -69,6 +71,8 @@ class wallmewallpaper : Application() {
 
         var doFullscreen = true;
 
+
+        val executor: ExecutorService = Executors.newFixedThreadPool(2);
     }
 
     override fun onCreate() {
