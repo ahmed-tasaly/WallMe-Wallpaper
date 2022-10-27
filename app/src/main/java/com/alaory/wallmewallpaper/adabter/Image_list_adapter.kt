@@ -144,13 +144,12 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             .target(holder.image_main!!)
             .allowHardware(false)
             .listener(
-                onSuccess = {_,_ ->
+                onSuccess = {req,res ->
                     holder.cricle_prograssBar.visibility = View.GONE;
                     holder.cricle_prograssBar.setImageDrawable(null);
                     holder.loaded = true;
                     tempDrawable = null;
                     tempBitmap = null;
-
                 },
                 onCancel = {
                     holder.cricle_prograssBar.visibility = View.GONE;

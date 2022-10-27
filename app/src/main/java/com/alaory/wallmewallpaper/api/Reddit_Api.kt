@@ -176,7 +176,7 @@ class Reddit_Api(subredditname: String) {
 
         fun filter_words(word : String): Boolean{
             val word = word.lowercase();
-            val filterWords: Array<String> = arrayOf("hentai","cursed","semen","pornhub","dick","pussy","cunt","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","gods","lgb","sex","rainbow","pride","furry","jerk")
+            val filterWords: Array<String> = arrayOf("hentai","fap","cursed","semen","pornhub","dick","pussy","cunt","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","gods","lgb","sex","rainbow","pride","furry","jerk")
 
             for(i in filterWords)
                 if(word.contains(i))
@@ -186,20 +186,10 @@ class Reddit_Api(subredditname: String) {
         }
         fun ban_subreddits(subname : String): Boolean{
             val word = subname.lowercase();
-            val filterWords: Array<String> = arrayOf("deadbedrooms","4chan","teenagers","showerthoughts","politics","relationship_advice","askreddit","relationships","fap");
+            val filterWords: Array<String> = arrayOf("deadbedrooms","askwomen","unpopularopinion","funny","conspiracy","wtf","TwoXChromosomes","exmormon","todayilearned","4chan","worldnews","askmen","mensrights","atheism","jokes","news","teenagers","showerthoughts","politics","relationship_advice","askreddit","relationships");
 
             for(i in filterWords)
-                if(word.contains(i))
-                    return true
-
-            return false;
-        }
-        fun has_good_words(word : String): Boolean{
-            val word = word.lowercase();
-            val filterWords: Array<String> = arrayOf("anime","wallpaper","amoled","background","vertical","gif","video","live","animated","art")
-
-            for(i in filterWords)
-                if(word.contains(i))
+                if(word.contains(i.lowercase()))
                     return true
 
             return false;
@@ -419,11 +409,37 @@ class Reddit_Api(subredditname: String) {
                                         .replace("amp;", "");
 
                                     //get image preview from list
-                                    val image_preview_url = dataJson
-                                        .getJSONObject("preview").getJSONArray("images")
-                                        .getJSONObject(0)
-                                        .getJSONArray("resolutions").getJSONObject(previewQulaity)
-                                        .getString("url").replace("amp;", "");
+                                    val image_preview_url : String =
+                                        when(type){
+                                            UrlType.Gif -> {
+                                                try{
+                                                    dataJson
+                                                        .getJSONObject("preview")
+                                                        .getJSONArray("images")
+                                                        .getJSONObject(0)
+                                                        .getJSONObject("variants")
+                                                        .getJSONObject("gif")
+                                                        .getJSONArray("resolutions")
+                                                        .getJSONObject(previewQulaity)
+                                                        .getString("url").replace("amp;", "");
+
+                                                }catch (e : Exception){
+                                                    dataJson
+                                                        .getJSONObject("preview").getJSONArray("images")
+                                                        .getJSONObject(0)
+                                                        .getJSONArray("resolutions").getJSONObject(previewQulaity)
+                                                        .getString("url").replace("amp;", "")
+                                                }
+
+                                            }
+                                            else -> {
+                                                dataJson
+                                                    .getJSONObject("preview").getJSONArray("images")
+                                                    .getJSONObject(0)
+                                                    .getJSONArray("resolutions").getJSONObject(previewQulaity)
+                                                    .getString("url").replace("amp;", "")
+                                            }
+                                        };
 
                                     //get image Ratio from list
                                     val imageRatio = Image_Ratio(
