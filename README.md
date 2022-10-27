@@ -90,9 +90,9 @@ since the app is still in development the ui may change :)
 - [x] add auto wallpaper changer with the user configuration //still work in progress.
 - [x] add support for gif wallpapers
 - [x] add support for video wallpapers
+- [x] add the ability to add images from the device to the favorite page
 - [ ] add functionality to the auto wallpaper changer to change the wallpaper based on android theme (dark/light).
 - [ ] add user's posts page
-- [x] add the ability to add images from the device to the favorite page
 - [ ] add more UI I SAID MORE
 - [ ] more plans coming
 - [ ] go to sleep
