@@ -7,6 +7,7 @@ import android.graphics.drawable.Animatable
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -29,20 +30,14 @@ import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.decode.VideoFrameDecoder
 import coil.disk.DiskCache
-import coil.imageLoader
 import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.alaory.wallmewallpaper.*
-import com.alaory.wallmewallpaper.interpreter.ffmpegframedecoder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import okio.Path
 import okio.Path.Companion.toPath
-import wseemann.media.FFmpegMediaMetadataRetriever
-import java.util.concurrent.Executor
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import kotlin.concurrent.thread
+
 
 class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : OnImageClick): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -96,11 +91,12 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             .crossfade(true)
             //.logger(DebugLogger())
             .components {
+                add(ImageDecoderDecoder.Factory())
                 if (android.os.Build.VERSION.SDK_INT >= 28) {
-                    add(ImageDecoderDecoder.Factory())
+
                     add(VideoFrameDecoder.Factory())
                 } else {
-                    add(ffmpegframedecoder.ffmpegfactory())
+
                     add(GifDecoder.Factory())
                 }
             }
@@ -231,20 +227,19 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                                     }catch (e : Exception){
                                         Log.e(this@Image_list_adapter::class.java.simpleName, e.toString());
                                         try {//in case of contentresolver failer
-                                            val ffmpegmedia = FFmpegMediaMetadataRetriever()
-                                            ffmpegmedia.setDataSource(contentres.openFileDescriptor(uriInfo,"r")!!.fileDescriptor);
+                                            val mediaret = MediaMetadataRetriever();
+                                            mediaret.setDataSource(contentres.openFileDescriptor(uriInfo,"r")!!.fileDescriptor);
 
-                                            postbitmap = ffmpegmedia.frameAtTime
+                                            postbitmap = mediaret.frameAtTime
                                         } catch (ee : Exception){
                                             Log.e(this@Image_list_adapter::class.java.simpleName,ee.toString());
                                         }
                                     }
                                 }else{//is sdk 28 and below
-                                    val ffmpegmedia = FFmpegMediaMetadataRetriever()
-                                    ffmpegmedia.setDataSource(contentres.openFileDescriptor(uriInfo,"r")!!.fileDescriptor);
+                                    val mediaret = MediaMetadataRetriever();
+                                    mediaret.setDataSource(contentres.openFileDescriptor(uriInfo,"r")!!.fileDescriptor);
 
-
-                                    postbitmap = ffmpegmedia.frameAtTime
+                                    postbitmap = mediaret.frameAtTime
                                 }
 
                             }
