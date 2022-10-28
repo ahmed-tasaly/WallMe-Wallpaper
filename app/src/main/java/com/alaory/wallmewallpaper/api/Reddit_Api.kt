@@ -298,7 +298,7 @@ class Reddit_Api(subredditname: String) {
                                 if (dataJson.getBoolean("over_18") || found)
                                     continue;
 
-                                val testurl = dataJson.getString("url");
+                                //check if its a valid post that contains a wallpaper
                                 val lastchars = dataJson.getString("url").reversed().substring(0,5);
                                 val is_thumbnail_notvalid = dataJson.getString("thumbnail").isNullOrEmpty()
                                 val is_media_notvalid =  dataJson.getString("media") == "null"
@@ -316,11 +316,6 @@ class Reddit_Api(subredditname: String) {
                                 if (filter_words(dataJson.getString("title")))
                                     continue;
 
-
-
-                                var selfthumbnail = false
-                                if(dataJson.getString("thumbnail") == "self" || dataJson.getString("thumbnail") == "default")
-                                    selfthumbnail = true;
 
                                 var type = UrlType.Image;
 
@@ -401,13 +396,6 @@ class Reddit_Api(subredditname: String) {
                                 }
                                 //post does have a preview
                                 else {
-                                    //get image source from list
-                                    val image_source_url = dataJson
-                                        .getJSONObject("preview").getJSONArray("images")
-                                        .getJSONObject(0)
-                                        .getJSONObject("source").getString("url")
-                                        .replace("amp;", "");
-
                                     //get image preview from list
                                     val image_preview_url : String =
                                         when(type){

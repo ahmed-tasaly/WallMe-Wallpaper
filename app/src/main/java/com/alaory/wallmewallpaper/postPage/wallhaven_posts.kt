@@ -145,7 +145,7 @@ class wallhaven_posts( menuChange : MainActivity.MenuChange? = null) : Fragment(
         mLayoutManager = StaggeredGridLayoutManager( wallmewallpaper.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
         //(mLayoutManager as StaggeredGridLayoutManager).gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS;
         wallhaven_recycle!!.layoutManager = mLayoutManager;
-        wallhaven_recycle!!.setHasFixedSize(true);
+        wallhaven_recycle!!.setHasFixedSize(false);
         wallhaven_recycle?.adapter = wallhaven_adabter;
 
     }

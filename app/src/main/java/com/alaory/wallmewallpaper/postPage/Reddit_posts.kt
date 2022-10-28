@@ -171,7 +171,7 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
     private fun SetRVLayoutManager(){
         mLayoutManager = StaggeredGridLayoutManager( wallmewallpaper.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
         myrec!!.layoutManager = mLayoutManager;
-        myrec!!.setHasFixedSize(true);
+        myrec!!.setHasFixedSize(false);
         myrec?.adapter = PostsAdabter;
     }
 

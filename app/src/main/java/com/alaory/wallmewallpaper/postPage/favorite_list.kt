@@ -99,7 +99,7 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
         mlayout = StaggeredGridLayoutManager( wallmewallpaper.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
         favoriteList_recycler!!.adapter = favoriteList_adabter;
         favoriteList_recycler!!.layoutManager = mlayout;
-        favoriteList_recycler!!.setHasFixedSize(true);
+        favoriteList_recycler!!.setHasFixedSize(false);
     }
 
 
