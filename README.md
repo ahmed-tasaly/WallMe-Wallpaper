@@ -6,9 +6,6 @@
 
 <img src="./Images/newlogo_512.png" width=200 style="border-radius:20%"/>
 
-[Support me](https://www.patreon.com/Alaory)
-
-[Discussions](https://github.com/Alaory/WallMe-Wallpaper/discussions)
 
 
 
@@ -31,6 +28,8 @@
 [<img src="./Images/github_download.png" width=200/>](https://github.com/Alaory/WallMe-Wallpaper/releases/latest)
 
 </br>
+
+[<img src="https://niamhshaw.ie/wp-content/uploads/2021/05/Patreon-Button.png" width=150/>](https://www.patreon.com/Alaory)
 
 
 
