@@ -91,14 +91,13 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             .crossfade(true)
             //.logger(DebugLogger())
             .components {
-                add(ImageDecoderDecoder.Factory())
+                add(VideoFrameDecoder.Factory())
                 if (android.os.Build.VERSION.SDK_INT >= 28) {
-
-                    add(VideoFrameDecoder.Factory())
+                    add(ImageDecoderDecoder.Factory())
                 } else {
-
                     add(GifDecoder.Factory())
                 }
+
             }
             .memoryCache {
                 MemoryCache.Builder(recyclerView.context!!)
@@ -294,17 +293,17 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             //set image type to show the user
             if(currentpost.type != UrlType.Image){
                 holder.texttype.visibility = View.VISIBLE;
-                holder.texttype.setText(currentpost.type.name);
+                holder.texttype.setText(currentpost.type.name.uppercase());
             }else{
                 holder.texttype.visibility = View.INVISIBLE;
             }
+
+
             val pathuri = Uri.parse(currentpost.Image_url);
             if(pathuri.scheme != "content" && pathuri.scheme != "file"){
                 adab_ImageLoader?.let {
                     it.enqueue(getImagerequest(holder));
                 }
-            }else{
-
             }
 
 
