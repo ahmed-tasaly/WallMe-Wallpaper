@@ -3,22 +3,15 @@ package com.alaory.wallmewallpaper.wallpaper
 
 
 import android.graphics.Movie
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.service.wallpaper.WallpaperService
 import android.util.Log
-import android.view.Surface
 import android.view.SurfaceHolder
-import android.view.View
-import androidx.core.graphics.translationMatrix
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.video.VideoSize
-import com.otaliastudios.zoom.ZoomSurfaceView
-import java.io.File
 
 import kotlin.math.max
 
