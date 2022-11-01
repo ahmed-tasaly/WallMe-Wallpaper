@@ -41,6 +41,8 @@ class Reddit_Api_Contorller() {
     //time period
     var timeperiod = "&t=all";
 
+
+
     val TAG = "Reddit_Api";
 
 
@@ -173,10 +175,11 @@ class Reddit_Api(subredditname: String) {
 
     companion object{
         var redditcon :  Reddit_Api_Contorller? = null;
+        var prefswords = "";
 
         fun filter_words(word : String): Boolean{
             val word = word.lowercase();
-            val filterWords: Array<String> = arrayOf("hentai","fap","shit","cursed","ass","semen","porn","cum","nud","fuck","pornhub","dick","blowjob","pussy","cunt","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","gods","lgb","sex","rainbow","pride","furry","jerk","waifu")
+            val filterWords: Array<String> = arrayOf("hentai","horny","fap","shit","cursed","ass","semen","porn","cum","nud","fuck","pornhub","dick","blowjob","pussy","cunt","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","gods","lgb","sex","rainbow","pride","furry","jerk","waifu")
 
             for(i in filterWords)
                 if(word.contains(i))
@@ -184,6 +187,7 @@ class Reddit_Api(subredditname: String) {
 
             return false;
         }
+
         fun ban_subreddits(subname : String): Boolean{
             val word = subname.lowercase();
             val filterWords: Array<String> = arrayOf("deadbedrooms","askwomen","cuteanime","animegirls","unpopularopinion","funny","conspiracy","wtf","TwoXChromosomes","exmormon","todayilearned","tooafraidtoask","4chan","worldnews","askmen","mensrights","atheism","jokes","news","teenagers","showerthoughts","politics","relationship_advice","askreddit","relationships");
@@ -191,6 +195,11 @@ class Reddit_Api(subredditname: String) {
             for(i in filterWords)
                 if(word.contains(i.lowercase()))
                     return true
+
+            for(i in prefswords.split(","))
+                if(word.contains(i.lowercase()) && i.isNotEmpty())
+                    return true
+
 
             return false;
         }

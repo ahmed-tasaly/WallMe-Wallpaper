@@ -78,5 +78,6 @@ class wallmewallpaper : Application() {
     override fun onCreate() {
         super.onCreate();
         doFullscreen = this.getSharedPreferences("settings", Context.MODE_PRIVATE).getBoolean("fullscreenapp",true);
+        Reddit_Api.prefswords = this.getSharedPreferences("reddit_source_block",Context.MODE_PRIVATE).getString("sources","").toString();
     }
 }

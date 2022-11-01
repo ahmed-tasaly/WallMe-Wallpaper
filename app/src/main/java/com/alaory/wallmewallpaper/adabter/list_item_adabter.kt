@@ -1,5 +1,6 @@
 package com.alaory.wallmewallpaper.adabter
 
+import android.content.Context
 import android.content.res.ColorStateList
 
 import android.view.LayoutInflater
@@ -10,8 +11,11 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.alaory.wallmewallpaper.R
+import com.alaory.wallmewallpaper.api.Reddit_Api
 
 class list_item_adabter(var NameList: MutableList<String>,var onclick:Onclick?,var showremoveonly : Boolean = false): RecyclerView.Adapter<list_item_adabter.Item>() {
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Item {
         val item = LayoutInflater.from(parent.context).inflate(R.layout.list_item_add_source,parent,false);
@@ -21,6 +25,21 @@ class list_item_adabter(var NameList: MutableList<String>,var onclick:Onclick?,v
     override fun onBindViewHolder(holder: Item, position: Int) {
         holder.textTitle.setText(NameList[position]);
 
+        holder.blockbutton.setOnClickListener {
+            val prefs = holder.blockbutton.context.getSharedPreferences("reddit_source_block", Context.MODE_PRIVATE);
+            var blocks = prefs.getString("sources","").toString();
+            var found = false;
+            for (s in blocks.split(",")){
+                if(s == holder.textTitle.text.toString().lowercase()){
+                    found = true;
+                }
+            }
+            if(!found){
+                blocks += "${holder.textTitle.text.toString().lowercase()},";
+                prefs.edit().putString("sources",blocks).apply();
+                Reddit_Api.prefswords = blocks;
+            }
+        }
 
 
         if(showremoveonly){
@@ -66,6 +85,7 @@ class list_item_adabter(var NameList: MutableList<String>,var onclick:Onclick?,v
         val list_item_add = view.findViewById<ImageButton>(R.id.list_item_add);
         val list_item_remove = view.findViewById<ImageButton>(R.id.list_item_remove);
         val list_item_add_new = view.findViewById<ImageButton>(R.id.list_item_add_new);
+        val blockbutton = view.findViewById<ImageButton>(R.id.blocksource);
     }
     interface Onclick{
         fun onclick(name : String);
