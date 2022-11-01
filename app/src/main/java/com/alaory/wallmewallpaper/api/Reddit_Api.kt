@@ -176,7 +176,7 @@ class Reddit_Api(subredditname: String) {
 
         fun filter_words(word : String): Boolean{
             val word = word.lowercase();
-            val filterWords: Array<String> = arrayOf("hentai","fap","cursed","semen","pornhub","dick","pussy","cunt","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","gods","lgb","sex","rainbow","pride","furry","jerk")
+            val filterWords: Array<String> = arrayOf("hentai","fap","shit","cursed","ass","semen","porn","cum","nud","fuck","pornhub","dick","blowjob","pussy","cunt","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","gods","lgb","sex","rainbow","pride","furry","jerk","waifu")
 
             for(i in filterWords)
                 if(word.contains(i))
@@ -186,7 +186,7 @@ class Reddit_Api(subredditname: String) {
         }
         fun ban_subreddits(subname : String): Boolean{
             val word = subname.lowercase();
-            val filterWords: Array<String> = arrayOf("deadbedrooms","askwomen","unpopularopinion","funny","conspiracy","wtf","TwoXChromosomes","exmormon","todayilearned","4chan","worldnews","askmen","mensrights","atheism","jokes","news","teenagers","showerthoughts","politics","relationship_advice","askreddit","relationships");
+            val filterWords: Array<String> = arrayOf("deadbedrooms","askwomen","cuteanime","animegirls","unpopularopinion","funny","conspiracy","wtf","TwoXChromosomes","exmormon","todayilearned","tooafraidtoask","4chan","worldnews","askmen","mensrights","atheism","jokes","news","teenagers","showerthoughts","politics","relationship_advice","askreddit","relationships");
 
             for(i in filterWords)
                 if(word.contains(i.lowercase()))
