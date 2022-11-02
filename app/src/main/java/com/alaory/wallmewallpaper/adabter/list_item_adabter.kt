@@ -41,8 +41,9 @@ class list_item_adabter(var NameList: MutableList<String>,var onclick:Onclick?,v
             }
         }
 
-
+        //viewed on reddit  filter
         if(showremoveonly){
+            holder.blockbutton.visibility = View.GONE;
             holder.list_item_add.visibility = View.GONE;
             holder.list_item_remove.visibility = View.VISIBLE;
             holder.list_item_remove.imageTintList = ColorStateList.valueOf(holder.list_item_remove.context.resources.getColor(R.color.Buttons,holder.list_item_remove.context.theme));

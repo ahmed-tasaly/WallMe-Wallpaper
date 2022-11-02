@@ -163,7 +163,7 @@ class livewallpaper : WallpaperService() {
             moive!!.setTime((System.currentTimeMillis()%moive!!.duration()).toInt());
             callbackHandler.removeCallbacks(drawloopfun);
             if(isVisiable)
-                callbackHandler.postDelayed(drawloopfun,40);
+                callbackHandler.postDelayed(drawloopfun,30);//
         }
 
         override fun onCreate(surfaceHolder: SurfaceHolder?) {

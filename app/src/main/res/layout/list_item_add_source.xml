@@ -70,8 +70,7 @@
     <ImageButton
         android:visibility="visible"
         android:id="@+id/blocksource"
-        android:layout_margin="20dp"
-        android:padding="10dp"
+        android:padding="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toStartOf="@+id/list_item_remove"
