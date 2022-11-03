@@ -1,6 +1,8 @@
 package com.alaory.wallmewallpaper.adabter
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.res.ColorStateList
 
 import android.view.LayoutInflater
@@ -26,19 +28,31 @@ class list_item_adabter(var NameList: MutableList<String>,var onclick:Onclick?,v
         holder.textTitle.setText(NameList[position]);
 
         holder.blockbutton.setOnClickListener {
-            val prefs = holder.blockbutton.context.getSharedPreferences("reddit_source_block", Context.MODE_PRIVATE);
-            var blocks = prefs.getString("sources","").toString();
-            var found = false;
-            for (s in blocks.split(",")){
-                if(s == holder.textTitle.text.toString().lowercase()){
-                    found = true;
-                }
-            }
-            if(!found){
-                blocks += "${holder.textTitle.text.toString().lowercase()},";
-                prefs.edit().putString("sources",blocks).apply();
-                Reddit_Api.prefswords = blocks;
-            }
+            AlertDialog.Builder(holder.textTitle.context)
+                .setTitle("Do you want to remove this subreddit from the search list")
+                .setNegativeButton("no",object : DialogInterface.OnClickListener{
+                    override fun onClick(p0: DialogInterface?, p1: Int) {
+                    }
+                })
+                .setPositiveButton("yes",object : DialogInterface.OnClickListener{
+                    override fun onClick(p0: DialogInterface?, p1: Int) {
+                        removeItem(holder.layoutPosition)
+                        val prefs = holder.blockbutton.context.getSharedPreferences("reddit_source_block", Context.MODE_PRIVATE);
+                        var blocks = prefs.getString("sources","").toString();
+                        var found = false;
+                        for (s in blocks.split(",")){
+                            if(s == holder.textTitle.text.toString().lowercase()){
+                                found = true;
+                            }
+                        }
+                        if(!found){
+                            blocks += "${holder.textTitle.text.toString().lowercase()},";
+                            prefs.edit().putString("sources",blocks).apply();
+                            Reddit_Api.prefswords = blocks;
+                        }
+                    }
+                })
+                .show();
         }
 
         //viewed on reddit  filter
