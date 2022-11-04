@@ -15,8 +15,11 @@ import java.io.IOException
 
 class wallhaven_api {
     companion object{
+
         var wallhavenApi : wallhaven_api? = null;
+
     }
+
     val wallhavenRequest  = OkHttpClient();
 
 
@@ -51,6 +54,8 @@ class wallhaven_api {
             .build();
 
         Log.i("wallhaven_api","Home page Url $url_homepage")
+
+
         wallhavenRequest.newCall(homepagereq).enqueue(object : Callback{
 
             override fun onFailure(call: Call, e: IOException) {
@@ -243,7 +248,7 @@ class wallhaven_api {
         })
     }
 
-
+    //for user post page
     fun userPosts(){
 
     }

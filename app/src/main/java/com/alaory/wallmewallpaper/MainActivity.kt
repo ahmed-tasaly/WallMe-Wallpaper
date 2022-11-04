@@ -62,6 +62,8 @@ class MainActivity : AppCompatActivity(){
 
     var firstTimeOPen = true;
 
+
+    //fragment list
     enum class menu{
         reddit,
         wallhaven,
@@ -360,6 +362,7 @@ class MainActivity : AppCompatActivity(){
     }
 
 
+    //set menu color
     fun setFABcolor(icon : menu){
         reddit_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));
         wallhaven_floatingButton?.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.Buttons,theme));

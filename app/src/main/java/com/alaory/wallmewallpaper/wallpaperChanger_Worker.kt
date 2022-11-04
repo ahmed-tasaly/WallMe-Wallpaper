@@ -33,6 +33,7 @@ class wallpaperChanger_Worker(val context: Context, param : WorkerParameters) : 
             count += char.code;
         return count;
     }
+    //set wallpaper with full screen
     fun setWallpaper(result: Bitmap,wallpaperFlag: Int) : Boolean{
         try {
             val screenWidth = context.resources.displayMetrics.widthPixels;
@@ -106,7 +107,7 @@ class wallpaperChanger_Worker(val context: Context, param : WorkerParameters) : 
         var requestState = true;
 
         if(uriWallpaper.scheme == "content"){
-            when(imageInfo.type){
+            when(imageInfo.type){//local wallpaper
                 UrlType.Video -> {
                     val mpegplayer = MediaMetadataRetriever()
                     mpegplayer.setDataSource(context.contentResolver.openFileDescriptor(uriWallpaper,"r")!!.fileDescriptor);
@@ -118,7 +119,8 @@ class wallpaperChanger_Worker(val context: Context, param : WorkerParameters) : 
                     setWallpaper(bitmap,wallpaperFlag);
                 }
             }
-        }else {
+
+        }else {//online wallpaper
             val imagerequest = ImageRequest.Builder(context)
                 .data(imageInfo.Image_url)
                 .target(
@@ -156,6 +158,7 @@ class wallpaperChanger_Worker(val context: Context, param : WorkerParameters) : 
 
         val screenSelection = context.getSharedPreferences("settings", Context.MODE_PRIVATE).getInt("screenSelection",0);
         var state = true;
+        //wallpaper screen
         when (screenSelection){
             0 ->{
                 state = change_Wallpaper(WallpaperManager.FLAG_SYSTEM);

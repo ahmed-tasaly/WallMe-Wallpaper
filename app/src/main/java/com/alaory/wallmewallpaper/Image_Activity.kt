@@ -520,6 +520,7 @@ class Image_Activity(): AppCompatActivity(){
 
                         var BottomSheetSwatch : Palette.Swatch? = null
 
+                        //set container color
                         if(pal.darkMutedSwatch != null){
                             BottomSheetSwatch = pal.darkMutedSwatch;
                         }else if(pal.lightMutedSwatch != null){
@@ -547,6 +548,7 @@ class Image_Activity(): AppCompatActivity(){
                         var buttoncolor = 0;
                         var buttonIconcolor = 0;
 
+                        //set buttons color
                         if(pal.darkVibrantSwatch != null){
                             buttoncolor = pal.darkVibrantSwatch!!.rgb;
                             buttonIconcolor = pal.darkVibrantSwatch!!.bodyTextColor;
