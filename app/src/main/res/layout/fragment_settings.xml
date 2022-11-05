@@ -48,176 +48,25 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_below="@id/title_settings_constrain"
-        android:background="@color/widget"
-        />
-
-
-        <RelativeLayout
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/wallpaper_changer_layout"
+            android:layout_height="2dp"
             android:layout_below="@id/title_settings_constrain"
-            android:background="@drawable/border_line"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="5dp"
-            >
-
-            <TextView
-                android:id="@+id/wallpaper_changer_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Wallpaper changer"
-                android:textColor="@color/Selected"
-                android:textSize="20sp"
-                android:padding="10dp"
-                />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/wallpaper_changer_title">
-
-                <LinearLayout
-                    android:layoutDirection="ltr"
-                    android:id="@+id/wallpaper_changer_settings_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    >
-                <ImageView
-                    android:paddingStart="5dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_stages_wallpaper"
-                    android:layout_gravity="center"
-                    />
-                <TextView
-                    android:id="@+id/wallpaper_changer_settings_button_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="2dp"
-                    android:text="Start wallpaper changer"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
-                    android:paddingVertical="10dp"
-                    android:paddingHorizontal="5dp"
-                    />
-                </LinearLayout>
-                <RelativeLayout
-                    android:id="@+id/wallpaperchangerconfiglayout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/wallpaper_changer_settings_button"
-                    >
+            android:background="@color/widget" />
 
 
-                    <TextView
-                        android:id="@+id/timechanger_textview_desciption"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentBottom="true"
-                        android:paddingLeft="10dp"
-                        android:paddingBottom="5dp"
-                        android:text="Change Wallpaper Every"
-                        android:textColor="@color/white"
-                        android:textSize="18sp" />
-
-                    <EditText
-                        android:id="@+id/editTextTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_toRightOf="@id/timechanger_textview_desciption"
-                        android:ems="2"
-                        android:inputType="time"
-                        android:maxLength="2"
-                        android:textColor="@color/white" />
-
-                    <Spinner
-                        android:id="@+id/wallpaper_changer_time_spinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_toRightOf="@id/editTextTime"
-                        android:background="@drawable/textinput"
-                        android:entries="@array/wallpaperChangerTime"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="7dp" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/wallpaperchangerconfiglayout_forScreen"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/wallpaperchangerconfiglayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-
-                    >
-
-                    <TextView
-                        android:id="@+id/texttemp_forScreen"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_marginRight="10dp"
-                        android:paddingLeft="10dp"
-                        android:paddingBottom="5dp"
-                        android:text="For"
-                        android:textColor="@color/white"
-                        android:textSize="18sp" />
-
-                    <Spinner
-                        android:id="@+id/wallpaper_changer_time_spinner_forScreen"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-
-                        android:layout_marginBottom="10dp"
-                        android:layout_toRightOf="@id/texttemp_forScreen"
-                        android:background="@drawable/textinput"
-                        android:entries="@array/screens"
-                        android:padding="5dp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/wallpaper_changer_time_spinner_forScreen"
-                        android:layout_alignParentLeft="true"
-                        android:ems="20"
-                        android:paddingLeft="10dp"
-                        android:paddingBottom="10dp"
-                        android:text="@string/wallpaper_changer_des"
-                        android:textColor="@color/white" />
-
-                </RelativeLayout>
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-        </RelativeLayout>
 
 
     <RelativeLayout
         android:id="@+id/sources_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/wallpaper_changer_layout"
+        android:layout_below="@id/title_settings_constrain"
         android:background="@drawable/border_line"
         android:layout_marginTop="15dp"
         android:layout_marginHorizontal="10dp"
         >
+
         <TextView
             android:id="@+id/sources_title_settings"
             android:layout_width="match_parent"
