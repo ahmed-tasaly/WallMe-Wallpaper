@@ -1,0 +1,4 @@
+release 2.41: 
+    -added a remove subreddit button for reddit filter settings
+    -made the app safer
+    -bug fixes
