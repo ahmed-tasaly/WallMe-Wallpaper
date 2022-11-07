@@ -30,6 +30,7 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
 
     var favoritelist = database.imageinfo_list.toMutableList();
 
+
     val TAG = "favorite_list";
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,8 +46,6 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
     override fun onResume() {
         super.onResume();
         favoritelist = database.imageinfo_list.toMutableList();
-        favoriteList_adabter = Image_list_adapter(favoritelist,this);
-        setLayout();
         refrech_adabter();
         if(database.imageinfo_list.isEmpty()){
             textmain!!.visibility = View.VISIBLE;
@@ -95,13 +94,17 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
         mlayout = StaggeredGridLayoutManager( wallmewallpaper.num_post_in_Column,StaggeredGridLayoutManager.VERTICAL);
         favoriteList_recycler!!.adapter = favoriteList_adabter;
         favoriteList_recycler!!.layoutManager = mlayout;
-        favoriteList_recycler!!.setHasFixedSize(true);
+        favoriteList_recycler!!.setHasFixedSize(false);
     }
 
+
     fun refrech_adabter(){
+        favoriteList_adabter!!.listPosts = favoritelist;
         requireActivity().runOnUiThread {
-            favoriteList_adabter!!.notifyDataSetChanged()
+            favoriteList_adabter!!.notifyDataSetChanged();
+            favoriteList_recycler!!.invalidate();
         }
+        Log.d("lastItemPost","list : ${favoritelist.last().Image_url}  adab: ${favoriteList_adabter!!.listPosts.last().Image_url}");
     }
 
 

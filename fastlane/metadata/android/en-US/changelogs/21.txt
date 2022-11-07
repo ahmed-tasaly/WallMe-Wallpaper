@@ -1,0 +1,7 @@
+release 2.4:
+
+    fixed favorite post list not updating when adding or removing a wallpaper
+    fixed app crashing when adding a wallpaper from the device
+    now gif wallpapers show play when browsing posts
+    improved Reddit API
+    made the app safer

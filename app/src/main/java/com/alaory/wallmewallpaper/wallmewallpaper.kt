@@ -21,6 +21,8 @@ import com.alaory.wallmewallpaper.api.Reddit_Api_Contorller
 import com.alaory.wallmewallpaper.api.wallhaven_api
 import com.alaory.wallmewallpaper.settings.Reddit_settings
 import com.alaory.wallmewallpaper.settings.wallhaven_settings
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class wallmewallpaper : Application() {
 
@@ -49,7 +51,9 @@ class wallmewallpaper : Application() {
             }
         }
 
-
+        /*
+            TODO add support for fullscreen and non fullscreen
+         */
 
         fun HideSystemBar(window: Window){
             if(doFullscreen || true) {//not now :(
@@ -69,10 +73,15 @@ class wallmewallpaper : Application() {
 
         var doFullscreen = true;
 
+
+        val executor: ExecutorService = Executors.newFixedThreadPool(2);
     }
 
     override fun onCreate() {
         super.onCreate();
+
+
         doFullscreen = this.getSharedPreferences("settings", Context.MODE_PRIVATE).getBoolean("fullscreenapp",true);
+        Reddit_Api.prefswords = this.getSharedPreferences("reddit_source_block",Context.MODE_PRIVATE).getString("sources","").toString();
     }
 }

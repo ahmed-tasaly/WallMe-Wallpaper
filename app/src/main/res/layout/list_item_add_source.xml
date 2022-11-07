@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layoutDirection="ltr"
     android:id="@+id/root_list_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -17,6 +18,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:textColor="@color/white"
         />
+    <androidx.appcompat.widget.SwitchCompat
+        android:visibility="gone"
+        android:id="@+id/source_enable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
     <ImageButton
         android:id="@+id/list_item_add"
         android:layout_margin="20dp"
@@ -26,6 +36,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/source_enable"
         android:src="@drawable/add_ic"
         android:background="@color/transparent"
         />
@@ -50,10 +61,22 @@
         android:padding="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintRight_toLeftOf="@+id/list_item_add"
+        app:layout_constraintEnd_toStartOf="@+id/list_item_add"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:src="@drawable/remove_ic"
+        android:background="@color/transparent"
+        />
+    <ImageButton
+        android:visibility="visible"
+        android:id="@+id/blocksource"
+        android:padding="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/list_item_remove"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/ic_block"
         android:background="@color/transparent"
         />
 

@@ -37,7 +37,6 @@ import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import com.alaory.wallmewallpaper.api.wallhaven_api
-import com.alaory.wallmewallpaper.interpreter.ffmpegframedecoder
 import com.alaory.wallmewallpaper.interpreter.progressRespondBody
 import com.alaory.wallmewallpaper.postPage.TagActivity
 import com.alaory.wallmewallpaper.wallpaper.livewallpaper
@@ -310,10 +309,18 @@ class Image_Activity(): AppCompatActivity(){
                     pref.edit().putString("Video_Path",MediaPath).apply();
                     pref.edit().putString("Media_Type", myDataLocal!!.type.name.lowercase()).apply();
                     //save screen rect
+
                     pref.edit().putFloat("left",screenRect.left).apply();
                     pref.edit().putFloat("top",screenRect.top).apply();
                     pref.edit().putFloat("right",screenRect.right).apply();
                     pref.edit().putFloat("bottom",screenRect.bottom).apply();
+
+
+
+                    pref.edit().putFloat("Rleft",screenRect.left/Full_video!!.width).apply();
+                    pref.edit().putFloat("Rtop",screenRect.top/Full_video!!.height).apply();
+                    pref.edit().putFloat("Rright",screenRect.right/Full_video!!.width).apply();
+                    pref.edit().putFloat("Rbottom",screenRect.bottom/Full_video!!.height).apply();
 
 
                     val wpm = WallpaperManager.getInstance(it.context);
@@ -513,6 +520,7 @@ class Image_Activity(): AppCompatActivity(){
 
                         var BottomSheetSwatch : Palette.Swatch? = null
 
+                        //set container color
                         if(pal.darkMutedSwatch != null){
                             BottomSheetSwatch = pal.darkMutedSwatch;
                         }else if(pal.lightMutedSwatch != null){
@@ -540,6 +548,7 @@ class Image_Activity(): AppCompatActivity(){
                         var buttoncolor = 0;
                         var buttonIconcolor = 0;
 
+                        //set buttons color
                         if(pal.darkVibrantSwatch != null){
                             buttoncolor = pal.darkVibrantSwatch!!.rgb;
                             buttonIconcolor = pal.darkVibrantSwatch!!.bodyTextColor;
@@ -592,11 +601,7 @@ class Image_Activity(): AppCompatActivity(){
                 .allowHardware(false)
                 .components {
                     if(myDataLocal!!.type == UrlType.Video){
-                        if (android.os.Build.VERSION.SDK_INT >= 28) {
-                            add(VideoFrameDecoder.Factory())
-                        } else {
-                            add(ffmpegframedecoder.ffmpegfactory())
-                        }
+                        add(VideoFrameDecoder.Factory())
                     }else{
                         if (android.os.Build.VERSION.SDK_INT >= 28) {
                             add(ImageDecoderDecoder.Factory())
@@ -717,6 +722,9 @@ class Image_Activity(): AppCompatActivity(){
                 }
                 //load from device
             }else{
+                thumbnail?.let {
+                    SetBottomSheetColorsLambda(it.toBitmap());
+                }
                 cricle_prograssBar?.visibility = View.GONE;
                 MediaPath = myDataLocal!!.Image_url;
                 val bitmapfromfile : Drawable?;

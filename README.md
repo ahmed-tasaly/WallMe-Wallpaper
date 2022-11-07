@@ -6,9 +6,6 @@
 
 <img src="./Images/newlogo_512.png" width=200 style="border-radius:20%"/>
 
-[Support me](https://www.patreon.com/Alaory)
-
-[Discussions](https://github.com/Alaory/WallMe-Wallpaper/discussions)
 
 
 
@@ -31,6 +28,8 @@
 [<img src="./Images/github_download.png" width=200/>](https://github.com/Alaory/WallMe-Wallpaper/releases/latest)
 
 </br>
+
+[<img src="https://niamhshaw.ie/wp-content/uploads/2021/05/Patreon-Button.png" width=150/>](https://www.patreon.com/Alaory)
 
 
 
@@ -90,9 +89,9 @@ since the app is still in development the ui may change :)
 - [x] add auto wallpaper changer with the user configuration //still work in progress.
 - [x] add support for gif wallpapers
 - [x] add support for video wallpapers
+- [x] add the ability to add images from the device to the favorite page
 - [ ] add functionality to the auto wallpaper changer to change the wallpaper based on android theme (dark/light).
 - [ ] add user's posts page
-- [ ] add the ability to add images from the device to the favorite page
 - [ ] add more UI I SAID MORE
 - [ ] more plans coming
 - [ ] go to sleep

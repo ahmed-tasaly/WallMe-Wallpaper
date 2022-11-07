@@ -7,9 +7,11 @@ import android.graphics.drawable.Animatable
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +21,7 @@ import android.widget.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.net.toFile
+import androidx.core.os.HandlerCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -31,12 +34,10 @@ import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.alaory.wallmewallpaper.*
-import com.alaory.wallmewallpaper.interpreter.ffmpegframedecoder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import okio.Path
 import okio.Path.Companion.toPath
-import wseemann.media.FFmpegMediaMetadataRetriever
-import kotlin.concurrent.thread
+
 
 class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : OnImageClick): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -55,6 +56,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
     var lastLongpressedItem : PostItemView? = null;
 
     var save_local_external = false;
+    var handler: Handler? = null;
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
@@ -67,6 +69,8 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
 
         this.context = recyclerView.context;
+
+        handler = HandlerCompat.createAsync(this.context!!.mainLooper)
 
         var path : Path? =null;
         if(save_local_external){
@@ -87,13 +91,13 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             .crossfade(true)
             //.logger(DebugLogger())
             .components {
+                add(VideoFrameDecoder.Factory())
                 if (android.os.Build.VERSION.SDK_INT >= 28) {
                     add(ImageDecoderDecoder.Factory())
-                    add(VideoFrameDecoder.Factory())
                 } else {
-                    add(ffmpegframedecoder.ffmpegfactory())
                     add(GifDecoder.Factory())
                 }
+
             }
             .memoryCache {
                 MemoryCache.Builder(recyclerView.context!!)
@@ -135,13 +139,12 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             .target(holder.image_main!!)
             .allowHardware(false)
             .listener(
-                onSuccess = {_,_ ->
+                onSuccess = {req,res ->
                     holder.cricle_prograssBar.visibility = View.GONE;
                     holder.cricle_prograssBar.setImageDrawable(null);
                     holder.loaded = true;
                     tempDrawable = null;
                     tempBitmap = null;
-
                 },
                 onCancel = {
                     holder.cricle_prograssBar.visibility = View.GONE;
@@ -171,7 +174,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             if(holder.buttonframe.isVisible)
                 holder.buttonframe.visibility = View.GONE;
 
-            val uriInfo = Uri.parse(listPosts[holder.layoutPosition].Image_url)
+
             holder.cricle_prograssBar.setImageDrawable(null);
             holder.image_main?.setImageDrawable(null);
             holder.root_view.setOnClickListener(null);
@@ -198,15 +201,19 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             }
             val uriInfo = Uri.parse(listPosts[holder.layoutPosition].Image_url)
             if(uriInfo.scheme == "content"){
+                holder.cricle_prograssBar.visibility = View.GONE;
+                holder.cricle_prograssBar.setImageDrawable(null);
+
                 var updateCallback : (bitmap : Bitmap?,daw : Drawable?) -> Unit= { bit , draw ->
-                    if(bit != null)
-                        holder.image_main!!.setImageBitmap(bit);
-                    else
-                        holder.image_main!!.setImageDrawable(draw!!);
+                    handler?.post {
+                        if(bit != null)
+                            holder.image_main!!.setImageBitmap(bit);
+                        else
+                            holder.image_main!!.setImageDrawable(draw!!);
+                    }
                 }
-                thread {
-                    holder.cricle_prograssBar.visibility = View.GONE;
-                    holder.cricle_prograssBar.setImageDrawable(null);
+
+                val imageresRunnable = Runnable {
                     var postbitmap : Bitmap? = null;
                     var postdrawable : Drawable? = null;
                     if(uriInfo.scheme == "content"){
@@ -214,28 +221,43 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                         when(listPosts[holder.layoutPosition].type){
                             UrlType.Video ->{
                                 if(Build.VERSION.SDK_INT > 28){
-                                    postbitmap = this.context!!.contentResolver.loadThumbnail(uriInfo,android.util.Size(480,480),null);
-                                }else{
-                                    val ffmpegmedia = FFmpegMediaMetadataRetriever()
-                                    ffmpegmedia.setDataSource(contentres.openFileDescriptor(uriInfo,"r")!!.fileDescriptor);
+                                    try {
+                                        postbitmap = this.context!!.contentResolver.loadThumbnail(uriInfo,android.util.Size(480,480),null);
+                                    }catch (e : Exception){
+                                        Log.e(this@Image_list_adapter::class.java.simpleName, e.toString());
+                                        try {//in case of contentresolver failer
+                                            val mediaret = MediaMetadataRetriever();
+                                            mediaret.setDataSource(contentres.openFileDescriptor(uriInfo,"r")!!.fileDescriptor);
 
-                                    postbitmap = ffmpegmedia.frameAtTime
+                                            postbitmap = mediaret.frameAtTime
+                                        } catch (ee : Exception){
+                                            Log.e(this@Image_list_adapter::class.java.simpleName,ee.toString());
+                                        }
+                                    }
+                                }else{//is sdk 28 and below
+                                    val mediaret = MediaMetadataRetriever();
+                                    mediaret.setDataSource(contentres.openFileDescriptor(uriInfo,"r")!!.fileDescriptor);
+
+                                    postbitmap = mediaret.frameAtTime
                                 }
 
                             }
-                            else ->{
+                            else ->{//is a gif or an image
                                 postdrawable = Drawable.createFromStream(contentres.openInputStream(uriInfo),listPosts[holder.layoutPosition].Image_name);
                                 (postdrawable as? Animatable)?.start();
                             }
                         }
-                    }else{
+                    }else{//is a "file" scheme
                         val inputstreamfile = uriInfo.toFile().inputStream();
                         postbitmap = BitmapFactory.decodeStream(inputstreamfile);
                         inputstreamfile.close();
                     }
                     updateCallback(postbitmap,postdrawable);
-                }.run()
+                }
 
+                wallmewallpaper.executor.execute {
+                    imageresRunnable.run();
+                }
             }
 
         }else{
@@ -271,17 +293,17 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
             //set image type to show the user
             if(currentpost.type != UrlType.Image){
                 holder.texttype.visibility = View.VISIBLE;
-                holder.texttype.setText(currentpost.type.name);
+                holder.texttype.setText(currentpost.type.name.uppercase());
             }else{
                 holder.texttype.visibility = View.INVISIBLE;
             }
+
+
             val pathuri = Uri.parse(currentpost.Image_url);
             if(pathuri.scheme != "content" && pathuri.scheme != "file"){
                 adab_ImageLoader?.let {
                     it.enqueue(getImagerequest(holder));
                 }
-            }else{
-
             }
 
 

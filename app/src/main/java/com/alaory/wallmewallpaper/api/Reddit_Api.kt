@@ -41,6 +41,8 @@ class Reddit_Api_Contorller() {
     //time period
     var timeperiod = "&t=all";
 
+
+
     val TAG = "Reddit_Api";
 
 
@@ -173,10 +175,11 @@ class Reddit_Api(subredditname: String) {
 
     companion object{
         var redditcon :  Reddit_Api_Contorller? = null;
+        var prefswords = "";
 
         fun filter_words(word : String): Boolean{
             val word = word.lowercase();
-            val filterWords: Array<String> = arrayOf("hentai","cursed","semen","pornhub","dick","pussy","cunt","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","lgb","sex","rainbow","pride","furry","jerk")
+            val filterWords: Array<String> = arrayOf("hentai","horny","fap","shit","cursed","ass","semen","porn","cum","nud","fuck","pornhub","dick","blowjob","pussy","cunt","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","gods","lgb","sex","rainbow","pride","furry","jerk","waifu")
 
             for(i in filterWords)
                 if(word.contains(i))
@@ -184,23 +187,19 @@ class Reddit_Api(subredditname: String) {
 
             return false;
         }
+
         fun ban_subreddits(subname : String): Boolean{
             val word = subname.lowercase();
-            val filterWords: Array<String> = arrayOf("deadbedrooms","4chan","teenagers","showerthoughts","politics","relationship_advice","askreddit","relationships","fap");
+            val filterWords: Array<String> = arrayOf("deadbedrooms","askwomen","cuteanime","animegirls","unpopularopinion","funny","conspiracy","wtf","TwoXChromosomes","exmormon","todayilearned","tooafraidtoask","4chan","worldnews","askmen","mensrights","atheism","jokes","news","teenagers","showerthoughts","politics","relationship_advice","askreddit","relationships");
 
             for(i in filterWords)
-                if(word.contains(i))
+                if(word.contains(i.lowercase()))
                     return true
 
-            return false;
-        }
-        fun has_good_words(word : String): Boolean{
-            val word = word.lowercase();
-            val filterWords: Array<String> = arrayOf("anime","wallpaper","amoled","background","vertical","gif","video","live","animated","art")
-
-            for(i in filterWords)
-                if(word.contains(i))
+            for(i in prefswords.split(","))
+                if(word.contains(i.lowercase()) && i.isNotEmpty())
                     return true
+
 
             return false;
         }
@@ -308,7 +307,7 @@ class Reddit_Api(subredditname: String) {
                                 if (dataJson.getBoolean("over_18") || found)
                                     continue;
 
-                                val testurl = dataJson.getString("url");
+                                //check if its a valid post that contains a wallpaper
                                 val lastchars = dataJson.getString("url").reversed().substring(0,5);
                                 val is_thumbnail_notvalid = dataJson.getString("thumbnail").isNullOrEmpty()
                                 val is_media_notvalid =  dataJson.getString("media") == "null"
@@ -326,11 +325,6 @@ class Reddit_Api(subredditname: String) {
                                 if (filter_words(dataJson.getString("title")))
                                     continue;
 
-
-
-                                var selfthumbnail = false
-                                if(dataJson.getString("thumbnail") == "self" || dataJson.getString("thumbnail") == "default")
-                                    selfthumbnail = true;
 
                                 var type = UrlType.Image;
 
@@ -411,19 +405,38 @@ class Reddit_Api(subredditname: String) {
                                 }
                                 //post does have a preview
                                 else {
-                                    //get image source from list
-                                    val image_source_url = dataJson
-                                        .getJSONObject("preview").getJSONArray("images")
-                                        .getJSONObject(0)
-                                        .getJSONObject("source").getString("url")
-                                        .replace("amp;", "");
-
                                     //get image preview from list
-                                    val image_preview_url = dataJson
-                                        .getJSONObject("preview").getJSONArray("images")
-                                        .getJSONObject(0)
-                                        .getJSONArray("resolutions").getJSONObject(previewQulaity)
-                                        .getString("url").replace("amp;", "");
+                                    val image_preview_url : String =
+                                        when(type){
+                                            UrlType.Gif -> {
+                                                try{
+                                                    dataJson
+                                                        .getJSONObject("preview")
+                                                        .getJSONArray("images")
+                                                        .getJSONObject(0)
+                                                        .getJSONObject("variants")
+                                                        .getJSONObject("gif")
+                                                        .getJSONArray("resolutions")
+                                                        .getJSONObject(previewQulaity)
+                                                        .getString("url").replace("amp;", "");
+
+                                                }catch (e : Exception){
+                                                    dataJson
+                                                        .getJSONObject("preview").getJSONArray("images")
+                                                        .getJSONObject(0)
+                                                        .getJSONArray("resolutions").getJSONObject(previewQulaity)
+                                                        .getString("url").replace("amp;", "")
+                                                }
+
+                                            }
+                                            else -> {
+                                                dataJson
+                                                    .getJSONObject("preview").getJSONArray("images")
+                                                    .getJSONObject(0)
+                                                    .getJSONArray("resolutions").getJSONObject(previewQulaity)
+                                                    .getString("url").replace("amp;", "")
+                                            }
+                                        };
 
                                     //get image Ratio from list
                                     val imageRatio = Image_Ratio(

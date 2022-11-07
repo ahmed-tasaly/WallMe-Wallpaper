@@ -3,20 +3,15 @@ package com.alaory.wallmewallpaper.wallpaper
 
 
 import android.graphics.Movie
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.service.wallpaper.WallpaperService
 import android.util.Log
 import android.view.SurfaceHolder
-import android.view.View
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.video.VideoSize
-import com.otaliastudios.zoom.ZoomSurfaceView
-import java.io.File
 
 import kotlin.math.max
 
@@ -44,13 +39,19 @@ class livewallpaper : WallpaperService() {
 
     // Video Engine
     inner class VideoLiveWallpaperEngine : WallpaperService.Engine(){
-        var exoPlayer  = ExoPlayer.Builder(this@livewallpaper).build()
+        var exoPlayer  = ExoPlayer.Builder(this@livewallpaper)
+            .setVideoScalingMode(2)//VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
+            .build()
 
         override fun onCreate(surfaceHolder: SurfaceHolder?) {
             super.onCreate(surfaceHolder);
             exoPlayer.apply {
                 val prefs = this@livewallpaper.getSharedPreferences("LiveWallpaper", 0);
                 val videoPath = prefs.getString("Video_Path", "")!!.toString();
+//                val leftoffset = prefs.getFloat("left",0f);
+//                val topoffset = prefs.getFloat("top",0f);
+//                val rightoffset = prefs.getFloat("right",0f);
+//                val bottomoffset = prefs.getFloat("bottom",0f);
 
                 repeatMode = Player.REPEAT_MODE_ONE
 
@@ -60,16 +61,14 @@ class livewallpaper : WallpaperService() {
 
 
                 volume = 0f;
-
-
-                videoScalingMode = 2 //VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
-                setVideoSurface(surfaceHolder!!.surface)
+                setVideoSurfaceHolder(surfaceHolder)
             }
         }
 
-        override fun onSurfaceCreated(holder: SurfaceHolder?) {
-            super.onSurfaceCreated(holder);
+        override fun onSurfaceCreated(surfaceHolder: SurfaceHolder?) {
+            super.onSurfaceCreated(surfaceHolder);
             exoPlayer.apply {
+
                 prepare();
                 play();
             }
@@ -106,9 +105,11 @@ class livewallpaper : WallpaperService() {
 
 
     //gif engine
-
-
-
+    //   ||
+    //   ||
+    //   ||
+    //  \||/
+    //   \/
 
 
 
@@ -123,8 +124,6 @@ class livewallpaper : WallpaperService() {
         val GifPath = prefs.getString("Video_Path","")!!.toString();
         val leftoffset = prefs.getFloat("left",0f);
         val topoffset = prefs.getFloat("top",0f);
-        //var gifdrawable: Drawable? = AnimatedImageDrawable.createFromPath(GifPath);
-        //var gifanimated = gifdrawable as? Animatable;
         var surfholder : SurfaceHolder? =null;
         val callbackHandler  = Handler(this@livewallpaper.mainLooper);
         var scaleX = 0f;
@@ -164,7 +163,7 @@ class livewallpaper : WallpaperService() {
             moive!!.setTime((System.currentTimeMillis()%moive!!.duration()).toInt());
             callbackHandler.removeCallbacks(drawloopfun);
             if(isVisiable)
-                callbackHandler.postDelayed(drawloopfun,40);
+                callbackHandler.postDelayed(drawloopfun,30);//
         }
 
         override fun onCreate(surfaceHolder: SurfaceHolder?) {

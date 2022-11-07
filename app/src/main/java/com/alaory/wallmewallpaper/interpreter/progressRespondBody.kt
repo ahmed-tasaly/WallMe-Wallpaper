@@ -7,19 +7,20 @@ import okio.*
 
 class progressRespondBody(val responseBody: ResponseBody,progressListener: progressListener) : ResponseBody() {
     val TAG = "progressRespondBody";
+
+
     var buffersource : BufferedSource? = null;
     val progresslistener = progressListener;
-    override fun contentLength(): Long {
+    override fun contentLength(): Long {//content size in bytes
         Log.i(TAG,"yeet ${responseBody.contentLength()}")
         return responseBody.contentLength();
     }
 
     override fun contentType(): MediaType? {
-
         return responseBody.contentType();
     }
 
-    override fun source(): BufferedSource {
+    override fun source(): BufferedSource {//content source
         if(buffersource == null){
             buffersource = source(responseBody.source()).buffer();
         }
@@ -39,7 +40,7 @@ class progressRespondBody(val responseBody: ResponseBody,progressListener: progr
     }
 
 
-    interface progressListener{
+    interface progressListener{//call back interface
         fun Update(byteread: Long,contentLength : Long,done: Boolean)
     }
 }

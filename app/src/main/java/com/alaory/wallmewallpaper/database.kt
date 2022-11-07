@@ -84,6 +84,7 @@ class database(val context: Context,val table_name: String = ImageInfo_Table,val
         }
     }
 
+
     fun remove_image_info_from_database(image_info: Image_Info){
         val dp = this.writableDatabase ?: return;
         val query = "DELETE FROM $table_name WHERE $name = '${image_info.Image_name}' AND $auther = '${image_info.Image_auther}';";

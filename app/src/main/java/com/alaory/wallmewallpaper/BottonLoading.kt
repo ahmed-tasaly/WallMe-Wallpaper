@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 class BottonLoading {
     companion object{
         var loctionbottom = 0;
-        val TAG = "BottonLoading_log";
     }
 
 
