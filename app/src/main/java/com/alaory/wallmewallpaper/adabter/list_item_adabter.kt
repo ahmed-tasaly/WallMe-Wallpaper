@@ -10,12 +10,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.alaory.wallmewallpaper.R
+import com.alaory.wallmewallpaper.Subreddit
 import com.alaory.wallmewallpaper.api.Reddit_Api
 
-class list_item_adabter(var NameList: MutableList<String>,var onclick:Onclick?,var showremoveonly : Boolean = false): RecyclerView.Adapter<list_item_adabter.Item>() {
+class list_item_adabter(var NameList: MutableList<Subreddit>,var onclick:Onclick?,var showremoveonly : Boolean = false): RecyclerView.Adapter<list_item_adabter.Item>() {
 
 
 
@@ -25,7 +27,7 @@ class list_item_adabter(var NameList: MutableList<String>,var onclick:Onclick?,v
     }
 
     override fun onBindViewHolder(holder: Item, position: Int) {
-        holder.textTitle.setText(NameList[position]);
+        holder.textTitle.setText(NameList[position].Subreddit_Name);
 
         holder.blockbutton.setOnClickListener {
             AlertDialog.Builder(holder.textTitle.context)
@@ -55,8 +57,14 @@ class list_item_adabter(var NameList: MutableList<String>,var onclick:Onclick?,v
                 .show();
         }
 
+        holder.switchActive.isChecked = NameList[position].Active;
+        holder.switchActive.setOnCheckedChangeListener { compoundButton, isactive ->
+            NameList[position].Active = isactive;
+        }
+
         //viewed on reddit  filter
         if(showremoveonly){
+            holder.switchActive.visibility = View.VISIBLE;
             holder.blockbutton.visibility = View.GONE;
             holder.list_item_add.visibility = View.GONE;
             holder.list_item_remove.visibility = View.VISIBLE;
@@ -66,7 +74,7 @@ class list_item_adabter(var NameList: MutableList<String>,var onclick:Onclick?,v
             }
         }else{
             holder.list_item_add.setOnClickListener {
-                onclick!!.onclick(NameList[position]);
+                onclick!!.onclick(NameList[position].Subreddit_Name);
             }
         }
 
@@ -101,6 +109,7 @@ class list_item_adabter(var NameList: MutableList<String>,var onclick:Onclick?,v
         val list_item_remove = view.findViewById<ImageButton>(R.id.list_item_remove);
         val list_item_add_new = view.findViewById<ImageButton>(R.id.list_item_add_new);
         val blockbutton = view.findViewById<ImageButton>(R.id.blocksource);
+        val switchActive = view.findViewById<SwitchCompat>(R.id.source_enable)
     }
     interface Onclick{
         fun onclick(name : String);

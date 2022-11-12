@@ -72,7 +72,8 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
             Reddit_Api.redditcon?.reddit_global_posts = emptyList<Image_Info>().toMutableList();
 
             for (i in Reddit_settings.subreddits_list_names){
-                reddit_api += Reddit_Api(i);
+                if(i.Active)
+                    reddit_api += Reddit_Api(i.Subreddit_Name);
             }
             PostsAdabter = Reddit_Api.redditcon?.reddit_global_posts?.let { Image_list_adapter(it,this) };
             LoadMore();

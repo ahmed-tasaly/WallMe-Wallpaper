@@ -20,6 +20,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import com.alaory.wallmewallpaper.R
+import com.alaory.wallmewallpaper.Subreddit
 import com.alaory.wallmewallpaper.api.Reddit_Api
 import com.alaory.wallmewallpaper.postPage.Reddit_posts
 import com.alaory.wallmewallpaper.adabter.list_item_adabter
@@ -29,30 +30,58 @@ class Reddit_settings( menuChange : MainActivity.MenuChange? = null) : Fragment(
     val MenuChange = menuChange;
 
     companion object{
-        var subreddits_list_names : MutableList<String> = listOf("amoledbackgrounds","wallpaper").toMutableList();
+        var subreddits_list_names : MutableList<Subreddit> = listOf(Subreddit("amoledbackgrounds"),Subreddit("wallpaper")).toMutableList();
         var CheckedChipListMode : String = "Top";
         var TimePeriod = "";
         var TimePeridLastInt = 4;
         var image_preview_qualiy_int = 2;
 
-        fun parse_subreddits(SUBREDDITS : String){
+        fun parse_subreddits(SUBREDDITS : String,ActiveSubreddits : String){
             val subredditsNames = SUBREDDITS.filter { !it.isWhitespace() };
             Log.i("subreddits", subredditsNames.toString());
             subredditsNames.replace("\\s".toRegex(), "");
-            subreddits_list_names = subredditsNames.split("+").toMutableList();
+            val subreddits_list_names_strings = subredditsNames.split("+").toMutableList();
+            val subreddits_list_names_active = ActiveSubreddits.split("+").toMutableList();
+            subreddits_list_names.clear()
+
+            if(subreddits_list_names_strings.size == subreddits_list_names_active.size){
+                for(Si in 0 until subreddits_list_names_strings.size){
+                    val ch = subreddits_list_names_active[Si][0].lowercase();
+                    when(subreddits_list_names_active[Si][0].lowercase()){
+                        "f" -> {
+                            subreddits_list_names += Subreddit(subreddits_list_names_strings[Si],false);
+                        }
+                        else -> {
+                            subreddits_list_names += Subreddit(subreddits_list_names_strings[Si],true);
+                        }
+                    }
+                }
+            }else{
+                for(S in subreddits_list_names_strings)
+                    subreddits_list_names += Subreddit(S);
+            }
+
         }
 
         private fun savepref(context: Context){
 
             var subredditsNames = "";
             for(sub in subreddits_list_names){
-                subredditsNames += sub;
+                subredditsNames += sub.Subreddit_Name;
                 if(subreddits_list_names.last() != sub)
                     subredditsNames += '+';
             }
 
+            var subredditsActive = "";
+            for(sub in subreddits_list_names){
+                subredditsActive += sub.Active.toString();
+                if(subreddits_list_names.last() != sub)
+                    subredditsActive += '+';
+            }
+
             val redditSettings = context.getSharedPreferences("redditsettings",Context.MODE_PRIVATE);
             redditSettings.edit().putString("subreddits", subredditsNames).apply();
+            redditSettings.edit().putString("subreddits_active", subredditsActive).apply();
             redditSettings.edit().putInt("image_preview", image_preview_qualiy_int).apply();
             redditSettings.edit().putInt("timePeriod", TimePeridLastInt).apply();
             redditSettings.edit().putString("listmode", CheckedChipListMode).apply();
@@ -62,12 +91,13 @@ class Reddit_settings( menuChange : MainActivity.MenuChange? = null) : Fragment(
         fun loadprefs(context: Context){
             val sharedprefs = context.getSharedPreferences("redditsettings",Context.MODE_PRIVATE);
             val subtemp : String? = sharedprefs.getString("subreddits", "iphonexwallpapers+phonewallpapers");
+            val subActivelist : String? = sharedprefs.getString("subreddits_active", "true+true");
             val templistmode = sharedprefs.getString("listmode","Top");
             val temptimeperiod = sharedprefs.getString("timePeriodString","&t=all");
 
             //set local settings
             if(subtemp!!.isNotEmpty())
-                parse_subreddits(subtemp!!);
+                parse_subreddits(subtemp!!,subActivelist!!);
 
             CheckedChipListMode = templistmode!!;
             TimePeriod = temptimeperiod!!;
@@ -155,20 +185,22 @@ class Reddit_settings( menuChange : MainActivity.MenuChange? = null) : Fragment(
 
             val dialogBuilder = AlertDialog.Builder(requireContext());
             val layout = LayoutInflater.from(requireContext()).inflate(R.layout.search_list_box,null);
-            val subredditList: MutableList<String> = emptyList<String>().toMutableList();
+            val subredditList: MutableList<Subreddit> = emptyList<Subreddit>().toMutableList();
 
 
             val adapter = list_item_adabter(subredditList,object : list_item_adabter.Onclick{
                 override fun onclick(name: String) {
                     var hasbeenadded_before = false;
                     for (i in subreddits_list_names){
-                        if(i.lowercase().trim() == name.lowercase().trim())
-                            hasbeenadded_before = true;
+                        if(i.Subreddit_Name.lowercase().trim() == name.lowercase().trim())
+                            hasbeenadded_before = true;//check if subreddit is already added
                     }
+
                     if(hasbeenadded_before)
                         return;
+
                     Log.i("subreddits_list_names",name);
-                    subreddits_list_names += name;
+                    subreddits_list_names += Subreddit(name);
                     adabter.notifyDataSetChanged();
                     Toast.makeText(requireContext(),"subreddit has been added",Toast.LENGTH_SHORT).show();
                 }
@@ -189,8 +221,11 @@ class Reddit_settings( menuChange : MainActivity.MenuChange? = null) : Fragment(
                 override fun onQueryTextChange(text: String?): Boolean {
                     Reddit_Api.redditcon?.search_subreddits(text!!) {
 
-                        subredditList.clear()
-                        subredditList += it;
+                        subredditList.clear();
+
+                        for( s in it)
+                            subredditList += Subreddit(s, true);
+
                         requireActivity().runOnUiThread {
                             adapter.notifyDataSetChanged();
                         }
