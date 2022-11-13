@@ -18,6 +18,8 @@ import androidx.fragment.app.Fragment
 import androidx.work.*
 import com.alaory.wallmewallpaper.MainActivity
 import com.alaory.wallmewallpaper.R
+import com.alaory.wallmewallpaper.api.Reddit_Api
+import com.alaory.wallmewallpaper.api.Reddit_Api_Contorller
 import com.alaory.wallmewallpaper.wallmewallpaper
 import com.alaory.wallmewallpaper.wallpaperChanger_Worker
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -39,6 +41,9 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
     //cache
     var clearCache : LinearLayout? = null;
     var clearImages : LinearLayout? = null;
+
+    //post list settings
+    var Show_favorite_insearch : SwitchMaterial? = null;
 
     //about
     var github : TextView? = null;
@@ -68,6 +73,7 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
         clearCache = layout.findViewById(R.id.clear_cache_settings);
         clearImages = layout.findViewById(R.id.clear_saved_images_settings);
 
+        Show_favorite_insearch = layout.findViewById(R.id.Switch_favorite_settings)
 
         github = layout.findViewById(R.id.github_settings);
         supportMe = layout.findViewById(R.id.support_settings);
@@ -139,7 +145,13 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
 
 
 
-
+        Show_favorite_insearch?.let {
+            it.isChecked = requireContext().getSharedPreferences("settings",Context.MODE_PRIVATE).getBoolean("show_fav",true);
+            it.setOnCheckedChangeListener { compoundButton, ischecked ->
+                requireContext().getSharedPreferences("settings",Context.MODE_PRIVATE).edit().putBoolean("show_fav",ischecked).apply();
+                Reddit_Api.showfav = ischecked;
+            }
+        }
 
 
         github?.let {

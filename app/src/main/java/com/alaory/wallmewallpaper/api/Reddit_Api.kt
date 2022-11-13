@@ -177,6 +177,9 @@ class Reddit_Api(subredditname: String) {
         var redditcon :  Reddit_Api_Contorller? = null;
         var prefswords = "";
 
+        //show fav
+        var showfav = true;
+
         fun filter_words(word : String): Boolean{
             val word = word.lowercase();
             val filterWords: Array<String> = arrayOf("hentai","horny","fap","shit","cursed","ass","semen","porn","cum","nud","fuck","pornhub","dick","blowjob","pussy","cunt","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","gods","lgb","sex","rainbow","pride","furry","jerk","waifu")
@@ -308,12 +311,20 @@ class Reddit_Api(subredditname: String) {
                                     continue;
 
                                 //check if its a valid post that contains a wallpaper
-                                val lastchars = dataJson.getString("url").reversed().substring(0,5);
+                                val posturl = dataJson.getString("url");
+                                val lastchars = posturl.reversed().substring(0,5);
                                 val is_thumbnail_notvalid = dataJson.getString("thumbnail").isNullOrEmpty()
                                 val is_media_notvalid =  dataJson.getString("media") == "null"
                                 val is_media_metadata_notvalid : JSONObject? = dataJson.optJSONObject("media_metadata");
                                 if((!lastchars.contains('.') && is_thumbnail_notvalid  && is_media_notvalid && is_media_metadata_notvalid == null) || lastchars.get(0) == '/')
                                     continue;
+
+                                if(!showfav){
+                                    for(post in database.imageinfo_list){
+                                        if(post.Image_url == posturl)
+                                            continue;
+                                    }
+                                }
                                 //----------------------------------------------
                                 //post is worth adding
 
