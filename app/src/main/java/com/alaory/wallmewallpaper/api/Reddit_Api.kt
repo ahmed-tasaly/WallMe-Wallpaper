@@ -319,12 +319,17 @@ class Reddit_Api(subredditname: String) {
                                 if((!lastchars.contains('.') && is_thumbnail_notvalid  && is_media_notvalid && is_media_metadata_notvalid == null) || lastchars.get(0) == '/')
                                     continue;
 
+                                var isfavored_skip = false;
                                 if(!showfav){
                                     for(post in database.imageinfo_list){
-                                        if(post.Image_url == posturl)
-                                            continue;
+                                        if(post.Image_url == posturl){
+                                            isfavored_skip = true;
+                                            break;
+                                        }
                                     }
                                 }
+                                if(isfavored_skip)
+                                    continue;
                                 //----------------------------------------------
                                 //post is worth adding
 
