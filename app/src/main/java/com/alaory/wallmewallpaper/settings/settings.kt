@@ -146,9 +146,9 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
 
 
         Show_favorite_insearch?.let {
-            it.isChecked = requireContext().getSharedPreferences("settings",Context.MODE_PRIVATE).getBoolean("show_fav",false);
+            it.isChecked = !requireContext().getSharedPreferences("settings",Context.MODE_PRIVATE).getBoolean("show_fav",true);
             it.setOnCheckedChangeListener { compoundButton, ischecked ->
-                requireContext().getSharedPreferences("settings",Context.MODE_PRIVATE).edit().putBoolean("show_fav",ischecked).apply();
+                requireContext().getSharedPreferences("settings",Context.MODE_PRIVATE).edit().putBoolean("show_fav",!ischecked).apply();
                 Reddit_Api.showfav = !ischecked;
             }
         }
