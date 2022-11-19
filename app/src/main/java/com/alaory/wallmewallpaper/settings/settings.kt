@@ -46,6 +46,8 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
     var Show_favorite_insearch : SwitchMaterial? = null;
 
     //about
+    var export_data : TextView? = null;
+    var import_data : TextView? = null;
     var github : TextView? = null;
     var supportMe : TextView? = null;
 
@@ -75,6 +77,8 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
 
         Show_favorite_insearch = layout.findViewById(R.id.Switch_favorite_settings)
 
+        export_data = layout.findViewById(R.id.Export_settings)
+        import_data = layout.findViewById(R.id.Import_settings)
         github = layout.findViewById(R.id.github_settings);
         supportMe = layout.findViewById(R.id.support_settings);
 
@@ -152,6 +156,16 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
                 Reddit_Api.showfav = !ischecked;
             }
         }
+
+        export_data?.let {
+            val intentExport = Intent(Intent.ACTION_CREATE_DOCUMENT)
+                .setType("application/zip")
+                .putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/zip"))
+                .putExtra(Intent.EXTRA_TITLE,"Export app Data");
+            requireActivity().startActivityForResult(intentExport,wallmewallpaper.EBACKUP_CODE);
+        }
+
+
 
 
         github?.let {

@@ -29,6 +29,7 @@ import com.alaory.wallmewallpaper.wallpaper.loadMedia
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import okio.Path.Companion.toPath
 import java.io.File
+import java.io.FileOutputStream
 
 class MainActivity : AppCompatActivity(){
 
@@ -494,6 +495,22 @@ class MainActivity : AppCompatActivity(){
             Image_Activity.loadedPreview = false;
             startActivity(intent);
 
+        }
+        //export app Data
+        else if (requestCode == wallmewallpaper.EBACKUP_CODE && data != null && resultCode == RESULT_OK){
+            val uri = data.data!!;
+            val fdz = contentResolver.openFileDescriptor(uri,"w");
+            fdz?.use {
+                FileOutputStream(fdz.fileDescriptor).use { outstream ->
+                     val dbfolder = getDatabasePath("${database.ImageInfo_Table}.dp").parent;
+                     val zipFilebackup = filesDir.path + "WallmeWallpaper_backup.zip";
+                     val zipfile = File(zipFilebackup);
+                    if(filesDir.parent != null){
+                       val sharedprefsDir = dataDir.absoluteFile + "/shared_prefs";
+                        //add a way to comine folders into a file
+                    }
+                }
+            }
         }
     }
 }

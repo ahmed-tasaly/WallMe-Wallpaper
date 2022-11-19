@@ -45,8 +45,7 @@ class database(val context: Context,val table_name: String = ImageInfo_Table,val
             //i am not good at sql also its 0:33 for me :)
             val addType_query = "ALTER TABLE $table_name ADD COLUMN $type TEXT DEFAULT \"${UrlType.Image.name}\";";
             dp!!.execSQL(addType_query);
-        }catch (e: Exception){
-        }
+        }catch (e: Exception){}
 
     }
 
