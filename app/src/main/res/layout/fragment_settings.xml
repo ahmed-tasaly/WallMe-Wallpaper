@@ -279,6 +279,7 @@
 
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/Import_settings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -294,6 +295,7 @@
 
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/Export_settings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

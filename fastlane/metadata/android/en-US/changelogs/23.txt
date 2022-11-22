@@ -1,0 +1,9 @@
+release 2.5:
+    -bug fixes
+    -added a button to disable/enable subreddits in the Reddit list menu
+    -added a button to hide favorite posts from the post list
+    -minor API changes
+
+Dev note:
+
+    i am planning on working on a new project so the updates might be slow

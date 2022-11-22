@@ -157,13 +157,13 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
             }
         }
 
-        export_data?.let {
-            val intentExport = Intent(Intent.ACTION_CREATE_DOCUMENT)
-                .setType("application/zip")
-                .putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/zip"))
-                .putExtra(Intent.EXTRA_TITLE,"Export app Data");
-            requireActivity().startActivityForResult(intentExport,wallmewallpaper.EBACKUP_CODE);
-        }
+//        export_data?.let {
+//            val intentExport = Intent(Intent.ACTION_CREATE_DOCUMENT)
+//                .setType("application/zip")
+//                .putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/zip"))
+//                .putExtra(Intent.EXTRA_TITLE,"Export app Data");
+//            requireActivity().startActivityForResult(intentExport,wallmewallpaper.EBACKUP_CODE);
+//        }
 
 
 

@@ -506,7 +506,7 @@ class MainActivity : AppCompatActivity(){
                      val zipFilebackup = filesDir.path + "WallmeWallpaper_backup.zip";
                      val zipfile = File(zipFilebackup);
                     if(filesDir.parent != null){
-                       val sharedprefsDir = dataDir.absoluteFile + "/shared_prefs";
+                       val sharedprefsDir = "${dataDir.absoluteFile}/shared_prefs";
                         //add a way to comine folders into a file
                     }
                 }
