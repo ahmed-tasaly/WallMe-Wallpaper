@@ -502,11 +502,11 @@ class MainActivity : AppCompatActivity(){
             val fdz = contentResolver.openFileDescriptor(uri,"w");
             fdz?.use {
                 FileOutputStream(fdz.fileDescriptor).use { outstream ->
-                     val dbfolder = getDatabasePath("${database.ImageInfo_Table}.dp").parent;
-                     val zipFilebackup = filesDir.path + "WallmeWallpaper_backup.zip";
-                     val zipfile = File(zipFilebackup);
+                     val dbfolder = getDatabasePath("${database.ImageInfo_Table}.dp").parent;//get the database folder path
+                     val zipFilebackup = filesDir.path + "WallmeWallpaper_backup.zip"; //zip file path to save
+                     val zipfile = File(zipFilebackup);//file to save
                     if(filesDir.parent != null){
-                       val sharedprefsDir = "${dataDir.absoluteFile}/shared_prefs";
+                       val sharedprefsDir = "${dataDir.absoluteFile}/shared_prefs"; // shared pref path
                         //add a way to comine folders into a file
                     }
                 }
