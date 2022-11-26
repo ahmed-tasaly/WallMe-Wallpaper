@@ -77,10 +77,11 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
 
         Show_favorite_insearch = layout.findViewById(R.id.Switch_favorite_settings)
 
-        export_data = layout.findViewById(R.id.Export_settings)
-        import_data = layout.findViewById(R.id.Import_settings)
+
         github = layout.findViewById(R.id.github_settings);
         supportMe = layout.findViewById(R.id.support_settings);
+        export_data = layout.findViewById(R.id.Export_settings_btn)
+        import_data = layout.findViewById(R.id.Import_settings_btn)
 
 
 
@@ -157,13 +158,6 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
             }
         }
 
-        export_data?.let {
-            val intentExport = Intent(Intent.ACTION_CREATE_DOCUMENT)
-                .setType("application/zip")
-                .putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/zip"))
-                .putExtra(Intent.EXTRA_TITLE,"Export app Data");
-            requireActivity().startActivityForResult(intentExport,wallmewallpaper.EBACKUP_CODE);
-        }
 
 
 
@@ -180,6 +174,34 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
                 requireContext().startActivity(Intent(Intent.ACTION_VIEW,uri));
             }
         }
+
+        import_data?.let {
+            it.setOnClickListener{
+                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+                    .addCategory(Intent.CATEGORY_OPENABLE)
+                    .setType("application/zip")
+                    .putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/zip"))//file type
+                    .addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)//we get the right to read the file after restart
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+                requireActivity().startActivityForResult(intent,wallmewallpaper.RBACKUP_CODE);
+            }
+        }
+
+
+
+
+        export_data?.let {
+            it.setOnClickListener{
+                val intentExport = Intent(Intent.ACTION_CREATE_DOCUMENT)
+                    .setType("application/zip")
+                    .putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/zip"))
+                    .putExtra(Intent.EXTRA_TITLE,"AppBackup");
+                requireActivity().startActivityForResult(intentExport,wallmewallpaper.EBACKUP_CODE);
+            }
+        }
+
+
 
         return layout;
     }

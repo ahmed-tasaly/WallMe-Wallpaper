@@ -30,6 +30,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import okio.Path.Companion.toPath
 import java.io.File
 import java.io.FileOutputStream
+import java.util.zip.ZipFile
 
 class MainActivity : AppCompatActivity(){
 
@@ -502,15 +503,34 @@ class MainActivity : AppCompatActivity(){
             val fdz = contentResolver.openFileDescriptor(uri,"w");
             fdz?.use {
                 FileOutputStream(fdz.fileDescriptor).use { outstream ->
-                     val dbfolder = getDatabasePath("${database.ImageInfo_Table}.dp").parent;//get the database folder path
+                    //zip folders
+                     val dbfolder = getDatabasePath("${database.ImageInfo_Table}.dp").parentFile;//get the database folder path
                      val zipFilebackup = filesDir.path + "WallmeWallpaper_backup.zip"; //zip file path to save
                      val zipfile = File(zipFilebackup);//file to save
                     if(filesDir.parent != null){
-                       val sharedprefsDir = "${dataDir.absoluteFile}/shared_prefs"; // shared pref path
+                        val sharedprefsDir = "${dataDir.absoluteFile}/shared_prefs"; // shared pref path
+                        val zipfilenc = net.lingala.zip4j.ZipFile(zipfile);
+                        zipfilenc.addFolder(File(sharedprefsDir));
+                        zipfilenc.addFolder(filesDir);
+                        zipfilenc.addFolder(dbfolder);
                         //add a way to comine folders into a file
+                    }
+                    //-----
+                    try {
+                        zipfile.inputStream().use { input ->
+                            input.copyTo(outstream);
+                        }
+                    }finally {
+                        if(zipfile.exists()){
+                            zipfile.delete();
+                        }
                     }
                 }
             }
+        }
+
+        else if (requestCode == wallmewallpaper.RBACKUP_CODE && data != null && resultCode == RESULT_OK){
+            // add functinality to apply the save file
         }
     }
 }

@@ -40,6 +40,9 @@ android {
 
 dependencies {
 
+    //zip
+    implementation 'net.lingala.zip4j:zip4j:2.11.2'
+
     //exoplayer
     implementation 'com.google.android.exoplayer:exoplayer:2.18.1'
 

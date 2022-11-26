@@ -76,6 +76,7 @@ class wallmewallpaper : Application() {
 
         val executor: ExecutorService = Executors.newFixedThreadPool(2);
         val EBACKUP_CODE = 81723;
+        val RBACKUP_CODE = 81722;
     }
 
     override fun onCreate() {

@@ -278,43 +278,14 @@
             android:textSize="20sp" />
 
 
-        <TextView
 
-            android:id="@+id/Import_settings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/about_title_settings"
-            android:layout_marginBottom="2dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:padding="10dp"
-            android:text="Import App data"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
-
-
-        <TextView
-
-            android:id="@+id/Export_settings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/Import_settings"
-            android:layout_marginBottom="2dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:padding="10dp"
-            android:text="Export App data"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
 
 
         <TextView
             android:id="@+id/github_settings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/Export_settings"
+            android:layout_below="@id/about_title_settings"
             android:layout_marginBottom="2dp"
             android:clickable="true"
             android:focusable="true"
@@ -335,6 +306,39 @@
             android:foreground="?android:attr/selectableItemBackground"
             android:padding="10dp"
             android:text="Support me"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+
+
+        <TextView
+
+            android:id="@+id/Import_settings_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/support_settings"
+            android:layout_marginBottom="2dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:padding="10dp"
+            android:text="Import App data"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+
+        <TextView
+
+            android:id="@+id/Export_settings_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/Import_settings_btn"
+            android:layout_marginBottom="2dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:padding="10dp"
+            android:text="Export App data"
             android:textColor="@color/white"
             android:textSize="20sp" />
 
