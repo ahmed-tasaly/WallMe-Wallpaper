@@ -46,17 +46,8 @@ and at the same time have a lot of SFW wallpaper and with a good image quality w
 
 </div>
 
-### current sources 
+    Currenty the app support two sources Wallhaven and Reddit if you have a source that doesnt require an api key please notify me.
 
-Reddit source:
-
-    you can add subreddit's name to view it's posts and set them as wallpaper 
-    you can change the list mode from Hot New and Top, you can also change image preview quality for faster image loading  
-
-Wallhaven source:
-
-    you can add tags to your home page to view images of your type, 
-    every image contains tags that you can view when you click on them 
 
 
 
