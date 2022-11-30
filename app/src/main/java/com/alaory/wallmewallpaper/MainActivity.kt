@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewPropertyAnimator
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -29,7 +30,9 @@ import com.alaory.wallmewallpaper.wallpaper.loadMedia
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import okio.Path.Companion.toPath
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.util.zip.ZipException
 import java.util.zip.ZipFile
 
 class MainActivity : AppCompatActivity(){
@@ -530,7 +533,80 @@ class MainActivity : AppCompatActivity(){
         }
 
         else if (requestCode == wallmewallpaper.RBACKUP_CODE && data != null && resultCode == RESULT_OK){
-            // add functinality to apply the save file
+            contentResolver.takePersistableUriPermission(data.data!!,Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            val fdz = contentResolver.openFileDescriptor(data.data!!,"r");
+            var result = false;
+            fdz?.use {
+                FileInputStream(fdz.fileDescriptor).use { instream ->
+                    try{
+                        var restorezipfile : File? =null;
+                        var tempdirextract : File?= null;
+
+
+                        try{
+                            var dpParentFile = getDatabasePath("${database.ImageInfo_Table}.dp").parentFile;
+                            var dataDir = requireNotNull(filesDir.parentFile);
+
+                            restorezipfile = File(dataDir.absolutePath + "/restore.zip");
+                            tempdirextract = File(dataDir.absolutePath + "/toBeRestoredDir")// directory used to temporary extract all files
+
+                            tempdirextract.mkdir();
+
+                            instream.use { input ->  //Copy stream into temporary file
+                                restorezipfile.outputStream().use {outstream ->
+                                    input.copyTo(outstream);
+                                }
+                            }
+
+                            val prepzipfile = net.lingala.zip4j.ZipFile(restorezipfile.absolutePath);
+                            prepzipfile.extractAll(tempdirextract.absolutePath);
+
+                            //delete app /data/data
+                            val sharedprefs = File(dataDir.absolutePath + "/shared_prefs" );
+                            sharedprefs.deleteRecursively();
+
+                            dpParentFile?.listFiles()?.forEach {
+                                it.deleteRecursively();
+                            }
+
+                            filesDir.listFiles()?.forEach {
+                                it.deleteRecursively();
+                            }
+
+                            //copy files from tempdirextract to app /data/data
+                            if(tempdirextract.exists()){
+                                tempdirextract.listFiles()?.forEach {
+                                    val contentfile = File(dataDir.absolutePath + "/" + it.name);
+                                    if(!contentfile.exists()){
+                                        contentfile.mkdir();
+                                    }
+                                    it.copyRecursively(contentfile);
+                                }
+                                result = true;
+                            }else{}
+
+
+                        }catch (e : ZipException){
+
+                        }finally {
+                            if(tempdirextract?.exists() == true){
+                                tempdirextract.deleteRecursively();
+                            }
+                            if(restorezipfile?.exists() == true){
+                                restorezipfile.deleteRecursively();
+                            }
+                        }
+                        if(result){
+                            Toast.makeText(this,"Imported Backup",Toast.LENGTH_LONG).show()
+                        }else{
+                            Toast.makeText(this,"Failed to Import Backup",Toast.LENGTH_LONG).show()
+                        }
+                    }catch (e : Exception){
+                        Log.e(this::class.java.simpleName,e.toString());
+                    }
+                }
+            }
+
         }
     }
 }
