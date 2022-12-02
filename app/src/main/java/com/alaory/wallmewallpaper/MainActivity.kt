@@ -597,7 +597,7 @@ class MainActivity : AppCompatActivity(){
                             }
                         }
                         if(result){
-                            Toast.makeText(this,"Imported Backup",Toast.LENGTH_LONG).show()
+                            Toast.makeText(this,"Imported Backup, Please restart the app",Toast.LENGTH_LONG).show()
                         }else{
                             Toast.makeText(this,"Failed to Import Backup",Toast.LENGTH_LONG).show()
                         }

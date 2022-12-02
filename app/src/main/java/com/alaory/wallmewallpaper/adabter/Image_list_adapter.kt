@@ -207,9 +207,9 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                 var updateCallback : (bitmap : Bitmap?,daw : Drawable?) -> Unit= { bit , draw ->
                     handler?.post {
                         if(bit != null)
-                            holder.image_main!!.setImageBitmap(bit);
+                            holder.image_main?.setImageBitmap(bit);
                         else
-                            holder.image_main!!.setImageDrawable(draw!!);
+                            holder.image_main?.setImageDrawable(draw);
                     }
                 }
 
