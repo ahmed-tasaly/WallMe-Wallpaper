@@ -2,6 +2,8 @@ package com.alaory.wallmewallpaper.api
 
 import android.util.Log
 import com.alaory.wallmewallpaper.*
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.withTimeout
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONException
@@ -40,7 +42,6 @@ class Reddit_Api_Contorller() {
 
     //time period
     var timeperiod = "&t=all";
-
 
 
     val TAG = "Reddit_Api";
@@ -92,6 +93,7 @@ class Reddit_Api_Contorller() {
 
     fun get_allposts_andGive(callback_update: (Status: Int) -> Unit = {}) {
         for (subreddit in Subreddits) {
+
             subreddit.listMode = listMode;
             subreddit.api_key = api_key;
             subreddit.reddit = reddit;
@@ -99,8 +101,12 @@ class Reddit_Api_Contorller() {
             subreddit.timeperiod = timeperiod;
             subreddit.PostRequestNumber = PostRequestNumber;
 
+
+            //loop threw all subreddits
+
             subreddit.get_subreddit_posts { posts, Status ->
                 if(Status == 400){
+                    //try again
                     subreddit.get_subreddit_posts { Posts, status ->
                         reddit_global_posts += Posts;
                         last_index = reddit_global_posts.size;
@@ -111,9 +117,9 @@ class Reddit_Api_Contorller() {
                     last_index = reddit_global_posts.size;
                     callback_update(Status);
                 }
-
             }
         }
+
     }
 
 
