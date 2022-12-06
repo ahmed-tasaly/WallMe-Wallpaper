@@ -75,17 +75,14 @@ since the app is still in development the ui may change :)
 
 
 - [x] add favorite page
-- [x] add progress bar when downloading an image
+- [x] add a progress bar when downloading an image
 - [x] add landscape and portrait mode 
 - [x] add auto wallpaper changer with the user configuration //still work in progress.
 - [x] add support for gif wallpapers
 - [x] add support for video wallpapers
 - [x] add the ability to add images from the device to the favorite page
 - [ ] add functionality to the auto wallpaper changer to change the wallpaper based on android theme (dark/light).
-- [ ] add user's posts page
-- [ ] add more UI I SAID MORE
-- [ ] more plans coming
-- [ ] go to sleep
+
 
 
 
