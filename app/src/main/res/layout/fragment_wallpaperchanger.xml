@@ -9,7 +9,7 @@
     android:background="@color/Background">
 
     <RelativeLayout
-        android:layout_marginVertical="20dp"
+        android:layout_marginVertical="40dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/wallpaper_changer_layout"

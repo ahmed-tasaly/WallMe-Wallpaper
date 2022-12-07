@@ -188,7 +188,7 @@ class Reddit_Api(subredditname: String) {
 
         fun filter_words(word : String): Boolean{
             val word = word.lowercase();
-            val filterWords: Array<String> = arrayOf("hentai","horny","fap","shit","cursed","ass","semen","porn","cum","nud","fuck","pornhub","dick","blowjob","pussy","cunt","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","gods","lgb","sex","rainbow","pride","furry","jerk","waifu")
+            val filterWords: Array<String> = arrayOf("hentai","horny","bitch","fap","shit","cursed","ass","semen","porn","cum","nud","fuck","pornhub","dick","blowjob","pussy","cunt","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","gods","lgb","sex","rainbow","pride","furry","jerk","waifu")
 
             for(i in filterWords)
                 if(word.contains(i))

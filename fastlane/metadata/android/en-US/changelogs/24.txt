@@ -1,0 +1,5 @@
+release 2.51:
+
+    - Added an import/export feature to save app data
+    - made the app safer
+    - small bug fixes
