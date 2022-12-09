@@ -381,7 +381,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
         var found = false;
         val position = holder.layoutPosition;
         for(i in database.imageblock_list){
-            if(i.Image_name == listPosts.get(position).Image_name){
+            if(i.Image_url == listPosts.get(position).Image_url){
                 found = true;
             }
         }

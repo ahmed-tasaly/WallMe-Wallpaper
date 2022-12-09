@@ -302,12 +302,15 @@ class Reddit_Api(subredditname: String) {
                                         dataJson = dataJson.getJSONArray("crosspost_parent_list").getJSONObject(0);
                                 }
 
+
+                                val posturl = dataJson.getString("url");
+
                                 for (j in 0 until subreddit_posts_list.size) {
-                                    if (dataJson.getString("name") == subreddit_posts_list.get(j).Image_name)
+                                    if (posturl == subreddit_posts_list.get(j).Image_url)
                                         found = true;
                                 }
                                 for (p in database.imageblock_list) {
-                                    if (dataJson.getString("name") == p.Image_name)
+                                    if (posturl == p.Image_url)
                                         found = true;
                                 }
 
@@ -317,7 +320,7 @@ class Reddit_Api(subredditname: String) {
                                     continue;
 
                                 //check if its a valid post that contains a wallpaper
-                                val posturl = dataJson.getString("url");
+
                                 val lastchars = posturl.reversed().substring(0,5);
                                 val is_thumbnail_notvalid = dataJson.getString("thumbnail").isNullOrEmpty()
                                 val is_media_notvalid =  dataJson.getString("media") == "null"

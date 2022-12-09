@@ -297,17 +297,20 @@ class wallhaven_api {
                             val postInfo = data.getJSONObject(i);
 
                             var found = false;
-                            for (j in wallhaven_homepage_posts) {
-                                if (j.Image_name == postInfo.getString("id"))
-                                    found = true;
-                            }
-                            for(p in database.imageblock_list){
-                                if (p.Image_name == postInfo.getString("id"))
-                                    found = true;
-                            }
-
                             val postImageUrl = postInfo.getJSONObject("thumbs").getString("original");
 
+                            //check for post in temp list
+                            for (j in wallhaven_homepage_posts) {
+                                if (j.Image_url == postImageUrl)
+                                    found = true;
+                            }
+                            //check for post in block list
+                            for(p in database.imageblock_list){
+                                if (p.Image_url == postImageUrl)
+                                    found = true;
+                            }
+
+                            //check if the post is favorite
                             if(!Reddit_Api.showfav){
                                 for(postFav in database.imageinfo_list)
                                     if(postImageUrl  == postFav.Image_url){
