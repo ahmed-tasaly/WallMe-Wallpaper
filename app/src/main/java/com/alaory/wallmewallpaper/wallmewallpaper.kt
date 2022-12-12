@@ -84,6 +84,6 @@ class wallmewallpaper : Application() {
 
         Reddit_Api.showfav = getSharedPreferences("settings",Context.MODE_PRIVATE).getBoolean("show_fav",true);
         doFullscreen = this.getSharedPreferences("settings", Context.MODE_PRIVATE).getBoolean("fullscreenapp",true);
-        Reddit_Api.prefswords = this.getSharedPreferences("reddit_source_block",Context.MODE_PRIVATE).getString("sources","").toString();
+        Reddit_Api.prefswords = this.getSharedPreferences("reddit_source_block",Context.MODE_PRIVATE).getString("sources","animewallpaper").toString();
     }
 }

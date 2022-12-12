@@ -206,7 +206,7 @@ class Reddit_Api(subredditname: String) {
                     return true
 
             for(i in prefswords.split(","))
-                if(word.contains(i.lowercase()) && i.isNotEmpty())
+                if(word.lowercase() == i.lowercase())
                     return true
 
 

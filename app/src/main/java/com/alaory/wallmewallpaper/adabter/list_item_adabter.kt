@@ -36,6 +36,7 @@ class list_item_adabter(var NameList: MutableList<Subreddit>,var onclick:Onclick
                     override fun onClick(p0: DialogInterface?, p1: Int) {
                     }
                 })
+                    //block subreddit
                 .setPositiveButton("yes",object : DialogInterface.OnClickListener{
                     override fun onClick(p0: DialogInterface?, p1: Int) {
                         removeItem(holder.layoutPosition)

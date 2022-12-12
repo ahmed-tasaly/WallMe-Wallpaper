@@ -93,13 +93,12 @@
             android:id="@+id/Switch_reddit_settings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="2dp"
             android:layout_below="@id/Switch_wallhaven_settings"
+            android:layout_marginBottom="2dp"
             android:padding="10dp"
             android:text="Show Reddit source"
             android:textColor="@color/white"
-            android:textSize="20sp"
-            />
+            android:textSize="20sp" />
 
 
     </RelativeLayout>

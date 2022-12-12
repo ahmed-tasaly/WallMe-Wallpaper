@@ -18,7 +18,8 @@
         android:layout_marginTop="5dp"
         >
 
-        <TextView
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/wallpaper_changer_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -28,6 +29,7 @@
             android:textSize="20sp" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/autowallpaper_containter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/wallpaper_changer_title">
