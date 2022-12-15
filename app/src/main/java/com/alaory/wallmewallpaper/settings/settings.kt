@@ -5,9 +5,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,15 +12,11 @@ import android.widget.*
 import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.work.*
 import com.alaory.wallmewallpaper.MainActivity
 import com.alaory.wallmewallpaper.R
 import com.alaory.wallmewallpaper.api.Reddit_Api
-import com.alaory.wallmewallpaper.api.Reddit_Api_Contorller
 import com.alaory.wallmewallpaper.wallmewallpaper
-import com.alaory.wallmewallpaper.wallpaperChanger_Worker
 import com.google.android.material.switchmaterial.SwitchMaterial
-import java.util.concurrent.TimeUnit
 
 class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
 

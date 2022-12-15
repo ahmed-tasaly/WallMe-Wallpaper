@@ -14,7 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.work.*
 import com.alaory.wallmewallpaper.R
-import com.alaory.wallmewallpaper.wallpaperChanger_Worker
+import com.alaory.wallmewallpaper.backgroundService.wallpaperChanger_Worker
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.util.concurrent.TimeUnit
 
