@@ -72,12 +72,8 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
 
         handler = HandlerCompat.createAsync(this.context!!.mainLooper)
 
-        var path : Path? =null;
-        if(save_local_external){
-            path = this.context!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.path.toPath();
-        }else{
-            path = recyclerView.context!!.cacheDir.resolve("imagePreview").path.toPath();
-        }
+        var path  = recyclerView.context!!.cacheDir.resolve("imagePreview").path.toPath();
+
 
 
         adab_ImageLoader = ImageLoader.Builder(recyclerView.context!!)
@@ -105,10 +101,18 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                     .build()
             }
             .diskCache {
-                DiskCache.Builder()
-                    .directory(path)
-                    .maxSizePercent(0.1)
-                    .build();
+                if(save_local_external){
+                    path = this.context!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.path.toPath();
+                    DiskCache.Builder()
+                        .directory(path)
+                        .maxSizePercent(0.5)
+                        .build();
+                }else{
+                    DiskCache.Builder()
+                        .directory(path)
+                        .maxSizePercent(0.1)
+                        .build();
+                }
             }
             .networkObserverEnabled(false)
             .build();

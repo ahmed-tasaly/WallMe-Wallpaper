@@ -588,12 +588,8 @@ class Image_Activity(): AppCompatActivity(){
 
             }
         }
-            var path: Path?;
-            if (save_local_external){
-                path = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.path.toPath()
-            }else{
-                path = this.cacheDir.resolve("imagesaved").path.toPath();
-            }
+            var path = this.cacheDir.resolve("imagesaved").path.toPath();
+
 
             //set Image Loader
             imageloader = ImageLoader.Builder(this)
@@ -612,10 +608,18 @@ class Image_Activity(): AppCompatActivity(){
                     }
                 }
                 .diskCache {
-                    DiskCache.Builder()
-                        .maxSizeBytes(1024 * 1024 * 500)//saved images
-                        .directory(path)
-                        .build()
+                    if (save_local_external){
+                        path = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.path.toPath()
+                        DiskCache.Builder()
+                            .maxSizePercent(0.4)
+                            .directory(path)
+                            .build()
+                    }else{
+                        DiskCache.Builder()
+                            .maxSizePercent(0.1)
+                            .directory(path)
+                            .build()
+                    }
                 }
                 .okHttpClient {
                     OkHttpClient().newBuilder()

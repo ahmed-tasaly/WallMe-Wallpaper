@@ -6,8 +6,8 @@ import android.os.IBinder
 
 class WallpaperChangerService : Service() {
 
-    //TODO add light / black theme support.
     override fun onBind(intent: Intent): IBinder {
         TODO("Return the communication channel to the service.")
     }
+
 }
