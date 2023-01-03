@@ -83,6 +83,10 @@ since the app is still in development the ui may change :)
 - [x] add the ability to add images from the device to the favorite page
 - [ ] add functionality to the auto wallpaper changer to change the wallpaper based on android theme (dark/light).
 
+</br>
+
+## Ideas
+    - set html as wallpaper
 
 
 
