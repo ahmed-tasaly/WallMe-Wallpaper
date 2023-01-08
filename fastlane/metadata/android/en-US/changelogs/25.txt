@@ -1,0 +1,4 @@
+release 2.52:
+    - fixed subreddits being deactivated 
+    - fixed other small bugs
+    

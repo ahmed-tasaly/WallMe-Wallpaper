@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.res.ColorStateList
+import android.util.Log
 
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +29,7 @@ class list_item_adabter(var NameList: MutableList<Subreddit>,var onclick:Onclick
 
     override fun onBindViewHolder(holder: Item, position: Int) {
         holder.textTitle.setText(NameList[position].Subreddit_Name);
+        holder.switchActive.isChecked = NameList[position].Active;
 
         holder.blockbutton.setOnClickListener {
             AlertDialog.Builder(holder.textTitle.context)
@@ -58,9 +60,10 @@ class list_item_adabter(var NameList: MutableList<Subreddit>,var onclick:Onclick
                 .show();
         }
 
-        holder.switchActive.isChecked = NameList[position].Active;
+        //holder.switchActive.isChecked = NameList[position].Active;
         holder.switchActive.setOnCheckedChangeListener { compoundButton, isactive ->
-            NameList[position].Active = isactive;
+            NameList[holder.layoutPosition].Active = isactive;
+            Log.d("NameList",isactive.toString());
         }
 
         //viewed on reddit  filter
