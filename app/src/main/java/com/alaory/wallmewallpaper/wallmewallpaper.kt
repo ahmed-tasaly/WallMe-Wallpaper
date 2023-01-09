@@ -75,13 +75,15 @@ class wallmewallpaper : Application() {
 
 
         val executor: ExecutorService = Executors.newFixedThreadPool(2);
+        val EBACKUP_CODE = 81723;
+        val RBACKUP_CODE = 81722;
     }
 
     override fun onCreate() {
         super.onCreate();
 
-
+        Reddit_Api.showfav = getSharedPreferences("settings",Context.MODE_PRIVATE).getBoolean("show_fav",true);
         doFullscreen = this.getSharedPreferences("settings", Context.MODE_PRIVATE).getBoolean("fullscreenapp",true);
-        Reddit_Api.prefswords = this.getSharedPreferences("reddit_source_block",Context.MODE_PRIVATE).getString("sources","").toString();
+        Reddit_Api.prefswords = this.getSharedPreferences("reddit_source_block",Context.MODE_PRIVATE).getString("sources","animewallpaper").toString();
     }
 }

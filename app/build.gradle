@@ -13,8 +13,8 @@ android {
         applicationId "com.alaory.wallmewallpaper"
         minSdk 24
         targetSdk 32
-        versionCode 22
-        versionName "2.41"
+        versionCode 26
+        versionName "2.53"
 
         buildConfigField "String", "API_KEY_Base",localProperties['Base64_API_KEY']
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -39,6 +39,9 @@ android {
 }
 
 dependencies {
+
+    //zip
+    implementation 'net.lingala.zip4j:zip4j:2.11.2'
 
     //exoplayer
     implementation 'com.google.android.exoplayer:exoplayer:2.18.1'

@@ -60,6 +60,7 @@ import okhttp3.Response
 import okhttp3.internal.toHexString
 import okio.Path
 import okio.Path.Companion.toPath
+import kotlin.random.Random
 
 class Image_Activity(): AppCompatActivity(){
 
@@ -587,12 +588,8 @@ class Image_Activity(): AppCompatActivity(){
 
             }
         }
-            var path: Path?;
-            if (save_local_external){
-                path = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.path.toPath()
-            }else{
-                path = this.cacheDir.resolve("imagesaved").path.toPath();
-            }
+            var path = this.cacheDir.resolve("imagesaved").path.toPath();
+
 
             //set Image Loader
             imageloader = ImageLoader.Builder(this)
@@ -611,10 +608,18 @@ class Image_Activity(): AppCompatActivity(){
                     }
                 }
                 .diskCache {
-                    DiskCache.Builder()
-                        .maxSizeBytes(1024 * 1024 * 500)//saved images
-                        .directory(path)
-                        .build()
+                    if (save_local_external){
+                        path = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.path.toPath()
+                        DiskCache.Builder()
+                            .maxSizePercent(0.4)
+                            .directory(path)
+                            .build()
+                    }else{
+                        DiskCache.Builder()
+                            .maxSizePercent(0.1)
+                            .directory(path)
+                            .build()
+                    }
                 }
                 .okHttpClient {
                     OkHttpClient().newBuilder()
@@ -844,22 +849,29 @@ class Image_Activity(): AppCompatActivity(){
 
 
         saveWallpaperButton?.setOnClickListener {
-            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
-                if(checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    var accessstorage = 1;
-                    requestPermissions(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), accessstorage)
+            if(Uri.parse(myDataLocal!!.Image_url).scheme == "content"){
+                val speechlist = arrayOf("why are you saving an already saved wallpaper?",
+                "you know its already on your device right?","look between you and me. i think this wallpaper doesn't need to be saved :)")
+                val ranWord = (0..speechlist.lastIndex).random();
+                Toast.makeText(this,speechlist[ranWord],Toast.LENGTH_LONG).show();
+            }else{
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
+                    if(checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        var accessstorage = 1;
+                        requestPermissions(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), accessstorage)
+                    }else{
+                        if(loaded) {
+                            saveMedia(this, MediaPath!!, myDataLocal!!.type, myDataLocal!!);
+                        }else{
+                            Toast.makeText(this,"Please Wait for the Wallpaper to load",Toast.LENGTH_LONG).show();
+                        }
+                    }
                 }else{
                     if(loaded) {
                         saveMedia(this, MediaPath!!, myDataLocal!!.type, myDataLocal!!);
                     }else{
                         Toast.makeText(this,"Please Wait for the Wallpaper to load",Toast.LENGTH_LONG).show();
                     }
-                }
-            }else{
-                if(loaded) {
-                    saveMedia(this, MediaPath!!, myDataLocal!!.type, myDataLocal!!);
-                }else{
-                    Toast.makeText(this,"Please Wait for the Wallpaper to load",Toast.LENGTH_LONG).show();
                 }
             }
         };

@@ -1,4 +1,4 @@
-package com.alaory.wallmewallpaper
+package com.alaory.wallmewallpaper.backgroundService
 
 
 import android.app.WallpaperManager
@@ -21,6 +21,8 @@ import coil.ImageLoader
 import coil.disk.DiskCache
 import coil.request.ImageRequest
 import coil.target.Target
+import com.alaory.wallmewallpaper.UrlType
+import com.alaory.wallmewallpaper.database
 import kotlin.random.Random
 
 class wallpaperChanger_Worker(val context: Context, param : WorkerParameters) : CoroutineWorker(context,param) {

@@ -104,7 +104,6 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
             favoriteList_adabter!!.notifyDataSetChanged();
             favoriteList_recycler!!.invalidate();
         }
-        Log.d("lastItemPost","list : ${favoritelist.last().Image_url}  adab: ${favoriteList_adabter!!.listPosts.last().Image_url}");
     }
 
 

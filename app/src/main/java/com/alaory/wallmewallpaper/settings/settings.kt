@@ -5,9 +5,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,13 +12,11 @@ import android.widget.*
 import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.work.*
 import com.alaory.wallmewallpaper.MainActivity
 import com.alaory.wallmewallpaper.R
+import com.alaory.wallmewallpaper.api.Reddit_Api
 import com.alaory.wallmewallpaper.wallmewallpaper
-import com.alaory.wallmewallpaper.wallpaperChanger_Worker
 import com.google.android.material.switchmaterial.SwitchMaterial
-import java.util.concurrent.TimeUnit
 
 class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
 
@@ -40,7 +35,12 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
     var clearCache : LinearLayout? = null;
     var clearImages : LinearLayout? = null;
 
+    //post list settings
+    var Show_favorite_insearch : SwitchMaterial? = null;
+
     //about
+    var export_data : TextView? = null;
+    var import_data : TextView? = null;
     var github : TextView? = null;
     var supportMe : TextView? = null;
 
@@ -68,9 +68,13 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
         clearCache = layout.findViewById(R.id.clear_cache_settings);
         clearImages = layout.findViewById(R.id.clear_saved_images_settings);
 
+        Show_favorite_insearch = layout.findViewById(R.id.Switch_favorite_settings)
+
 
         github = layout.findViewById(R.id.github_settings);
         supportMe = layout.findViewById(R.id.support_settings);
+        export_data = layout.findViewById(R.id.Export_settings_btn)
+        import_data = layout.findViewById(R.id.Import_settings_btn)
 
 
 
@@ -139,6 +143,15 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
 
 
 
+        Show_favorite_insearch?.let {
+            it.isChecked = !requireContext().getSharedPreferences("settings",Context.MODE_PRIVATE).getBoolean("show_fav",true);
+            it.setOnCheckedChangeListener { compoundButton, ischecked ->
+                requireContext().getSharedPreferences("settings",Context.MODE_PRIVATE).edit().putBoolean("show_fav",!ischecked).apply();
+                Reddit_Api.showfav = !ischecked;
+            }
+        }
+
+
 
 
 
@@ -154,6 +167,34 @@ class settings( menuChange : MainActivity.MenuChange? = null) : Fragment() {
                 requireContext().startActivity(Intent(Intent.ACTION_VIEW,uri));
             }
         }
+
+        import_data?.let {
+            it.setOnClickListener{
+                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+                    .addCategory(Intent.CATEGORY_OPENABLE)
+                    .setType("application/zip")
+                    .putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/zip"))//file type
+                    .addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)//we get the right to read the file after restart
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+                requireActivity().startActivityForResult(intent,wallmewallpaper.RBACKUP_CODE);
+            }
+        }
+
+
+
+
+        export_data?.let {
+            it.setOnClickListener{
+                val intentExport = Intent(Intent.ACTION_CREATE_DOCUMENT)
+                    .setType("application/zip")
+                    .putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/zip"))
+                    .putExtra(Intent.EXTRA_TITLE,"AppBackup");
+                requireActivity().startActivityForResult(intentExport,wallmewallpaper.EBACKUP_CODE);
+            }
+        }
+
+
 
         return layout;
     }

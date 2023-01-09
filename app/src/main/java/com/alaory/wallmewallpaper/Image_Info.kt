@@ -39,3 +39,8 @@ data class Image_Info(
     var type : UrlType = UrlType.Image,
 ) {}
 
+data class Subreddit (
+        val Subreddit_Name: String,
+        var Active: Boolean = true
+){}
+

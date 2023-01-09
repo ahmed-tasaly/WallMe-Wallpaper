@@ -46,17 +46,8 @@ and at the same time have a lot of SFW wallpaper and with a good image quality w
 
 </div>
 
-### current sources 
+    Currenty the app support two sources Wallhaven and Reddit if you have a source that doesnt require an api key please notify me.
 
-Reddit source:
-
-    you can add subreddit's name to view it's posts and set them as wallpaper 
-    you can change the list mode from Hot New and Top, you can also change image preview quality for faster image loading  
-
-Wallhaven source:
-
-    you can add tags to your home page to view images of your type, 
-    every image contains tags that you can view when you click on them 
 
 
 
@@ -84,17 +75,18 @@ since the app is still in development the ui may change :)
 
 
 - [x] add favorite page
-- [x] add progress bar when downloading an image
+- [x] add a progress bar when downloading an image
 - [x] add landscape and portrait mode 
 - [x] add auto wallpaper changer with the user configuration //still work in progress.
 - [x] add support for gif wallpapers
 - [x] add support for video wallpapers
 - [x] add the ability to add images from the device to the favorite page
 - [ ] add functionality to the auto wallpaper changer to change the wallpaper based on android theme (dark/light).
-- [ ] add user's posts page
-- [ ] add more UI I SAID MORE
-- [ ] more plans coming
-- [ ] go to sleep
+
+</br>
+
+## Ideas
+    - set html as wallpaper
 
 
 

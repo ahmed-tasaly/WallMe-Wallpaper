@@ -2,6 +2,8 @@ package com.alaory.wallmewallpaper.api
 
 import android.util.Log
 import com.alaory.wallmewallpaper.*
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.withTimeout
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONException
@@ -40,7 +42,6 @@ class Reddit_Api_Contorller() {
 
     //time period
     var timeperiod = "&t=all";
-
 
 
     val TAG = "Reddit_Api";
@@ -92,6 +93,7 @@ class Reddit_Api_Contorller() {
 
     fun get_allposts_andGive(callback_update: (Status: Int) -> Unit = {}) {
         for (subreddit in Subreddits) {
+
             subreddit.listMode = listMode;
             subreddit.api_key = api_key;
             subreddit.reddit = reddit;
@@ -99,8 +101,12 @@ class Reddit_Api_Contorller() {
             subreddit.timeperiod = timeperiod;
             subreddit.PostRequestNumber = PostRequestNumber;
 
+
+            //loop threw all subreddits
+
             subreddit.get_subreddit_posts { posts, Status ->
                 if(Status == 400){
+                    //try again
                     subreddit.get_subreddit_posts { Posts, status ->
                         reddit_global_posts += Posts;
                         last_index = reddit_global_posts.size;
@@ -111,9 +117,9 @@ class Reddit_Api_Contorller() {
                     last_index = reddit_global_posts.size;
                     callback_update(Status);
                 }
-
             }
         }
+
     }
 
 
@@ -177,9 +183,12 @@ class Reddit_Api(subredditname: String) {
         var redditcon :  Reddit_Api_Contorller? = null;
         var prefswords = "";
 
+        //show fav
+        var showfav = true;
+
         fun filter_words(word : String): Boolean{
             val word = word.lowercase();
-            val filterWords: Array<String> = arrayOf("hentai","horny","fap","shit","cursed","ass","semen","porn","cum","nud","fuck","pornhub","dick","blowjob","pussy","cunt","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","gods","lgb","sex","rainbow","pride","furry","jerk","waifu")
+            val filterWords: Array<String> = arrayOf("hentai","horny","bitch","fap","shit","cursed","ass","semen","porn","cum","nud","fuck","pornhub","dick","blowjob","pussy","cunt","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","gods","lgb","sex","rainbow","pride","furry","jerk","waifu","deadbedrooms","askwomen","cuteanime","animegirls","unpopularopinion","funny","conspiracy","wtf","TwoXChromosomes","exmormon","todayilearned","tooafraidtoask","4chan","worldnews","askmen","mensrights","atheism","jokes","news","teenagers","showerthoughts","politics","relationship_advice","askreddit","relationships")
 
             for(i in filterWords)
                 if(word.contains(i))
@@ -190,14 +199,14 @@ class Reddit_Api(subredditname: String) {
 
         fun ban_subreddits(subname : String): Boolean{
             val word = subname.lowercase();
-            val filterWords: Array<String> = arrayOf("deadbedrooms","askwomen","cuteanime","animegirls","unpopularopinion","funny","conspiracy","wtf","TwoXChromosomes","exmormon","todayilearned","tooafraidtoask","4chan","worldnews","askmen","mensrights","atheism","jokes","news","teenagers","showerthoughts","politics","relationship_advice","askreddit","relationships");
+            val filterWords: Array<String> = arrayOf("animewallpaper","animewallpapers");
 
             for(i in filterWords)
-                if(word.contains(i.lowercase()))
+                if(word.lowercase() == (i.lowercase()))
                     return true
 
             for(i in prefswords.split(","))
-                if(word.contains(i.lowercase()) && i.isNotEmpty())
+                if(word.lowercase() == i.lowercase())
                     return true
 
 
@@ -293,12 +302,15 @@ class Reddit_Api(subredditname: String) {
                                         dataJson = dataJson.getJSONArray("crosspost_parent_list").getJSONObject(0);
                                 }
 
+
+                                val posturl = dataJson.getString("url");
+
                                 for (j in 0 until subreddit_posts_list.size) {
-                                    if (dataJson.getString("name") == subreddit_posts_list.get(j).Image_name)
+                                    if (posturl == subreddit_posts_list.get(j).Image_url)
                                         found = true;
                                 }
                                 for (p in database.imageblock_list) {
-                                    if (dataJson.getString("name") == p.Image_name)
+                                    if (posturl == p.Image_url)
                                         found = true;
                                 }
 
@@ -308,11 +320,24 @@ class Reddit_Api(subredditname: String) {
                                     continue;
 
                                 //check if its a valid post that contains a wallpaper
-                                val lastchars = dataJson.getString("url").reversed().substring(0,5);
+
+                                val lastchars = posturl.reversed().substring(0,5);
                                 val is_thumbnail_notvalid = dataJson.getString("thumbnail").isNullOrEmpty()
                                 val is_media_notvalid =  dataJson.getString("media") == "null"
                                 val is_media_metadata_notvalid : JSONObject? = dataJson.optJSONObject("media_metadata");
                                 if((!lastchars.contains('.') && is_thumbnail_notvalid  && is_media_notvalid && is_media_metadata_notvalid == null) || lastchars.get(0) == '/')
+                                    continue;
+
+                                var isfavored_skip = false;
+                                if(!showfav){
+                                    for(post in database.imageinfo_list){
+                                        if(post.Image_url == posturl){
+                                            isfavored_skip = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if(isfavored_skip)
                                     continue;
                                 //----------------------------------------------
                                 //post is worth adding

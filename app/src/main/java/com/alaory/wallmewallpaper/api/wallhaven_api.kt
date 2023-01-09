@@ -88,12 +88,23 @@ class wallhaven_api {
                                 if (p.Image_name == postInfo.getString("id"))
                                     found = true;
                             }
+
+                            val postImageUrl = postInfo.getJSONObject("thumbs").getString("original");
+
+                            if(!Reddit_Api.showfav){
+                                for(postFav in database.imageinfo_list)
+                                    if(postImageUrl  == postFav.Image_url){
+                                        found = true;
+                                        break;
+                                    }
+                            }
+
                             if (found)
                                 continue;
 
                             post = Image_Info(
                                 postInfo.getString("path"),
-                                postInfo.getJSONObject("thumbs").getString("original"),
+                                postImageUrl,
                                 postInfo.getString("id"),
                                 "",
                                 "",
@@ -249,8 +260,99 @@ class wallhaven_api {
     }
 
     //for user post page
-    fun userPosts(){
+    fun userPosts(UserName : String,callback: () -> Unit = {},onfailercallback: () -> Unit = {}){
+        var Tags_String = "&q=";
+        Tags_String += "@$UserName";
 
+        val url_homepage = "https://wallhaven.cc/api/v1/search?page=${currentPage}&purity=100$sorting$ratio$ordering$timeperiod$categories${if(Tags_String != "&q=")Tags_String else ""}";
+
+        val homepagereq = Request.Builder()
+            .url(url_homepage)
+            .build();
+
+        Log.i("wallhaven_api","Home page Url $url_homepage")
+
+
+        wallhavenRequest.newCall(homepagereq).enqueue(object : Callback{
+
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e("wallhaven_api",e.toString());
+                onfailercallback();
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                try {
+                    val body = response.body!!.string();
+
+                    val responseJson = JSONObject(body);
+                    val data = responseJson.getJSONArray("data");
+
+                    Log.i("wallhaven_api",body);
+
+                    var TempList : Array<Image_Info> = emptyArray();
+
+                    for (i in 0 until data.length()) {
+                        try {
+                            var post: Image_Info;
+                            val postInfo = data.getJSONObject(i);
+
+                            var found = false;
+                            val postImageUrl = postInfo.getJSONObject("thumbs").getString("original");
+
+                            //check for post in temp list
+                            for (j in wallhaven_homepage_posts) {
+                                if (j.Image_url == postImageUrl)
+                                    found = true;
+                            }
+                            //check for post in block list
+                            for(p in database.imageblock_list){
+                                if (p.Image_url == postImageUrl)
+                                    found = true;
+                            }
+
+                            //check if the post is favorite
+                            if(!Reddit_Api.showfav){
+                                for(postFav in database.imageinfo_list)
+                                    if(postImageUrl  == postFav.Image_url){
+                                        found = true;
+                                        break;
+                                    }
+                            }
+
+                            if (found)
+                                continue;
+
+                            post = Image_Info(
+                                postInfo.getString("path"),
+                                postImageUrl,
+                                postInfo.getString("id"),
+                                "",
+                                "",
+                                postInfo.getString("url"),
+                                Image_Ratio(postInfo.getString("resolution"))
+                            );
+                            TempList += post;
+                        } catch (e: JSONException) {
+                            Log.e("wallhaven_api", "err: ${e.toString()} url: $body");
+                        }
+                    }
+                    if(TempList.size > 0){
+                        currentPage++;
+                        lastindex = wallhaven_homepage_posts.size;
+                        wallhaven_homepage_posts += TempList;
+                        callback();
+                    }else{
+                        onfailercallback();
+                    }
+
+                }
+                catch (e: Exception){
+                    onfailercallback();
+                    Log.e("wallhaven_api",e.toString());
+                }
+            }
+
+        })
     }
 
 

@@ -10,11 +10,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.work.*
 import com.alaory.wallmewallpaper.R
-import com.alaory.wallmewallpaper.settings.settings
-import com.alaory.wallmewallpaper.wallmewallpaper
-import com.alaory.wallmewallpaper.wallpaperChanger_Worker
+import com.alaory.wallmewallpaper.backgroundService.wallpaperChanger_Worker
+import com.google.android.material.switchmaterial.SwitchMaterial
 import java.util.concurrent.TimeUnit
 
 
@@ -24,23 +25,25 @@ class wallpaper_changer : Fragment() {
 
 
 
-
     companion object{
         var time: String = "15";
         var timecountSelection: Int = 0;
         var screenSelection: Int = 0;
+        var enableAutoWallpaper = true;
 
         fun saveprefs(context: Context){
             val preferenceManager = context.getSharedPreferences("settings",Context.MODE_PRIVATE);
             preferenceManager.edit().putString("timecount",time).apply();
             preferenceManager.edit().putInt("timecountSelection",timecountSelection).apply();
             preferenceManager.edit().putInt("screenSelection",screenSelection).apply();
+            preferenceManager.edit().putBoolean("shouldEnable",enableAutoWallpaper).apply();
         }
         fun loadprefs(context: Context){
             val preferenceManager = context.getSharedPreferences("settings",Context.MODE_PRIVATE);
             time = preferenceManager.getString("timecount","15")!!.toString();
             timecountSelection = preferenceManager.getInt("timecountSelection",0);
             screenSelection = preferenceManager.getInt("screenSelection",0);
+            enableAutoWallpaper = preferenceManager.getBoolean("shouldEnable",false);
         }
 
 
@@ -64,8 +67,18 @@ class wallpaper_changer : Fragment() {
         val timecount : Spinner = WallpaperChanger_Layout.findViewById(R.id.wallpaper_changer_time_spinner);
         val screenFlag :  Spinner = WallpaperChanger_Layout.findViewById(R.id.wallpaper_changer_time_spinner_forScreen);
 
+        //enable/disable
+        var enableautowallpaper : SwitchMaterial = WallpaperChanger_Layout.findViewById(R.id.wallpaper_changer_title);
+        var autowall_container : ConstraintLayout = WallpaperChanger_Layout.findViewById(R.id.autowallpaper_containter);
 
+        autowall_container.isVisible = enableAutoWallpaper;
+        enableautowallpaper.isChecked = enableAutoWallpaper;
 
+        enableautowallpaper.setOnCheckedChangeListener { compoundButton, checked ->
+            enableAutoWallpaper = checked;
+            autowall_container.isVisible = enableAutoWallpaper;
+            saveprefs(compoundButton.context)
+        }
 
 
 
