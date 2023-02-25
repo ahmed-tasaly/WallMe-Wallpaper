@@ -34,6 +34,7 @@ import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.alaory.wallmewallpaper.*
+import com.google.android.exoplayer2.util.UriUtil
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import okio.Path
 import okio.Path.Companion.toPath
@@ -222,6 +223,7 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                     var postdrawable : Drawable? = null;
                     if(uriInfo.scheme == "content"){
                         val contentres = this.context?.contentResolver!!;
+
                         when(listPosts[holder.layoutPosition].type){
                             UrlType.Video ->{
                                 if(Build.VERSION.SDK_INT > 28){
@@ -239,22 +241,37 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                                         }
                                     }
                                 }else{//is sdk 28 and below
-                                    val mediaret = MediaMetadataRetriever();
-                                    mediaret.setDataSource(contentres.openFileDescriptor(uriInfo,"r")!!.fileDescriptor);
+                                    try {
+                                        val mediaret = MediaMetadataRetriever();
+                                        mediaret.setDataSource(contentres.openFileDescriptor(uriInfo,"r")!!.fileDescriptor);
 
-                                    postbitmap = mediaret.frameAtTime
+                                        postbitmap = mediaret.frameAtTime
+                                    }catch (ee : Exception){
+                                        Log.e(this@Image_list_adapter::class.java.simpleName,ee.toString());
+                                    }
+
                                 }
 
                             }
                             else ->{//is a gif or an image
-                                postdrawable = Drawable.createFromStream(contentres.openInputStream(uriInfo),listPosts[holder.layoutPosition].Image_name);
-                                (postdrawable as? Animatable)?.start();
+                                try {
+                                    postdrawable = Drawable.createFromStream(contentres.openInputStream(uriInfo),listPosts[holder.layoutPosition].Image_name);
+
+                                    (postdrawable as? Animatable)?.start();
+                                }catch (ee : Exception){
+                                    Log.e(this@Image_list_adapter::class.java.simpleName,ee.toString());
+                                }
+
                             }
                         }
                     }else{//is a "file" scheme
-                        val inputstreamfile = uriInfo.toFile().inputStream();
-                        postbitmap = BitmapFactory.decodeStream(inputstreamfile);
-                        inputstreamfile.close();
+                        try{
+                            val inputstreamfile = uriInfo.toFile().inputStream();
+                            postbitmap = BitmapFactory.decodeStream(inputstreamfile);
+                            inputstreamfile.close();
+                        }catch (ee : Exception){
+                            Log.e(this@Image_list_adapter::class.java.simpleName,ee.toString());
+                        }
                     }
                     updateCallback(postbitmap,postdrawable);
                 }
