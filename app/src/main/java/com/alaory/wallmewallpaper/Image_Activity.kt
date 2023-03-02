@@ -243,9 +243,14 @@ class Image_Activity(): AppCompatActivity(){
             }
 
             url_post?.let{
-                it.setOnClickListener {
-                    val linkuri = Uri.parse("https://${myDataLocal!!.post_url}");
-                    this@Image_Activity.startActivity(Intent(Intent.ACTION_VIEW,linkuri));
+                var uriImage = Uri.parse(myDataLocal!!.Image_url);
+                if(uriImage.scheme == "content" || uriImage.scheme == "file"){
+                    it.visibility = View.GONE;
+                }else{
+                    it.setOnClickListener {
+                        val linkuri = Uri.parse("https://${myDataLocal!!.post_url}");
+                        this@Image_Activity.startActivity(Intent(Intent.ACTION_VIEW,linkuri));
+                    }
                 }
             }
 
