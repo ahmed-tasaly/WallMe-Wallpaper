@@ -765,9 +765,13 @@ class Image_Activity(): AppCompatActivity(){
                                 })
                                 repeatMode = Player.REPEAT_MODE_ONE
 
+                                try{
+                                    val mediaItem = MediaItem.fromUri(Wallpaper_Uri);
+                                    exoPlayer.setMediaItem(mediaItem);
+                                }catch(e: Exception){
+                                    Log.e(this::class.java.simpleName,e.toString());
+                                }
 
-                                val mediaItem = MediaItem.fromUri(Wallpaper_Uri);
-                                exoPlayer.setMediaItem(mediaItem);
 
 
                                 volume = 0f;
@@ -779,13 +783,19 @@ class Image_Activity(): AppCompatActivity(){
                             }
                         }
                         else ->{
-                            val cont = this.contentResolver.openInputStream(Wallpaper_Uri);
-                            bitmapfromfile = Drawable.createFromStream(cont,myDataLocal!!.Image_name);
-                            mybitmap = bitmapfromfile!!.toBitmap();
-                            Full_image!!.setImageDrawable(bitmapfromfile);
-                            (bitmapfromfile as? Animatable)?.start();
-                            myDataLocal!!.imageRatio =
-                                Image_Ratio(mybitmap!!.width, mybitmap!!.height);
+                            try {
+                                val cont = this.contentResolver.openInputStream(Wallpaper_Uri);
+                                bitmapfromfile =
+                                    Drawable.createFromStream(cont, myDataLocal!!.Image_name);
+                                mybitmap = bitmapfromfile!!.toBitmap();
+                                Full_image!!.setImageDrawable(bitmapfromfile);
+                                (bitmapfromfile as? Animatable)?.start();
+                                myDataLocal!!.imageRatio =
+                                    Image_Ratio(mybitmap!!.width, mybitmap!!.height);
+                            }catch (e:Exception){
+                                Log.e(this::class.java.simpleName,e.toString());
+                            }
+
                         }
                     }
                 }
