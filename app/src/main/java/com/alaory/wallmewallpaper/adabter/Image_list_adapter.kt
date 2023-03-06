@@ -38,6 +38,7 @@ import com.google.android.exoplayer2.util.UriUtil
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import okio.Path
 import okio.Path.Companion.toPath
+import kotlin.math.max
 
 
 class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : OnImageClick): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -253,7 +254,39 @@ class Image_list_adapter(var listPosts: MutableList<Image_Info>, onimageclick : 
                                 }
 
                             }
-                            else ->{//is a gif or an image
+                            UrlType.Image -> {
+                                try {
+                                    //get image info
+                                    val bitmapWall = contentres.openFileDescriptor(uriInfo,"r")!!.fileDescriptor;
+                                    val bitmapOptions = BitmapFactory.Options().apply {
+                                        inJustDecodeBounds = true;//dont load bitmap
+                                    }
+
+                                    BitmapFactory.decodeFileDescriptor(bitmapWall,null,bitmapOptions);
+                                    val deviceMaxWidth = context!!.resources.displayMetrics.widthPixels / 4;
+                                    val deviceMaxHeight = context!!.resources.displayMetrics.heightPixels / 4;
+                                    val imageWidth = bitmapOptions.outWidth;
+                                    val imageHeight = bitmapOptions.outHeight;
+                                    val ratio = max(imageWidth/deviceMaxWidth,imageHeight/deviceMaxHeight);
+
+
+                                    if(ratio > 2){//load smaller image
+
+                                        BitmapFactory.Options().run {
+                                            inSampleSize = ratio;
+                                            BitmapFactory.decodeFileDescriptor(bitmapWall,null,this);
+                                        }.run {
+                                            postbitmap = this;
+
+                                        }
+                                    }else{
+                                        postbitmap = BitmapFactory.decodeFileDescriptor(bitmapWall);
+                                    }
+                                }catch (e:Exception){
+                                    Log.e(this::class.java.simpleName,e.toString());
+                                }
+                            }
+                            else ->{//gif
                                 try {
                                     postdrawable = Drawable.createFromStream(contentres.openInputStream(uriInfo),listPosts[holder.layoutPosition].Image_name);
 
