@@ -2,6 +2,8 @@ package com.alaory.wallmewallpaper.wallpaper
 
 
 
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.graphics.Movie
 import android.net.Uri
 import android.os.Build
@@ -224,6 +226,54 @@ class livewallpaper : WallpaperService() {
         override fun onDestroy() {
             super.onDestroy();
             Log.d("DestoryLog",this::class.java.simpleName);
+        }
+    }
+
+    //image engine
+    //   ||
+    //   ||
+    //   ||
+    //  \||/
+    //   \/
+
+    inner class imageengine : Engine(){
+        val prefs = this@livewallpaper.getSharedPreferences("LiveWallpaper",0);
+        val imagepath = prefs.getString("Video_Path","")!!.toString();
+        val imageUri = Uri.parse(imagepath);
+        override fun onCreate(surfaceHolder: SurfaceHolder?) {
+            super.onCreate(surfaceHolder)
+        }
+
+        override fun onSurfaceCreated(holder: SurfaceHolder?) {
+            super.onSurfaceCreated(holder)
+            val canvas  = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            {  holder?.lockHardwareCanvas(); } else { holder?.lockCanvas(); }
+            when (imageUri.scheme){
+                "content" -> {
+                    val  contentstream = this@livewallpaper.contentResolver.openInputStream(imageUri);
+                    val image = BitmapFactory.decodeStream(contentstream);
+                    canvas?.setBitmap(image);
+
+                }
+                else -> {
+                    val image = BitmapFactory.decodeFile(imagepath);
+                    canvas?.setBitmap(image);
+                }
+            }
+            holder!!.unlockCanvasAndPost(canvas);
+        }
+
+        override fun onSurfaceChanged(
+            holder: SurfaceHolder?,
+            format: Int,
+            width: Int,
+            height: Int
+        ) {
+            super.onSurfaceChanged(holder, format, width, height)
+        }
+
+        override fun onSurfaceDestroyed(holder: SurfaceHolder?) {
+            super.onSurfaceDestroyed(holder)
         }
     }
 

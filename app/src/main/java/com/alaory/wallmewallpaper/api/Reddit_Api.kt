@@ -188,7 +188,7 @@ class Reddit_Api(subredditname: String) {
 
         fun filter_words(word : String): Boolean{
             val word = word.lowercase();
-            val filterWords: Array<String> = arrayOf("hentai","horny","bitch","fap","shit","cursed","ass","semen","porn","cum","nud","fuck","pornhub","dick","blowjob","pussy","cunt","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","gods","lgb","sex","rainbow","pride","furry","jerk","waifu","deadbedrooms","askwomen","cuteanime","animegirls","unpopularopinion","funny","conspiracy","wtf","TwoXChromosomes","exmormon","todayilearned","tooafraidtoask","4chan","worldnews","askmen","mensrights","atheism","jokes","news","teenagers","showerthoughts","politics","relationship_advice","askreddit","relationships")
+            val filterWords: Array<String> = arrayOf("hentai","horny","bitch","fap","shit","cursed","ass","semen","porn","cum","nud","fuck","pornhub","dick","blowjob","pussy","cunt","nsfw","adult","gender","gay","demon","summon","cross","bible","chris","lgbt","gods","lgb","sex","rainbow","pride","furry","jerk","waifu","deadbedrooms","askwomen","cuteanime","animegirls","unpopularopinion","funny","nun","girl","women","lady","conspiracy","wtf","TwoXChromosomes","exmormon","todayilearned","tooafraidtoask","4chan","worldnews","askmen","mensrights","atheism","jokes","news","teenagers","showerthoughts","politics","relationship_advice","askreddit","relationships")
 
             for(i in filterWords)
                 if(word.contains(i))
@@ -240,7 +240,7 @@ class Reddit_Api(subredditname: String) {
 
 
 
-    fun get_subreddit_posts(callback_update: (list_data : Array<Image_Info>, Status : Int) -> Unit= { _, _->}){
+    fun get_subreddit_posts(callback_update: (list_data : MutableList<Image_Info>, Status : Int) -> Unit= { _, _->}){
 
             Log.i("Reddit_Api", api_key)
             val url: String;
@@ -267,7 +267,7 @@ class Reddit_Api(subredditname: String) {
                 lateinit var respond_json: JSONObject;
                 override fun onFailure(call: Call, e: IOException) {
                     Log.i("Reddit_Api","error $e");
-                    callback_update(emptyArray(),400);
+                    callback_update(emptyList<Image_Info>().toMutableList(),400);
                 }
 
                 override fun onResponse(call: Call, response: Response) {
@@ -282,7 +282,7 @@ class Reddit_Api(subredditname: String) {
                         val children_json = respond_json.getJSONObject("data").getJSONArray("children");
                         //----------------------
                         // temp array to add data to
-                        var temp_list: Array<Image_Info> = emptyArray();
+                        var temp_list: MutableList<Image_Info> = emptyList<Image_Info>().toMutableList();
 
                         for (i in 0 until children_json.length()) {
                             try {
@@ -375,16 +375,27 @@ class Reddit_Api(subredditname: String) {
                                             Log.i("Reddit_Api", "Gallery found")
 
 
+
                                             val ImageRatio = Image_Ratio(
                                                 current_metadata.getJSONArray("p")
                                                 .getJSONObject(previewQulaity).getInt("x"),
                                                 current_metadata.getJSONArray("p")
                                                     .getJSONObject(previewQulaity).getInt("y"))
 
+                                            val postImageUrl = current_metadata.getJSONObject("s").getString("u")
+                                                .replace("amp;", "");
+
+                                            var foundgallery = false;
+                                            for (p in database.imageblock_list) {
+                                                if (postImageUrl == p.Image_url)
+                                                    foundgallery = true;
+                                            }
+                                            if(foundgallery){
+                                                continue;//skip image
+                                            }
 
                                             val imageInfo_gallery: Image_Info = Image_Info(
-                                                current_metadata.getJSONObject("s").getString("u")
-                                                    .replace("amp;", ""),
+                                                postImageUrl,
                                                 current_metadata.getJSONArray("p")
                                                     .getJSONObject(previewQulaity).getString("u")
                                                     .replace("amp;", ""),
@@ -394,7 +405,8 @@ class Reddit_Api(subredditname: String) {
                                                 "reddit.com${dataJson.getString("permalink")}",
                                                 ImageRatio
                                             );
-                                            temp_list += imageInfo_gallery;
+                                            temp_list.add(imageInfo_gallery);
+
                                         } catch (e: JSONException) {
                                             Log.e("Reddit_Api", "gallary error: ${e.toString()}, Url is: $url")
                                         }
@@ -498,7 +510,7 @@ class Reddit_Api(subredditname: String) {
 
 
 
-                                temp_list += one_post;
+                                temp_list.add(one_post);
                             }
                             catch (e:Exception ){
                                 Log.d("Reddit_Api","Reddit_Api getting one post error")
@@ -507,13 +519,14 @@ class Reddit_Api(subredditname: String) {
                         if(temp_list.isNotEmpty()){
                             subreddit_posts_list += temp_list;
                             callback_update(temp_list,200);
+                            temp_list.clear();
                         }else{
 
-                            callback_update(emptyArray(),400);
+                            callback_update(emptyList<Image_Info>().toMutableList(),400);
                         }
                     }
                     catch (e : JSONException){
-                        callback_update(emptyArray(),400);
+                        callback_update(emptyList<Image_Info>().toMutableList(),400);
                         Log.e("Reddit_Api", e.toString());
                     }
 

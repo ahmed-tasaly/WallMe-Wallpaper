@@ -68,6 +68,11 @@ class MainActivity : AppCompatActivity(){
     var firstTimeOPen = true;
 
 
+    //init database
+    val DataBase = database(this);
+    val blockdatabase = database(this,database.ImageBlock_Table,"${database.ImageBlock_Table}.dp");
+
+
     //fragment list
     enum class menu{
         reddit,
@@ -102,6 +107,8 @@ class MainActivity : AppCompatActivity(){
                 override fun onClick(p0: DialogInterface?, p1: Int) {
                     firstTimeOPen = false;
                     getSharedPreferences("main", MODE_PRIVATE).edit().putBoolean("FirstTimeOpen",firstTimeOPen).apply();
+                    val imageinfo = Image_Info("https://i.redd.it/kcdy6mkid8b51.gif","https://preview.redd.it/kcdy6mkid8b51.gif?width=108&crop=smart&v=enabled&s=7d46c823b33cbc2922d3a8d220da1393eb887abf","t3_hsb4wq");
+                    blockdatabase.add_image_info_to_database(imageinfo);
                 }
             })
             .create()
@@ -149,9 +156,6 @@ class MainActivity : AppCompatActivity(){
         fun PlayAnimation_forNav(playanimation : (animate : ViewPropertyAnimator?) -> Unit);
     }
 
-    //init database
-    val DataBase = database(this);
-    val blockdatabase = database(this,database.ImageBlock_Table,"${database.ImageBlock_Table}.dp");
 
 
 

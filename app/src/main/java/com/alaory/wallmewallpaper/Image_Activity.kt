@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.RectF
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.AnimatedVectorDrawable
@@ -60,6 +61,7 @@ import okhttp3.Response
 import okhttp3.internal.toHexString
 import okio.Path
 import okio.Path.Companion.toPath
+import kotlin.math.max
 import kotlin.random.Random
 
 class Image_Activity(): AppCompatActivity(){
@@ -243,9 +245,14 @@ class Image_Activity(): AppCompatActivity(){
             }
 
             url_post?.let{
-                it.setOnClickListener {
-                    val linkuri = Uri.parse("https://${myDataLocal!!.post_url}");
-                    this@Image_Activity.startActivity(Intent(Intent.ACTION_VIEW,linkuri));
+                var uriImage = Uri.parse(myDataLocal!!.Image_url);
+                if(uriImage.scheme == "content" || uriImage.scheme == "file"){
+                    it.visibility = View.GONE;
+                }else{
+                    it.setOnClickListener {
+                        val linkuri = Uri.parse("https://${myDataLocal!!.post_url}");
+                        this@Image_Activity.startActivity(Intent(Intent.ACTION_VIEW,linkuri));
+                    }
                 }
             }
 
@@ -735,9 +742,10 @@ class Image_Activity(): AppCompatActivity(){
                 val bitmapfromfile : Drawable?;
                 if (Wallpaper_Uri.scheme == "content"){
                     loaded = true;
-                    when(myDataLocal!!.type){
+                    when(myDataLocal!!.type){// is video
                         UrlType.Video ->{
-                            val exoPlayer = ExoPlayer.Builder(this@Image_Activity).build();
+                            val exoPlayer = ExoPlayer.Builder(this@Image_Activity).build();//video player
+
                             Full_video!!.addCallback(object : ZoomSurfaceView.Callback {
                                 override fun onZoomSurfaceCreated(view: ZoomSurfaceView) {
                                     exoPlayer.setVideoSurface(Full_video!!.surface);
@@ -749,8 +757,9 @@ class Image_Activity(): AppCompatActivity(){
                                 }
                             });
 
-                            Full_video!!.visibility = View.VISIBLE;
+                            Full_video!!.visibility = View.VISIBLE;//switch to surface
                             Full_image!!.visibility = View.INVISIBLE;
+
                             exoPlayer.apply {
                                 addListener(object : Player.Listener{
                                     override fun onVideoSizeChanged(videoSize: VideoSize) {
@@ -758,11 +767,15 @@ class Image_Activity(): AppCompatActivity(){
                                         Full_video!!.setContentSize(videoSize.width.toFloat(),videoSize.height.toFloat())
                                     }
                                 })
-                                repeatMode = Player.REPEAT_MODE_ONE
+                                repeatMode = Player.REPEAT_MODE_ONE;//repeat video
 
+                                try{
+                                    val mediaItem = MediaItem.fromUri(Wallpaper_Uri);
+                                    exoPlayer.setMediaItem(mediaItem);
+                                }catch(e: Exception){
+                                    Log.e(this::class.java.simpleName,e.toString());
+                                }
 
-                                val mediaItem = MediaItem.fromUri(Wallpaper_Uri);
-                                exoPlayer.setMediaItem(mediaItem);
 
 
                                 volume = 0f;
@@ -773,14 +786,62 @@ class Image_Activity(): AppCompatActivity(){
                                 play();
                             }
                         }
-                        else ->{
-                            val cont = this.contentResolver.openInputStream(Wallpaper_Uri);
-                            bitmapfromfile = Drawable.createFromStream(cont,myDataLocal!!.Image_name);
-                            mybitmap = bitmapfromfile!!.toBitmap();
-                            Full_image!!.setImageDrawable(bitmapfromfile);
-                            (bitmapfromfile as? Animatable)?.start();
-                            myDataLocal!!.imageRatio =
-                                Image_Ratio(mybitmap!!.width, mybitmap!!.height);
+                        UrlType.Image -> {
+
+                            try {
+                                //get image info
+                                val bitmapWall = this.contentResolver.openFileDescriptor(Wallpaper_Uri,"r")!!.fileDescriptor;
+                                val bitmapOptions = BitmapFactory.Options().apply {
+                                    inJustDecodeBounds = true;//dont load bitmap
+                                }
+
+                                BitmapFactory.decodeFileDescriptor(bitmapWall,null,bitmapOptions);
+                                val deviceMaxWidth = resources.displayMetrics.widthPixels * 2;
+                                val deviceMaxHeight = resources.displayMetrics.heightPixels * 2;
+                                val imageWidth = bitmapOptions.outWidth;
+                                val imageHeight = bitmapOptions.outHeight;
+                                val ratio = max(imageWidth/deviceMaxWidth,imageHeight/deviceMaxHeight);
+
+
+                                if(ratio > 2){//load smaller image
+
+                                    BitmapFactory.Options().run {
+                                        inSampleSize = ratio;
+                                        BitmapFactory.decodeFileDescriptor(bitmapWall,null,this);
+                                    }.run {
+                                        mybitmap = this;
+                                        Full_image!!.setImageBitmap(this);
+                                        myDataLocal!!.imageRatio =
+                                            Image_Ratio(mybitmap!!.width, mybitmap!!.height);
+                                    }
+                                }else{
+                                    val outBitmap = BitmapFactory.decodeFileDescriptor(bitmapWall);
+                                    mybitmap = outBitmap;
+                                    Full_image!!.setImageBitmap(outBitmap);
+                                    myDataLocal!!.imageRatio =
+                                        Image_Ratio(mybitmap!!.width, mybitmap!!.height);
+                                }
+
+
+                            }catch (e:Exception){
+                                Log.e(this::class.java.simpleName,e.toString());
+                            }
+                        }
+
+                        else ->{// gif
+                            try {
+                                val cont = this.contentResolver.openInputStream(Wallpaper_Uri);
+                                bitmapfromfile =
+                                    Drawable.createFromStream(cont, myDataLocal!!.Image_name);
+                                mybitmap = bitmapfromfile!!.toBitmap();
+                                Full_image!!.setImageDrawable(bitmapfromfile);
+                                (bitmapfromfile as? Animatable)?.start();
+                                myDataLocal!!.imageRatio =
+                                    Image_Ratio(mybitmap!!.width, mybitmap!!.height);
+                            }catch (e:Exception){
+                                Log.e(this::class.java.simpleName,e.toString());
+                            }
+
                         }
                     }
                 }
