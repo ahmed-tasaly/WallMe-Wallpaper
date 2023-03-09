@@ -65,7 +65,7 @@ fun setWallpaper(context: Context, wallBitmap: Bitmap, rectF: RectF, setScreen: 
                 else -> {}
             }
             ContextCompat.getMainExecutor(context).execute {
-                Toast.makeText(context,"Wallpaper was set",Toast.LENGTH_LONG).show();
+                Toast.makeText(context,"Wallpaper has been set",Toast.LENGTH_LONG).show();
             }
 
 
