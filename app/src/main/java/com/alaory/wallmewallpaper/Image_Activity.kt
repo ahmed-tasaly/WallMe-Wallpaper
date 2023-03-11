@@ -61,6 +61,7 @@ import okhttp3.Response
 import okhttp3.internal.toHexString
 import okio.Path
 import okio.Path.Companion.toPath
+import kotlin.concurrent.thread
 import kotlin.math.max
 import kotlin.random.Random
 
@@ -796,8 +797,8 @@ class Image_Activity(): AppCompatActivity(){
                                 }
 
                                 BitmapFactory.decodeFileDescriptor(bitmapWall,null,bitmapOptions);
-                                val deviceMaxWidth = resources.displayMetrics.widthPixels * 2;
-                                val deviceMaxHeight = resources.displayMetrics.heightPixels * 2;
+                                val deviceMaxWidth = resources.displayMetrics.widthPixels;
+                                val deviceMaxHeight = resources.displayMetrics.heightPixels;
                                 val imageWidth = bitmapOptions.outWidth;
                                 val imageHeight = bitmapOptions.outHeight;
                                 val ratio = max(imageWidth/deviceMaxWidth,imageHeight/deviceMaxHeight);
@@ -809,10 +810,15 @@ class Image_Activity(): AppCompatActivity(){
                                         inSampleSize = ratio;
                                         BitmapFactory.decodeFileDescriptor(bitmapWall,null,this);
                                     }.run {
-                                        mybitmap = this;
+
+
                                         Full_image!!.setImageBitmap(this);
                                         myDataLocal!!.imageRatio =
-                                            Image_Ratio(mybitmap!!.width, mybitmap!!.height);
+                                            Image_Ratio(this!!.width, this!!.height);
+
+                                        thread{
+                                            mybitmap =  BitmapFactory.decodeFileDescriptor(bitmapWall);
+                                        }.start()
                                     }
                                 }else{
                                     val outBitmap = BitmapFactory.decodeFileDescriptor(bitmapWall);
@@ -863,29 +869,41 @@ class Image_Activity(): AppCompatActivity(){
             val tempDialog = alert_setwallpaper.show();
 
             buttonlist.findViewById<Button>(R.id.SetHomeScreen).setOnClickListener {
+                if(mybitmap == null){
+                    Toast.makeText(this,"please wait for the image to load",Toast.LENGTH_LONG).show();
+                }
+                Toast.makeText(this,"Setting wallpaper to Homescreen please wait" ,Toast.LENGTH_SHORT).show();
                 setWallpaper(
                     this,
                     mybitmap!!,
                     Full_image!!.zoomedRect,
                     setmode.HomeScreen
                 );
-                Toast.makeText(this,"Wallpaper set to Homescreen",Toast.LENGTH_LONG).show();
+
                 tempDialog.dismiss();
             }
 
             buttonlist.findViewById<Button>(R.id.SetLockScreen).setOnClickListener {
+                if(mybitmap == null){
+                    Toast.makeText(this,"please wait for the image to load",Toast.LENGTH_LONG).show();
+                }
+                Toast.makeText(this,"Setting wallpaper to lockscreen please wait",Toast.LENGTH_SHORT).show();
                 setWallpaper(
                     this,
                     mybitmap!!,
                     Full_image!!.zoomedRect,
                     setmode.LockScreen
                 );
-                Toast.makeText(this,"Wallpaper set to lockscreen",Toast.LENGTH_LONG).show();
+
                 tempDialog.dismiss();
             }
 
             buttonlist.findViewById<Button>(R.id.SetBothScreen).setOnClickListener {
+                if(mybitmap == null){
+                    Toast.makeText(this,"please wait for the image to load",Toast.LENGTH_LONG).show();
+                }
                 val temprect = Full_image!!.zoomedRect;
+                Toast.makeText(this,"Setting wallpaper to Both please wait",Toast.LENGTH_SHORT).show();
                 setWallpaper(
                     this,
                     mybitmap!!,
@@ -899,7 +917,7 @@ class Image_Activity(): AppCompatActivity(){
                     setmode.HomeScreen
                 );
 
-                Toast.makeText(this,"Wallpaper set to Both",Toast.LENGTH_LONG).show();
+
                 tempDialog.dismiss();
             }
 

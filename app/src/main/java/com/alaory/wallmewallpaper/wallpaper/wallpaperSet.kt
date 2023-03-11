@@ -15,6 +15,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.alaory.wallmewallpaper.Image_Activity
 import com.alaory.wallmewallpaper.Image_Info
 import com.alaory.wallmewallpaper.UrlType
@@ -63,6 +64,12 @@ fun setWallpaper(context: Context, wallBitmap: Bitmap, rectF: RectF, setScreen: 
                 }
                 else -> {}
             }
+            ContextCompat.getMainExecutor(context).execute {
+                Toast.makeText(context,"Wallpaper has been set",Toast.LENGTH_LONG).show();
+            }
+
+
+
         }.start()
 
     }catch (e:Exception){
