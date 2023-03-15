@@ -339,17 +339,17 @@ class Image_Activity(): AppCompatActivity(){
                     val wpminfo = wpm.wallpaperInfo;
                     val videocomponent =ComponentName(applicationContext,livewallpaper::class.java);
 
-
                     if(wpminfo !=null && wpminfo.component == videocomponent){
-                        wpm.clear(WallpaperManager.FLAG_SYSTEM);//if there is a live wallpaper clear it
+                        livewallpaper.killwallpaper();
+                    //wpm.clear(WallpaperManager.FLAG_SYSTEM);//if there is a live wallpaper clear it
+                    }else {
+                        val liveintent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER).addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        liveintent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, videocomponent);
+                        startActivity(liveintent);
                     }
 
 
-                    val liveintent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER).addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                    liveintent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, videocomponent);
 
-
-                    startActivity(liveintent);
 
                     return@setOnClickListener;
                 }
