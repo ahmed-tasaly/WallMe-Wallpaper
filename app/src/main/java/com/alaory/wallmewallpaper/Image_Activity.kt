@@ -167,6 +167,9 @@ class Image_Activity(): AppCompatActivity(){
     override fun onCreate(bundle: Bundle?) {
         if(myDataLocal == null){
             myDataLocal = MYDATA;
+            if(MYDATA != null){
+                myDataLocal!!.Image_url = myDataLocal!!.Image_url.replace("http:","https:");// not gonna open unsecure connection
+            }
             thumbnail = THUMBNAIL;
         }
         Log.d("Image_Activity","Info url ${myDataLocal?.Image_url} name ${myDataLocal?.Image_name} thumbnail ${myDataLocal?.Image_thumbnail}");
@@ -718,11 +721,11 @@ class Image_Activity(): AppCompatActivity(){
                             },
                             onCancel = {
                                 cricle_prograssBar?.visibility = View.GONE;
-                                Log.i("cricle_prograssBar", "cancled");
+                                Log.e("cricle_prograssBar", "cancled");
                             },
                             onError = { _, _ ->
                                 cricle_prograssBar?.visibility = View.GONE;
-                                Log.i("cricle_prograssBar", "error");
+                                Log.e("cricle_prograssBar", "error");
                             },
                             onStart = {
                                 cricle_prograssBar?.visibility = View.VISIBLE;
