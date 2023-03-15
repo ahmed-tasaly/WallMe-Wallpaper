@@ -26,9 +26,12 @@ class livewallpaper : WallpaperService() {
         var engine  : WallpaperService.Engine? = null;
         when(type){
             "gif" ->{
-                engine = gifengine();
+                engine = GifEngine();
             }
-            else ->{
+            "image" -> {
+                engine = ImageEngine();
+            }
+            else ->{//video
                 engine = VideoLiveWallpaperEngine();
             }
         }
@@ -121,7 +124,7 @@ class livewallpaper : WallpaperService() {
 
 
 
-    inner class gifengine : Engine(){
+    inner class GifEngine : Engine(){
         val prefs = this@livewallpaper.getSharedPreferences("LiveWallpaper",0);
         val GifPath = prefs.getString("Video_Path","")!!.toString();
         val leftoffset = prefs.getFloat("left",0f);
@@ -236,7 +239,7 @@ class livewallpaper : WallpaperService() {
     //  \||/
     //   \/
 
-    inner class imageengine : Engine(){
+    inner class ImageEngine : Engine(){
         val prefs = this@livewallpaper.getSharedPreferences("LiveWallpaper",0);
         val imagepath = prefs.getString("Video_Path","")!!.toString();
         val imageUri = Uri.parse(imagepath);

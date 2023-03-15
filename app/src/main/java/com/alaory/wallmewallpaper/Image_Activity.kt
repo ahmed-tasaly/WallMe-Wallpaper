@@ -176,7 +176,7 @@ class Image_Activity(): AppCompatActivity(){
         super.onCreate(bundle);
         //activity system and app bar
         this.supportActionBar!!.hide();
-        wallmewallpaper.HideSystemBar(window);
+        wallmewallpaper.HideSystemBar(window);//hide system bar
         //update screen orein
         wallmewallpaper.checkorein();
 
@@ -319,7 +319,7 @@ class Image_Activity(): AppCompatActivity(){
                     val pref = getSharedPreferences("LiveWallpaper",Context.MODE_PRIVATE);
 
                     pref.edit().putString("Video_Path",MediaPath).apply();
-                    pref.edit().putString("Media_Type", myDataLocal!!.type.name.lowercase()).apply();
+                    pref.edit().putString("Media_Type", myDataLocal!!.type.name.lowercase()).apply();//tell the live wallpaper engine what mode to use
                     //save screen rect
 
                     pref.edit().putFloat("left",screenRect.left).apply();

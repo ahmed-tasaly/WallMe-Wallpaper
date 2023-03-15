@@ -152,7 +152,7 @@ class MainActivity : AppCompatActivity(){
     interface MenuChange{
         fun ChangeTo(menuitem : menu,shownav: Boolean = true,changelastfragment: Boolean = false);
         fun Shownav(shownav: Boolean);
-        fun hidenavbuttons(menuitem: menu,show: Boolean);
+        fun hidenavbuttons(menuitem: menu,show: Boolean);//app navigation
         fun PlayAnimation_forNav(playanimation : (animate : ViewPropertyAnimator?) -> Unit);
     }
 
