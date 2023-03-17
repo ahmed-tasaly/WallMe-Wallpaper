@@ -219,6 +219,7 @@ class Image_Activity(): AppCompatActivity(){
             this.state = BottomSheetBehavior.STATE_COLLAPSED;
             this.isHideable = false;
 
+
             val Views = LayoutInflater.from(this@Image_Activity).inflate(R.layout.bottom_sheet,null);
             bottomsheetfragment.addView(Views);
 
@@ -235,7 +236,7 @@ class Image_Activity(): AppCompatActivity(){
             saveWallpaperButton = Views.findViewById(R.id.save_imageButton);
             setfavorite = Views.findViewById(R.id.favorite_bottomsheet_floatingbutton);
             blockimage = Views.findViewById(R.id.block_bottomsheet_floatingbutton);
-            bottomsheetarrow = Views.findViewById<ImageButton>(R.id.pullbottom);
+            bottomsheetarrow = Views.findViewById(R.id.pullbottom);
 
             if(isOnDatabase())//check if image is in favorite list database
                 setfavorite!!.setImageResource(R.drawable.ic_heartfull);
@@ -455,7 +456,7 @@ class Image_Activity(): AppCompatActivity(){
         else
             titlePost!!.visibility = View.GONE;
 
-        auther_post!!.setText("posted by: ${myDataLocal?.Image_auther}");
+        auther_post!!.setText(myDataLocal?.Image_auther);
         counter_image!!.isVisible = false;
 
 
