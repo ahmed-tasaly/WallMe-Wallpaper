@@ -685,6 +685,7 @@ class Image_Activity(): AppCompatActivity(){
                                         Image_Ratio(mybitmap!!.width, mybitmap!!.height);
                                 } else {
                                     val exoplayer = ExoPlayer.Builder(this@Image_Activity)
+                                        .setVideoScalingMode(2)
                                         .build()
                                     Full_video!!.addCallback(object : ZoomSurfaceView.Callback {
                                         override fun onZoomSurfaceCreated(view: ZoomSurfaceView) {
@@ -865,13 +866,12 @@ class Image_Activity(): AppCompatActivity(){
                 return@setOnClickListener;
             }
 
-            val alert_setwallpaper = AlertDialog.Builder(this,R.style.TransparentDialog)
+            val alert_setwallpaper = AlertDialog.Builder(this,R.style.aletdia_log);
 
             val buttonlist = LayoutInflater.from(this).inflate(R.layout.setwallpaperalert,null) as ConstraintLayout;
             alert_setwallpaper.setView(buttonlist);
 
             val tempDialog = alert_setwallpaper.show();
-
             buttonlist.findViewById<Button>(R.id.SetHomeScreen).setOnClickListener {
                 if(mybitmap == null){
                     Toast.makeText(this,"please wait for the image to load",Toast.LENGTH_LONG).show();

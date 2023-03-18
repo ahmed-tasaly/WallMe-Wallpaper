@@ -2,19 +2,20 @@ package com.alaory.wallmewallpaper.wallpaper
 
 
 
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Movie
+import android.graphics.*
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Process.myPid
 import android.service.wallpaper.WallpaperService
 import android.util.Log
+import android.view.SurfaceControl
 import android.view.SurfaceHolder
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.RenderersFactory
+import com.google.android.exoplayer2.video.VideoSize
 
 import kotlin.math.max
 
@@ -125,10 +126,10 @@ class livewallpaper : WallpaperService() {
 
                 val mediaItem = MediaItem.fromUri(Uri.parse(videoPath))
                 exoPlayer!!.setMediaItem(mediaItem);
-
-
                 volume = 0f;
-                setVideoSurfaceHolder(surfaceHolder);
+
+
+                setVideoSurface(surfaceHolder?.surface);
             }
         }
 
@@ -141,6 +142,7 @@ class livewallpaper : WallpaperService() {
 
         override fun setScale(width: Int, height: Int) {
             //sweet f.a
+
         }
 
         override fun onSurfaceChanged(
@@ -150,6 +152,7 @@ class livewallpaper : WallpaperService() {
             height: Int
         ) {
 
+            Log.d("SurfaceControl","surface changed ${holder?.surfaceFrame}")
         }
 
         override fun onVisibilityChanged(visible: Boolean) {
