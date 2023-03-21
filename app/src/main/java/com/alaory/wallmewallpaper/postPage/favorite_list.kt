@@ -14,6 +14,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.alaory.wallmewallpaper.*
@@ -26,7 +27,8 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
     var favoriteList_adabter: Image_list_adapter? = null;
     var favoriteList_recycler: RecyclerView? = null;
     var mlayout : RecyclerView.LayoutManager? = null;
-    var textmain : TextView? = null;
+    var emptyicon : ImageView? = null;
+    var emptyCon : ConstraintLayout ? = null;
 
     var favoritelist = database.imageinfo_list.toMutableList();
 
@@ -48,8 +50,8 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
         favoritelist = database.imageinfo_list.toMutableList();
         refrech_adabter();
         if(database.imageinfo_list.isEmpty()){
-            textmain!!.visibility = View.VISIBLE;
-            textmain!!.text = "Empty 'woosh' ;)"
+            emptyCon?.visibility = View.VISIBLE;
+            emptyicon?.setImageResource(R.drawable.appicon);
         }
     }
 
@@ -77,14 +79,15 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
         val mainview = inflater.inflate(R.layout.postlist_mainwindow, container, false);
         favoriteList_recycler = mainview.findViewById(R.id.fragmentrec);
         mainview.findViewById<ImageView>(R.id.loading_recyclye).visibility = View.INVISIBLE;
-        textmain = mainview.findViewById<TextView>(R.id.loading_text);
+        emptyicon = mainview.findViewById(R.id.EmptyIcon);
+        mainview.findViewById<TextView>(R.id.loading_text).visibility = View.GONE;
+        emptyCon = mainview.findViewById(R.id.EmptyCon);
 
-
-        if(database.imageinfo_list.isNotEmpty())
-            textmain!!.visibility = View.INVISIBLE;
-        else{
-            textmain!!.text = "Empty 'woosh' ;)"
+        if(database.imageinfo_list.isEmpty()){
+            emptyCon?.visibility = View.VISIBLE;
+            emptyicon?.setImageResource(R.drawable.appicon);
         }
+
 
 
         setLayout();

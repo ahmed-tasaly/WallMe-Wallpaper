@@ -59,11 +59,9 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.internal.toHexString
-import okio.Path
 import okio.Path.Companion.toPath
 import kotlin.concurrent.thread
 import kotlin.math.max
-import kotlin.random.Random
 
 class Image_Activity(): AppCompatActivity(){
 
@@ -253,6 +251,7 @@ class Image_Activity(): AppCompatActivity(){
                 var uriImage = Uri.parse(myDataLocal!!.Image_url);
                 if(uriImage.scheme == "content" || uriImage.scheme == "file"){
                     it.visibility = View.GONE;
+                    (Views.findViewById(R.id.splitter_text) as TextView).visibility = View.GONE;
                 }else{
                     it.setOnClickListener {
                         val linkuri = Uri.parse("https://${myDataLocal!!.post_url}");
@@ -341,7 +340,7 @@ class Image_Activity(): AppCompatActivity(){
                     val videocomponent =ComponentName(applicationContext,livewallpaper::class.java);
 
                     if(wpminfo !=null && wpminfo.component == videocomponent){
-                        livewallpaper.killwallpaper();
+                        livewallpaper.updatewallpaperservice();
                     //wpm.clear(WallpaperManager.FLAG_SYSTEM);//if there is a live wallpaper clear it
                     }else {
                         val liveintent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER).addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
@@ -876,12 +875,14 @@ class Image_Activity(): AppCompatActivity(){
                 if(mybitmap == null){
                     Toast.makeText(this,"please wait for the image to load",Toast.LENGTH_LONG).show();
                 }
-                Toast.makeText(this,"Setting wallpaper to Homescreen please wait" ,Toast.LENGTH_SHORT).show();
+                var toast = Toast.makeText(this,"Setting wallpaper to Homescreen please wait" ,Toast.LENGTH_SHORT);
+                toast.show();
                 setWallpaper(
                     this,
                     mybitmap!!,
                     Full_image!!.zoomedRect,
-                    setmode.HomeScreen
+                    setmode.HomeScreen,
+                    {toast.cancel();}
                 );
 
                 tempDialog.dismiss();
@@ -891,12 +892,14 @@ class Image_Activity(): AppCompatActivity(){
                 if(mybitmap == null){
                     Toast.makeText(this,"please wait for the image to load",Toast.LENGTH_LONG).show();
                 }
-                Toast.makeText(this,"Setting wallpaper to lockscreen please wait",Toast.LENGTH_SHORT).show();
+                var toast = Toast.makeText(this,"Setting wallpaper to lockscreen please wait",Toast.LENGTH_SHORT);
+                toast.show();
                 setWallpaper(
                     this,
                     mybitmap!!,
                     Full_image!!.zoomedRect,
-                    setmode.LockScreen
+                    setmode.LockScreen,
+                    {toast.cancel();}
                 );
 
                 tempDialog.dismiss();

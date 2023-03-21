@@ -2,27 +2,25 @@ package com.alaory.wallmewallpaper.wallpaper
 
 
 
+
 import android.graphics.*
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
-import android.os.Process.myPid
 import android.service.wallpaper.WallpaperService
 import android.util.Log
-import android.view.SurfaceControl
 import android.view.SurfaceHolder
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.RenderersFactory
-import com.google.android.exoplayer2.video.VideoSize
+
 
 import kotlin.math.max
 
 class livewallpaper : WallpaperService() {
 
     companion object{
-        var  killwallpaper : () -> Unit = {};
+        var  updatewallpaperservice : () -> Unit = {};
     }
     var type = "";
 
@@ -52,14 +50,18 @@ class livewallpaper : WallpaperService() {
         var surfcangeHeight = 0;
         var surfaceh : SurfaceHolder? = null;
 
+
         override fun onCreate(surfaceHolder: SurfaceHolder?) {
+
             if(surfaceh == null){
                 surfaceh = surfaceHolder;
             }
             super.onCreate(surfaceh);
-            killwallpaper = {
+
+            updatewallpaperservice = {
                 engine?.onDestroy();
                 engine = null;
+
                 onCreate(surfaceh);
 
                 engine?.onSurfaceCreated(surfaceh);
@@ -77,6 +79,8 @@ class livewallpaper : WallpaperService() {
         override fun onSurfaceCreated(holder: SurfaceHolder?) {
             super.onSurfaceCreated(holder)
             engine?.onSurfaceCreated(holder);
+            this.onSurfaceRedrawNeeded(holder);
+
         }
 
         override fun onSurfaceChanged(
@@ -85,10 +89,13 @@ class livewallpaper : WallpaperService() {
             width: Int,
             height: Int
         ) {
+            Log.d("SurfaceControl","surface changed ${holder?.surfaceFrame} format ${format}");
             super.onSurfaceChanged(holder, format, width, height);
+
             surfcangeWidth = width;
             surfcangeHeight = height
             engine?.onSurfaceChanged(holder,format,width,height);
+
         }
 
         override fun onVisibilityChanged(visible: Boolean) {
@@ -105,6 +112,7 @@ class livewallpaper : WallpaperService() {
             super.onDestroy()
             engine?.onDestroy();
         }
+
     }
 
     // Video Engine
@@ -116,13 +124,10 @@ class livewallpaper : WallpaperService() {
                     .setVideoScalingMode(2)//VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
                     .build()
 
-
-
             exoPlayer!!.apply {
                 val prefs = this@livewallpaper.getSharedPreferences("LiveWallpaper", 0);
                 val videoPath = prefs.getString("Video_Path", "")!!.toString();
-                repeatMode = Player.REPEAT_MODE_ONE
-
+                repeatMode = Player.REPEAT_MODE_ONE;
 
                 val mediaItem = MediaItem.fromUri(Uri.parse(videoPath))
                 exoPlayer!!.setMediaItem(mediaItem);
@@ -142,7 +147,6 @@ class livewallpaper : WallpaperService() {
 
         override fun setScale(width: Int, height: Int) {
             //sweet f.a
-
         }
 
         override fun onSurfaceChanged(
@@ -152,7 +156,7 @@ class livewallpaper : WallpaperService() {
             height: Int
         ) {
 
-            Log.d("SurfaceControl","surface changed ${holder?.surfaceFrame}")
+
         }
 
         override fun onVisibilityChanged(visible: Boolean) {
