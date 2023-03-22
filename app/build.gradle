@@ -13,8 +13,8 @@ android {
         applicationId "com.alaory.wallmewallpaper"
         minSdk 24
         targetSdk 32
-        versionCode 26
-        versionName "2.53"
+        versionCode 27
+        versionName "2.7"
 
         buildConfigField "String", "API_KEY_Base",localProperties['Base64_API_KEY']
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
