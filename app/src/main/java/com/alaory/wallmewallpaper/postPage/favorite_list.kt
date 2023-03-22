@@ -27,7 +27,6 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
     var favoriteList_adabter: Image_list_adapter? = null;
     var favoriteList_recycler: RecyclerView? = null;
     var mlayout : RecyclerView.LayoutManager? = null;
-    var emptyicon : ImageView? = null;
     var emptyCon : ConstraintLayout ? = null;
 
     var favoritelist = database.imageinfo_list.toMutableList();
@@ -51,7 +50,6 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
         refrech_adabter();
         if(database.imageinfo_list.isEmpty()){
             emptyCon?.visibility = View.VISIBLE;
-            emptyicon?.setImageResource(R.drawable.appicon);
         }
     }
 
@@ -79,13 +77,11 @@ class favorite_list(menuChange : MainActivity.MenuChange? = null) : Fragment(), 
         val mainview = inflater.inflate(R.layout.postlist_mainwindow, container, false);
         favoriteList_recycler = mainview.findViewById(R.id.fragmentrec);
         mainview.findViewById<ImageView>(R.id.loading_recyclye).visibility = View.INVISIBLE;
-        emptyicon = mainview.findViewById(R.id.EmptyIcon);
         mainview.findViewById<TextView>(R.id.loading_text).visibility = View.GONE;
         emptyCon = mainview.findViewById(R.id.EmptyCon);
 
         if(database.imageinfo_list.isEmpty()){
             emptyCon?.visibility = View.VISIBLE;
-            emptyicon?.setImageResource(R.drawable.appicon);
         }
 
 

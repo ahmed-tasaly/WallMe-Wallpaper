@@ -39,6 +39,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
+            android:src="@drawable/appicon"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

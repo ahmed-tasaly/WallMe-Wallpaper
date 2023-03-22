@@ -18,6 +18,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -37,6 +38,9 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
     var imageloading: ImageView? =null;
     var textloading: TextView? = null;
     var buttonLoading: Button? =null;
+
+    var EmptyCon : ConstraintLayout? = null;
+    var isEmpty = false;
 
     var failedFirstLoading = false;
 
@@ -75,8 +79,12 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
                 if(i.Active)
                     reddit_api += Reddit_Api(i.Subreddit_Name);
             }
+            isEmpty = reddit_api.isEmpty();
+
             PostsAdabter = Reddit_Api.redditcon?.reddit_global_posts?.let { Image_list_adapter(it,this) };
             LoadMore();
+
+
             firsttime = false;
             userHitSave = false;
         }
@@ -100,20 +108,21 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
                 lastPastImageInfo = null;
             }
         }
+
     }
 
 
-    fun showloading(){
+    private fun showloading(){
         buttonLoading?.let{it.visibility = View.GONE;}
         imageloading?.let{it.visibility = View.VISIBLE;}
         textloading?.let{it.visibility = View.VISIBLE;}
     }
-    fun hideloading(){
+    private fun hideloading(){
         buttonLoading?.let{it.visibility = View.VISIBLE;}
         imageloading?.let{it.visibility = View.GONE;}
         textloading?.let{it.visibility = View.GONE}
     }
-    fun disableloading(){
+    private fun disableloading(){
         buttonLoading?.let{it.visibility = View.GONE;}
         imageloading?.let{it.visibility = View.GONE;}
         textloading?.let{it.visibility = View.GONE;}
@@ -137,7 +146,7 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
         }
 
         val layoutfragment = inflater.inflate(R.layout.postlist_mainwindow, container, false);
-
+        EmptyCon = layoutfragment.findViewById(R.id.EmptyCon);
 
         myrec = layoutfragment.findViewById(R.id.fragmentrec) as RecyclerView;
         SetRVLayoutManager();
@@ -162,6 +171,11 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
         //for screen rotaion
         if(Resources.getSystem().configuration.orientation !=  wallmewallpaper.last_orein)
             LoadMore();
+
+        if(isEmpty){
+            EmptyCon?.visibility = View.VISIBLE
+            disableloading();
+        }
 
         return layoutfragment;
     }
@@ -194,31 +208,33 @@ class Reddit_posts(menuChange : MainActivity.MenuChange? = null) : Fragment(), I
 
 
     fun LoadMore(){
-        if(isAdded){
-            requireActivity().runOnUiThread {
-                showloading();
-            }
-        }
-        Reddit_Api.redditcon?.get_allposts_andGive { Status ->
-            if(Status == 400)
-                failedFirstLoading = true;
-
-            if(isAdded) {
-                if(Status == 400){
-                    requireActivity().runOnUiThread {
-                        PostsAdabter!!.removeLoadingView();
-                        scrollListener?.setLoaded();
-                        if(failedFirstLoading){
-                            hideloading();
-                        }
-                    }
-                    return@get_allposts_andGive;
-                }
+        if(!isEmpty) {
+            if (isAdded) {
                 requireActivity().runOnUiThread {
-                    PostsAdabter?.removeLoadingView();
-                    scrollListener?.setLoaded();
-                    PostsAdabter?.refresh_itemList(Reddit_Api.redditcon!!.reddit_global_posts.lastIndex);
-                    disableloading();
+                    showloading();
+                }
+            }
+            Reddit_Api.redditcon?.get_allposts_andGive { Status ->
+                if (Status == 400)
+                    failedFirstLoading = true;
+
+                if (isAdded) {
+                    if (Status == 400) {
+                        requireActivity().runOnUiThread {
+                            PostsAdabter!!.removeLoadingView();
+                            scrollListener?.setLoaded();
+                            if (failedFirstLoading) {
+                                hideloading();
+                            }
+                        }
+                        return@get_allposts_andGive;
+                    }
+                    requireActivity().runOnUiThread {
+                        PostsAdabter?.removeLoadingView();
+                        scrollListener?.setLoaded();
+                        PostsAdabter?.refresh_itemList(Reddit_Api.redditcon!!.reddit_global_posts.lastIndex);
+                        disableloading();
+                    }
                 }
             }
         }
