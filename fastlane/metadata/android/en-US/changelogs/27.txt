@@ -1,0 +1,5 @@
+release 2.7:
+
+    -Bug fixes
+    -UI changes
+    

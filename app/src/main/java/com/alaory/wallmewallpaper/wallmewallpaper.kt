@@ -11,11 +11,13 @@ import android.os.Build
 import android.util.Log
 import android.view.View
 import android.view.Window
+import android.view.WindowInsetsController
 import android.view.WindowManager
 import android.widget.ImageView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.alaory.wallmewallpaper.api.Reddit_Api
 import com.alaory.wallmewallpaper.api.Reddit_Api_Contorller
 import com.alaory.wallmewallpaper.api.wallhaven_api
@@ -57,17 +59,16 @@ class wallmewallpaper : Application() {
 
         fun HideSystemBar(window: Window){
             if(doFullscreen || true) {//not now :(
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    window.setDecorFitsSystemWindows(false)
-                } else {
-                    window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-                }
+                val windowinset = WindowCompat.getInsetsController(window,window.decorView);
+                windowinset.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE;
+                window.decorView.setOnApplyWindowInsetsListener { view, windowInsets ->
+                    windowinset.hide(WindowInsetsCompat.Type.systemBars());
+                    view.onApplyWindowInsets(windowInsets);
+                }//no deprecated stuff now to enable immersive mode
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     window.attributes.layoutInDisplayCutoutMode =
                         WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
                 }
-            }else{
-
             }
         }
 

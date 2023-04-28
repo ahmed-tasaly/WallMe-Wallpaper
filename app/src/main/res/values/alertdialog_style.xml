@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="aletdia_log">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowMinWidthMajor">30%</item>
+        <item name="android:windowMinWidthMinor">70%</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+</resources>

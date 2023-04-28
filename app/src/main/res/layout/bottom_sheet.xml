@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layoutDirection="ltr"
     android:layout_width="match_parent"
-    android:paddingTop="50dp"
+    android:paddingTop="38dp"
     android:layout_height="match_parent"
     android:elevation="2dp"
     >
@@ -119,23 +119,34 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/title_post"
                     app:layout_constraintBottom_toTopOf="@+id/button_box_bottomsheet"
-
                     />
+
+                <TextView
+                    android:id="@+id/splitter_text"
+
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="|"
+                    android:paddingBottom="20dp"
+                    android:paddingHorizontal="10dp"
+                    app:layout_constraintBottom_toTopOf="@+id/button_box_bottomsheet"
+                    app:layout_constraintStart_toEndOf="@+id/auther_post"
+                    app:layout_constraintTop_toBottomOf="@+id/title_post" />
 
                 <TextView
                     android:id="@+id/url_post"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:paddingBottom="20dp"
-                    android:layout_marginEnd="20dp"
                     android:autoLink="web"
+                    android:paddingBottom="20dp"
                     android:text="@string/imageLinkUrl"
                     android:textColor="@color/teal_200"
-                    app:layout_constraintTop_toBottomOf="@+id/title_post"
                     app:layout_constraintBottom_toTopOf="@+id/button_box_bottomsheet"
                     app:layout_constraintRight_toRightOf="parent"
-                    />
+                    app:layout_constraintStart_toEndOf="@+id/splitter_text"
+                    app:layout_constraintTop_toBottomOf="@+id/title_post" />
 
                 <TextView
 

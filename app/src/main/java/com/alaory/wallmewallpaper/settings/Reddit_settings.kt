@@ -30,7 +30,7 @@ class Reddit_settings( menuChange : MainActivity.MenuChange? = null) : Fragment(
     val MenuChange = menuChange;
 
     companion object{
-        var subreddits_list_names : MutableList<Subreddit> = listOf(Subreddit("amoledbackgrounds"),Subreddit("wallpaper")).toMutableList();
+        var subreddits_list_names : MutableList<Subreddit> = emptyList<Subreddit>().toMutableList()
         var CheckedChipListMode : String = "Top";
         var TimePeriod = "";
         var TimePeridLastInt = 4;
@@ -90,8 +90,8 @@ class Reddit_settings( menuChange : MainActivity.MenuChange? = null) : Fragment(
 
         fun loadprefs(context: Context){
             val sharedprefs = context.getSharedPreferences("redditsettings",Context.MODE_PRIVATE);
-            val subtemp : String? = sharedprefs.getString("subreddits", "iphonexwallpapers+phonewallpapers");
-            val subActivelist : String? = sharedprefs.getString("subreddits_active", "true+true");
+            val subtemp : String? = sharedprefs.getString("subreddits", "");
+            val subActivelist : String? = sharedprefs.getString("subreddits_active", "");
             val templistmode = sharedprefs.getString("listmode","Top");
             val temptimeperiod = sharedprefs.getString("timePeriodString","&t=all");
 

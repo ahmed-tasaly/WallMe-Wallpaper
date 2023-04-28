@@ -2,9 +2,8 @@ package com.alaory.wallmewallpaper.wallpaper
 
 
 
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Movie
+
+import android.graphics.*
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
@@ -15,85 +14,166 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 
+
 import kotlin.math.max
 
 class livewallpaper : WallpaperService() {
 
+    companion object{
+        var  updatewallpaperservice : () -> Unit = {};
+    }
+    var type = "";
 
     //return my engine
     override fun onCreateEngine(): Engine {
-        val type = this@livewallpaper.getSharedPreferences("LiveWallpaper",0).getString("Media_Type","video");
-        var engine  : WallpaperService.Engine? = null;
-        when(type){
-            "gif" ->{
-                engine = gifengine();
-            }
-            else ->{
-                engine = VideoLiveWallpaperEngine();
-            }
-        }
-        return engine;
+        return ManagmentEngine();
     }
 
+    interface SubEngine {
+        fun onCreate(surfaceHolder: SurfaceHolder?);
+        fun onSurfaceCreated(holder: SurfaceHolder?);
+        fun onVisibilityChanged(visible: Boolean);
+        fun onSurfaceDestroyed(holder: SurfaceHolder?);
+        fun onSurfaceChanged(
+            holder: SurfaceHolder?,
+            format: Int,
+            width: Int,
+            height: Int
+        )
+        fun setScale(width: Int,height: Int);
+        fun onDestroy();
+    }
 
+    inner class ManagmentEngine : WallpaperService.Engine(){
+        var engine : SubEngine? = null;
+        var surfcangeWidth = 0;
+        var surfcangeHeight = 0;
+        var surfaceh : SurfaceHolder? = null;
 
-
-
-    // Video Engine
-    inner class VideoLiveWallpaperEngine : WallpaperService.Engine(){
-        var exoPlayer  = ExoPlayer.Builder(this@livewallpaper)
-            .setVideoScalingMode(2)//VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
-            .build()
 
         override fun onCreate(surfaceHolder: SurfaceHolder?) {
-            super.onCreate(surfaceHolder);
-            exoPlayer.apply {
+
+            if(surfaceh == null){
+                surfaceh = surfaceHolder;
+            }
+            super.onCreate(surfaceh);
+
+            updatewallpaperservice = {
+                engine?.onDestroy();
+                engine = null;
+
+                onCreate(surfaceh);
+
+                engine?.onSurfaceCreated(surfaceh);
+                engine?.setScale(surfcangeWidth,surfcangeHeight);
+            }
+            val type = this@livewallpaper.getSharedPreferences("LiveWallpaper",0).getString("Media_Type","video");
+            when(type){
+                "video" -> {engine = VideoLiveWallpaperEngine()}
+                "gif" -> {engine = GifEngine()}
+                else -> {}
+            }
+            engine?.onCreate(surfaceh);
+        }
+
+        override fun onSurfaceCreated(holder: SurfaceHolder?) {
+            super.onSurfaceCreated(holder)
+            engine?.onSurfaceCreated(holder);
+            this.onSurfaceRedrawNeeded(holder);
+
+        }
+
+        override fun onSurfaceChanged(
+            holder: SurfaceHolder?,
+            format: Int,
+            width: Int,
+            height: Int
+        ) {
+            Log.d("SurfaceControl","surface changed ${holder?.surfaceFrame} format ${format}");
+            super.onSurfaceChanged(holder, format, width, height);
+
+            surfcangeWidth = width;
+            surfcangeHeight = height
+            engine?.onSurfaceChanged(holder,format,width,height);
+
+        }
+
+        override fun onVisibilityChanged(visible: Boolean) {
+            super.onVisibilityChanged(visible)
+            engine?.onVisibilityChanged(visible);
+        }
+
+        override fun onSurfaceDestroyed(holder: SurfaceHolder?) {
+            super.onSurfaceDestroyed(holder)
+            engine?.onSurfaceDestroyed(holder);
+        }
+
+        override fun onDestroy() {
+            super.onDestroy()
+            engine?.onDestroy();
+        }
+
+    }
+
+    // Video Engine
+    inner class VideoLiveWallpaperEngine : SubEngine{
+        var exoPlayer  : ExoPlayer? = null;
+
+        override fun onCreate(surfaceHolder: SurfaceHolder?) {
+            exoPlayer = ExoPlayer.Builder(this@livewallpaper)
+                    .setVideoScalingMode(2)//VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
+                    .build()
+
+            exoPlayer!!.apply {
                 val prefs = this@livewallpaper.getSharedPreferences("LiveWallpaper", 0);
                 val videoPath = prefs.getString("Video_Path", "")!!.toString();
-//                val leftoffset = prefs.getFloat("left",0f);
-//                val topoffset = prefs.getFloat("top",0f);
-//                val rightoffset = prefs.getFloat("right",0f);
-//                val bottomoffset = prefs.getFloat("bottom",0f);
-
-                repeatMode = Player.REPEAT_MODE_ONE
-
+                repeatMode = Player.REPEAT_MODE_ONE;
 
                 val mediaItem = MediaItem.fromUri(Uri.parse(videoPath))
-                exoPlayer.setMediaItem(mediaItem);
-
-
+                exoPlayer!!.setMediaItem(mediaItem);
                 volume = 0f;
-                setVideoSurfaceHolder(surfaceHolder)
+
+
+                setVideoSurface(surfaceHolder?.surface);
             }
         }
 
-        override fun onSurfaceCreated(surfaceHolder: SurfaceHolder?) {
-            super.onSurfaceCreated(surfaceHolder);
-            exoPlayer.apply {
-
+        override fun onSurfaceCreated(holder: SurfaceHolder?) {
+            exoPlayer!!.apply {
                 prepare();
                 play();
             }
         }
 
+        override fun setScale(width: Int, height: Int) {
+            //sweet f.a
+        }
+
+        override fun onSurfaceChanged(
+            holder: SurfaceHolder?,
+            format: Int,
+            width: Int,
+            height: Int
+        ) {
+
+
+        }
+
         override fun onVisibilityChanged(visible: Boolean) {
-            super.onVisibilityChanged(visible);
             if(visible)
-                exoPlayer.play();
+                exoPlayer!!.play();
             else
-                exoPlayer.pause();
+                exoPlayer!!.pause();
 
         }
 
-        override fun onSurfaceDestroyed(holder: SurfaceHolder?) {
-            super.onSurfaceDestroyed(holder);
-            if(exoPlayer.isPlaying) exoPlayer.stop();
+         override fun onSurfaceDestroyed(holder: SurfaceHolder?) {
+            if(exoPlayer!!.isPlaying) exoPlayer!!.stop();
         }
 
-        override fun onDestroy() {
-            super.onDestroy();
-            if(exoPlayer.isPlaying) exoPlayer.stop();
-            exoPlayer.release();
+         override fun onDestroy() {
+            if(exoPlayer!!.isPlaying) exoPlayer!!.stop();
+            exoPlayer!!.release();exoPlayer = null;
         }
 
     }
@@ -121,7 +201,7 @@ class livewallpaper : WallpaperService() {
 
 
 
-    inner class gifengine : Engine(){
+    inner class GifEngine : SubEngine{
         val prefs = this@livewallpaper.getSharedPreferences("LiveWallpaper",0);
         val GifPath = prefs.getString("Video_Path","")!!.toString();
         val leftoffset = prefs.getFloat("left",0f);
@@ -169,14 +249,13 @@ class livewallpaper : WallpaperService() {
         }
 
         override fun onCreate(surfaceHolder: SurfaceHolder?) {
-            super.onCreate(surfaceHolder);
             var sourceuri = Uri.parse(GifPath);
             when(sourceuri.scheme){
                 "content" -> {
                     val  contentstream = this@livewallpaper.contentResolver.openInputStream(sourceuri);
                     moive = Movie.decodeStream(contentstream);
+                    contentstream!!.close();
                 }
-
                 else -> {
                     moive = Movie.decodeFile(GifPath);//i know
                 }
@@ -184,9 +263,14 @@ class livewallpaper : WallpaperService() {
 
         }
         override fun onSurfaceCreated(holder: SurfaceHolder?) {
-            super.onSurfaceCreated(holder);
-            surfholder = surfaceHolder;
+            surfholder = holder;
             callbackHandler.post(drawloopfun);//jump start Animation
+        }
+
+        override  fun setScale(width: Int,height: Int){
+            scaleX =  width.toFloat() / moive!!.width().toFloat();
+            scaleY =  height.toFloat() /moive!!.height().toFloat();
+            largestscale = max(scaleX,scaleY);
         }
 
 
@@ -196,16 +280,13 @@ class livewallpaper : WallpaperService() {
             width: Int,
             height: Int
         ) {
-            super.onSurfaceChanged(holder, format, width, height);
             scaleX =  width.toFloat() / moive!!.width().toFloat();
             scaleY =  height.toFloat() /moive!!.height().toFloat();
             largestscale = max(scaleX,scaleY);
         }
 
 
-
         override fun onVisibilityChanged(visible: Boolean) {
-            super.onVisibilityChanged(visible)
             isVisiable = visible;
             if(visible){
                 callbackHandler.post(drawloopfun);
@@ -219,15 +300,31 @@ class livewallpaper : WallpaperService() {
         override fun onSurfaceDestroyed(holder: SurfaceHolder?) {
             callbackHandler.removeCallbacks(drawloopfun);
             surfholder = null;
-            super.onSurfaceDestroyed(holder);
+
         }
 
-
         override fun onDestroy() {
-            super.onDestroy();
+            callbackHandler.removeCallbacks(drawloopfun);
+            moive = null;
+            surfholder = null;
             Log.d("DestoryLog",this::class.java.simpleName);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     //image engine
     //   ||
@@ -236,7 +333,7 @@ class livewallpaper : WallpaperService() {
     //  \||/
     //   \/
 
-    inner class imageengine : Engine(){
+    inner class ImageEngine : Engine(){
         val prefs = this@livewallpaper.getSharedPreferences("LiveWallpaper",0);
         val imagepath = prefs.getString("Video_Path","")!!.toString();
         val imageUri = Uri.parse(imagepath);

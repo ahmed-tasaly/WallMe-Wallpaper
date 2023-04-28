@@ -8,11 +8,13 @@
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.3295" />
         <entry key="app/src/main/res/drawable-v24/image_border_line.xml" value="0.323" />
         <entry key="app/src/main/res/drawable/add_ic.xml" value="0.3295" />
+        <entry key="app/src/main/res/drawable/appicon.xml" value="0.152" />
         <entry key="app/src/main/res/drawable/arrow_out_ic.xml" value="0.323" />
         <entry key="app/src/main/res/drawable/border_line.xml" value="0.328" />
         <entry key="app/src/main/res/drawable/border_line_white.xml" value="0.323" />
         <entry key="app/src/main/res/drawable/bottomsheetshape.xml" value="0.323" />
         <entry key="app/src/main/res/drawable/button_border.xml" value="0.323" />
+        <entry key="app/src/main/res/drawable/desert.xml" value="0.152" />
         <entry key="app/src/main/res/drawable/filter_ic.xml" value="0.3295" />
         <entry key="app/src/main/res/drawable/homelist_ic.xml" value="0.3295" />
         <entry key="app/src/main/res/drawable/ic_baseline_horizontal_rule_24.xml" value="0.3525" />
@@ -22,11 +24,13 @@
         <entry key="app/src/main/res/drawable/ic_filter.xml" value="0.3295" />
         <entry key="app/src/main/res/drawable/ic_image.xml" value="0.323" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.3295" />
+        <entry key="app/src/main/res/drawable/ic_mediamodifier_design.xml" value="0.152" />
         <entry key="app/src/main/res/drawable/ic_round_save_24.xml" value="0.3525" />
         <entry key="app/src/main/res/drawable/ic_round_wallpaper_24.xml" value="0.3525" />
         <entry key="app/src/main/res/drawable/ic_save.xml" value="0.323" />
         <entry key="app/src/main/res/drawable/ic_stages_wallpaper.xml" value="0.323" />
         <entry key="app/src/main/res/drawable/ic_wallhaven_2.xml" value="0.3295" />
+        <entry key="app/src/main/res/drawable/ic_wallpaper.xml" value="0.152" />
         <entry key="app/src/main/res/drawable/image_border_line.xml" value="0.323" />
         <entry key="app/src/main/res/drawable/image_placeholder.xml" value="0.3525" />
         <entry key="app/src/main/res/drawable/left_arrow_ic.xml" value="0.323" />
@@ -71,6 +75,7 @@
         <entry key="app/src/main/res/menu/navigation_menu.xml" value="0.2949978623343309" />
         <entry key="app/src/main/res/menu/wallhaven_sortmenu.xml" value="0.2949978623343309" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.193" />
+        <entry key="app/src/main/res/xml/alertdialog_style.xml" value="1.231060606060606" />
       </map>
     </option>
   </component>
