@@ -33,6 +33,6 @@ jobs:
         uses: ashutoshgngwr/validate-fastlane-supply-metadata@v2
       
       - name: Gradle Build Action
-        uses: gradle/gradle-build-action@v2.3.0
+        uses: gradle/gradle-build-action@v2.4.2
 
 
